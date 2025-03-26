@@ -140,9 +140,12 @@ CREATE TABLE IF NOT EXISTS `empleado` (
   UNIQUE KEY `id_usuario` (`id_usuario`),
   UNIQUE KEY `cedula` (`cedula`),
   CONSTRAINT `empleado_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Volcando datos para la tabla tecno_fix.empleado: ~0 rows (aproximadamente)
+INSERT INTO `empleado` (`id_empleado`, `id_usuario`, `nombre`, `apellido`, `cedula`, `telefono`, `departamento`, `fecha_contratacion`, `especialidad`) VALUES
+	(1, 1, 'José', 'Rubio', 'V-12345678', '555-1234567', 'Administración', '2025-03-26', 'Administración de Sistemas'),
+	(2, 2, 'José', 'Rubio', 'V-87654321', '555-7654321', 'Soporte Técnico', '2025-03-26', 'Reparación de equipos');
 
 -- Volcando estructura para tabla tecno_fix.estado
 CREATE TABLE IF NOT EXISTS `estado` (
@@ -271,13 +274,17 @@ CREATE TABLE IF NOT EXISTS `rol` (
   `fecha_creacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `activo` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id_rol`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Volcando datos para la tabla tecno_fix.rol: ~3 rows (aproximadamente)
 INSERT INTO `rol` (`id_rol`, `nombre_rol`, `descripcion`, `fecha_creacion`, `activo`) VALUES
 	(1, 'Administrador', 'Acceso completo al sistema', '2025-03-26 00:34:00', 1),
 	(2, 'Empleado', 'Técnico o personal de soporte', '2025-03-26 00:34:00', 1),
-	(3, 'Cliente', 'Usuario final que recibe equipos', '2025-03-26 00:34:00', 1);
+	(3, 'Cliente', 'Usuario final que recibe equipos', '2025-03-26 00:34:00', 1),
+	(4, 'Administrador', 'Acceso completo al sistema', '2025-03-26 17:25:01', 1),
+	(5, 'Administrador', 'Acceso completo al sistema', '2025-03-26 17:25:14', 1),
+	(6, 'Administrador', 'Acceso completo al sistema', '2025-03-26 17:26:32', 1),
+	(7, 'Tecnico', 'Personal técnico de soporte y reparación', '2025-03-26 17:26:32', 1);
 
 -- Volcando estructura para tabla tecno_fix.solicitudsoporte
 CREATE TABLE IF NOT EXISTS `solicitudsoporte` (
@@ -316,9 +323,12 @@ CREATE TABLE IF NOT EXISTS `usuario` (
   UNIQUE KEY `email` (`email`),
   KEY `id_rol` (`id_rol`),
   CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Volcando datos para la tabla tecno_fix.usuario: ~0 rows (aproximadamente)
+-- Volcando datos para la tabla tecno_fix.usuario: ~2 rows (aproximadamente)
+INSERT INTO `usuario` (`id_usuario`, `id_rol`, `username`, `password`, `email`, `fecha_creacion`, `ultimo_login`, `activo`) VALUES
+	(1, 1, 'admin', '$2a$12$eLODQC2J1i3Xk/zadEr52ulaS6YPkWEq8jvkBLK7LugfkR37ox8ZO', 'admin@tecno-fix.com', '2025-03-26 17:26:32', NULL, 1),
+	(2, 7, 'jrubio', '$2a$12$BF7DbPDCu0HHfYoNuYqNqOqI/iTtIk1IstwYDDSiDROjvfUPzd8I6', 'jrubio@tecno-fix.com', '2025-03-26 17:26:32', NULL, 1);
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
