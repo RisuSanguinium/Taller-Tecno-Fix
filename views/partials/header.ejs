@@ -1,0 +1,15 @@
+<header>
+    <h1>Tecno-Fix</h1>
+    <nav>
+        <a href="/" <%= currentPage === 'home' ? 'style="font-weight:bold"' : '' %>>Home</a> |
+        
+        <% if (locals.user) { %>
+            <span>Bienvenido <%= locals.user.nombre %> <%= locals.user.apellido %></span> |
+            <a href="/logout">Cerrar sesión</a>
+        <% } else { %>
+            <a href="/registro" <%= currentPage === 'registro' ? 'style="font-weight:bold"' : '' %>>Registrarse</a> |
+            <a href="/login" <%= currentPage === 'login' ? 'style="font-weight:bold"' : '' %>>Iniciar sesión</a>
+        <% } %>
+    </nav>
+    <hr>
+</header>

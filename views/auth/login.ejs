@@ -6,34 +6,28 @@
     <title><%= title %></title>
 </head>
 <body>
-    <header>
-        <h1>Tecno-Fix</h1>
-        <nav>
-            <a href="/" <%= currentPage === 'home' ? 'style="font-weight:bold"' : '' %>>Home</a> |
-            <a href="/registro" <%= currentPage === 'registro' ? 'style="font-weight:bold"' : '' %>>Registrarse</a> |
-            <a href="/login" <%= currentPage === 'login' ? 'style="font-weight:bold"' : '' %>>Iniciar sesión</a>
-        </nav>
-        <hr>
-    </header>
+    <%- include('../partials/header') %>
 
     <main>
         <h2>Iniciar sesión</h2>
-        <form>
+        
+        <% if (typeof error !== 'undefined') { %>
+            <p style="color: red;"><%= error %></p>
+        <% } %>
+
+        <form action="/login" method="POST">
             <div>
                 <label>Email:</label>
-                <input type="email" name="email">
+                <input type="email" name="email" required>
             </div>
             <div>
                 <label>Contraseña:</label>
-                <input type="password" name="password">
+                <input type="password" name="password" required>
             </div>
             <button type="submit">Ingresar</button>
         </form>
     </main>
 
-    <footer>
-        <hr>
-        <p>&copy; 2025 Tecno-Fix</p>
-    </footer>
+    <%- include('../partials/footer') %>
 </body>
 </html>

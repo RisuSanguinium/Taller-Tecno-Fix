@@ -4,7 +4,10 @@ const conexion = msyql.createConnection({
     host:'localhost',
     user:'root',
     password:'12345',
-    database:'tecno_fix'
+    database:'tecno_fix',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
 conexion.connect((error)=>{

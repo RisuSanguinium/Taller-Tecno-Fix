@@ -6,24 +6,13 @@
     <title><%= title %></title>
 </head>
 <body>
-    <header>
-        <h1>Tecno-Fix</h1>
-        <nav>
-            <a href="/" <%= currentPage === 'home' ? 'style="font-weight:bold"' : '' %>>Home</a> |
-            <a href="/registro" <%= currentPage === 'registro' ? 'style="font-weight:bold"' : '' %>>Registrarse</a> |
-            <a href="/login" <%= currentPage === 'login' ? 'style="font-weight:bold"' : '' %>>Iniciar sesión</a>
-        </nav>
-        <hr>
-    </header>
+    <%- include('../partials/header') %>
 
     <main>
         <h2><%= message %></h2>
         <p>Sistema integral para la gestión de equipos informáticos, asignaciones y reparaciones.</p>
     </main>
 
-    <footer>
-        <hr>
-        <p>&copy; 2025 Tecno-Fix</p>
-    </footer>
+    <%- include('../partials/footer') %>
 </body>
 </html>

@@ -1,24 +1,35 @@
 const express = require('express');
-const app = express();
+const session = require('express-session');
 const path = require('path');
-app.use(express.static('public'));
-app.set('view engine','ejs');
+const app = express();
 
-app.use(express.urlencoded({extends:false}));
-app.use(express.json());
+// Configuración de sesiones (DEBE ir antes de las rutas)
+app.use(session({
+    secret: 'tu_secreto_super_seguro',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { 
+        secure: false, // Cambiar a true en producción con HTTPS
+        maxAge: 24 * 60 * 60 * 1000 // 1 día
+    }
+}));
 
-app.set('views', path.join(__dirname, 'views'));
-app.set('controller', path.join(__dirname, 'controller'));
-
-//app.get('/', (req,res)=>{
-//
-//    res.send('Este es un mensaje en la ruta');
-//});
-
-app.use('/',require('./router'))
-
-app.listen(5000,()=>{
-    console.log("Servidor Local http://localhost:5000");
-
+// Middleware para hacer user disponible en todas las vistas
+app.use((req, res, next) => {
+    res.locals.user = req.session.user || null;
+    next();
 });
 
+// Configuración de Express
+app.use(express.static(path.join(__dirname, 'public')));
+app.set('view engine', 'ejs');
+app.use(express.urlencoded({ extended: false })); // Corregido "extends" por "extended"
+app.use(express.json());
+app.set('views', path.join(__dirname, 'views'));
+
+// Rutas
+app.use('/', require('./routers'));
+
+app.listen(5000, () => {
+    console.log("Servidor Local http://localhost:5000");
+});
