@@ -1,15 +1,38 @@
-<header>
-    <h1>Tecno-Fix</h1>
-    <nav>
-        <a href="/" <%= currentPage === 'home' ? 'style="font-weight:bold"' : '' %>>Home</a> |
-        
-        <% if (locals.user) { %>
-            <span>Bienvenido <%= locals.user.nombre %> <%= locals.user.apellido %></span> |
-            <a href="/logout">Cerrar sesión</a>
-        <% } else { %>
-            <a href="/registro" <%= currentPage === 'registro' ? 'style="font-weight:bold"' : '' %>>Registrarse</a> |
-            <a href="/login" <%= currentPage === 'login' ? 'style="font-weight:bold"' : '' %>>Iniciar sesión</a>
-        <% } %>
-    </nav>
-    <hr>
-</header>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tecno-Fix</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        ::selection {
+            background-color: #007bff;
+            color: white;
+        }
+        .active-link {
+            color: white !important;
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-dark text-white p-3 mb-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h1 class="h3 mb-0 text-primary">Tecno-Fix</h1>
+            <nav>
+                <a href="/" class="text-primary text-decoration-none me-3 <%= currentPage === 'home' ? 'fw-bold active-link' : '' %>">Home</a>
+                
+                <% if (locals.user) { %>
+                    <span class="me-3 text-white">Bienvenido <%= locals.user.nombre %> <%= locals.user.apellido %></span>
+                    <a href="/logout" class="btn btn-outline-primary btn-sm <%= currentPage === 'logout' ? 'active-link' : '' %>">Cerrar sesión</a>
+                <% } else { %>
+                    <a href="/registro" class="text-primary text-decoration-none me-3 <%= currentPage === 'registro' ? 'fw-bold active-link' : '' %>">Registrarse</a>
+                    <a href="/login" class="text-primary text-decoration-none <%= currentPage === 'login' ? 'fw-bold active-link' : '' %>">Iniciar sesión</a>
+                <% } %>
+            </nav>
+        </div>
+    </header>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
