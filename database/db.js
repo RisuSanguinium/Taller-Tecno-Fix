@@ -1,9 +1,10 @@
 const msyql = require('mysql');
+require('dotenv').config();
 
 const conexion = msyql.createConnection({
     host:'localhost',
-    user:'root',
-    password:'12345',
+    user:process.env.DBUSER,
+    password:process.env.DBPASSWORD,
     database:'tecno_fix',
 });
 
