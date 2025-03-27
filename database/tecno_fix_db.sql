@@ -16,7 +16,7 @@
 
 
 -- Volcando estructura de base de datos para tecno_fix
-CREATE DATABASE IF NOT EXISTS `tecno_fix` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE IF NOT EXISTS `tecno_fix` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8_general_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `tecno_fix`;
 
 -- Volcando estructura para tabla tecno_fix.asignacion
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `asignacion` (
   CONSTRAINT `asignacion_ibfk_2` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`),
   CONSTRAINT `asignacion_ibfk_3` FOREIGN KEY (`id_empleado_asignador`) REFERENCES `empleado` (`id_empleado`),
   CONSTRAINT `asignacion_ibfk_4` FOREIGN KEY (`id_inventario`) REFERENCES `inventario` (`id_inventario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8_general_ci;
 
 -- Volcando datos para la tabla tecno_fix.asignacion: ~0 rows (aproximadamente)
 
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `bitacoraasignacion` (
   CONSTRAINT `bitacoraasignacion_ibfk_2` FOREIGN KEY (`id_estado_anterior`) REFERENCES `estado` (`id_estado`),
   CONSTRAINT `bitacoraasignacion_ibfk_3` FOREIGN KEY (`id_estado_nuevo`) REFERENCES `estado` (`id_estado`),
   CONSTRAINT `bitacoraasignacion_ibfk_4` FOREIGN KEY (`id_usuario_modificacion`) REFERENCES `usuario` (`id_usuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8_general_ci;
 
 -- Volcando datos para la tabla tecno_fix.bitacoraasignacion: ~0 rows (aproximadamente)
 
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `bitacorareparacion` (
   CONSTRAINT `bitacorareparacion_ibfk_2` FOREIGN KEY (`id_estado_anterior`) REFERENCES `estado` (`id_estado`),
   CONSTRAINT `bitacorareparacion_ibfk_3` FOREIGN KEY (`id_estado_nuevo`) REFERENCES `estado` (`id_estado`),
   CONSTRAINT `bitacorareparacion_ibfk_4` FOREIGN KEY (`id_empleado`) REFERENCES `empleado` (`id_empleado`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8_general_ci;
 
 -- Volcando datos para la tabla tecno_fix.bitacorareparacion: ~0 rows (aproximadamente)
 
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `categoria` (
   `nombre` varchar(100) NOT NULL,
   `descripcion` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id_categoria`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8_general_ci;
 
 -- Volcando datos para la tabla tecno_fix.categoria: ~7 rows (aproximadamente)
 INSERT INTO `categoria` (`id_categoria`, `nombre`, `descripcion`) VALUES
@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS `cliente` (
   UNIQUE KEY `id_usuario` (`id_usuario`),
   UNIQUE KEY `cedula` (`cedula`),
   CONSTRAINT `cliente_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8_general_ci;
 
 -- Volcando datos para la tabla tecno_fix.cliente: ~0 rows (aproximadamente)
 
@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS `empleado` (
   UNIQUE KEY `id_usuario` (`id_usuario`),
   UNIQUE KEY `cedula` (`cedula`),
   CONSTRAINT `empleado_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8_general_ci;
 
 -- Volcando datos para la tabla tecno_fix.empleado: ~0 rows (aproximadamente)
 INSERT INTO `empleado` (`id_empleado`, `id_usuario`, `nombre`, `apellido`, `cedula`, `telefono`, `departamento`, `fecha_contratacion`, `especialidad`) VALUES
@@ -154,7 +154,7 @@ CREATE TABLE IF NOT EXISTS `estado` (
   `descripcion` varchar(255) DEFAULT NULL,
   `tipo_estado` enum('equipo','solicitud','reparacion') NOT NULL,
   PRIMARY KEY (`id_estado`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8_general_ci;
 
 -- Volcando datos para la tabla tecno_fix.estado: ~14 rows (aproximadamente)
 INSERT INTO `estado` (`id_estado`, `nombre_estado`, `descripcion`, `tipo_estado`) VALUES
@@ -184,7 +184,7 @@ CREATE TABLE IF NOT EXISTS `inventario` (
   PRIMARY KEY (`id_inventario`),
   KEY `responsable` (`responsable`),
   CONSTRAINT `inventario_ibfk_1` FOREIGN KEY (`responsable`) REFERENCES `empleado` (`id_empleado`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8_general_ci;
 
 -- Volcando datos para la tabla tecno_fix.inventario: ~0 rows (aproximadamente)
 
@@ -201,7 +201,7 @@ CREATE TABLE IF NOT EXISTS `inventarioproducto` (
   KEY `id_producto` (`id_producto`),
   CONSTRAINT `inventarioproducto_ibfk_1` FOREIGN KEY (`id_inventario`) REFERENCES `inventario` (`id_inventario`),
   CONSTRAINT `inventarioproducto_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `producto` (`id_producto`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8_general_ci;
 
 -- Volcando datos para la tabla tecno_fix.inventarioproducto: ~0 rows (aproximadamente)
 
@@ -226,7 +226,7 @@ CREATE TABLE IF NOT EXISTS `procesoreparacion` (
   CONSTRAINT `procesoreparacion_ibfk_1` FOREIGN KEY (`id_solicitud`) REFERENCES `solicitudsoporte` (`id_solicitud`),
   CONSTRAINT `procesoreparacion_ibfk_2` FOREIGN KEY (`id_empleado_asignado`) REFERENCES `empleado` (`id_empleado`),
   CONSTRAINT `procesoreparacion_ibfk_3` FOREIGN KEY (`id_estado`) REFERENCES `estado` (`id_estado`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8_general_ci;
 
 -- Volcando datos para la tabla tecno_fix.procesoreparacion: ~0 rows (aproximadamente)
 
@@ -247,7 +247,7 @@ CREATE TABLE IF NOT EXISTS `producto` (
   UNIQUE KEY `numero_serie` (`numero_serie`),
   KEY `id_categoria` (`id_categoria`),
   CONSTRAINT `producto_ibfk_1` FOREIGN KEY (`id_categoria`) REFERENCES `categoria` (`id_categoria`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8_general_ci;
 
 -- Volcando datos para la tabla tecno_fix.producto: ~0 rows (aproximadamente)
 
@@ -262,7 +262,7 @@ CREATE TABLE IF NOT EXISTS `reporte` (
   PRIMARY KEY (`id_reporte`),
   KEY `id_usuario_generador` (`id_usuario_generador`),
   CONSTRAINT `reporte_ibfk_1` FOREIGN KEY (`id_usuario_generador`) REFERENCES `usuario` (`id_usuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8_general_ci;
 
 -- Volcando datos para la tabla tecno_fix.reporte: ~0 rows (aproximadamente)
 
@@ -274,7 +274,7 @@ CREATE TABLE IF NOT EXISTS `rol` (
   `fecha_creacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `activo` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id_rol`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8_general_ci;
 
 -- Volcando datos para la tabla tecno_fix.rol: ~3 rows (aproximadamente)
 INSERT INTO `rol` (`id_rol`, `nombre_rol`, `descripcion`, `fecha_creacion`, `activo`) VALUES
@@ -304,7 +304,7 @@ CREATE TABLE IF NOT EXISTS `solicitudsoporte` (
   CONSTRAINT `solicitudsoporte_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`),
   CONSTRAINT `solicitudsoporte_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `producto` (`id_producto`),
   CONSTRAINT `solicitudsoporte_ibfk_3` FOREIGN KEY (`id_estado`) REFERENCES `estado` (`id_estado`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8_general_ci;
 
 -- Volcando datos para la tabla tecno_fix.solicitudsoporte: ~0 rows (aproximadamente)
 
@@ -323,7 +323,7 @@ CREATE TABLE IF NOT EXISTS `usuario` (
   UNIQUE KEY `email` (`email`),
   KEY `id_rol` (`id_rol`),
   CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`id_rol`) REFERENCES `rol` (`id_rol`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8_general_ci;
 
 -- Volcando datos para la tabla tecno_fix.usuario: ~2 rows (aproximadamente)
 INSERT INTO `usuario` (`id_usuario`, `id_rol`, `username`, `password`, `email`, `fecha_creacion`, `ultimo_login`, `activo`) VALUES
