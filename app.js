@@ -5,7 +5,7 @@ const app = express();
 
 
 app.use(session({
-    secret: 'tu_secreto_super_seguro',
+    secret: '12345',
     resave: false,
     saveUninitialized: true,
     cookie: { 
