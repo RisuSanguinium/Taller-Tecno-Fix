@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
 // Rutas de autenticación
 router.get('/login', authController.showLoginForm);
 router.post('/login', authController.login);
-router.get('/registro', authController.showRegisterForm); // Esta es la única ruta de registro necesaria
+router.get('/registro', authController.showRegisterForm);
 router.post('/registro', authController.register);
 router.get('/logout', authController.logout);
 
