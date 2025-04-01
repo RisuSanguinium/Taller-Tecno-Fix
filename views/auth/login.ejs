@@ -15,6 +15,10 @@
             <p style="color: red;"><%= error %></p>
         <% } %>
 
+        <% if (locals.query && locals.query.registro === 'exitoso') { %>
+            <p style="color: green;">¡Registro exitoso! Por favor inicie sesión.</p>
+        <% } %>
+
         <form action="/login" method="POST">
             <div>
                 <label>Email:</label>

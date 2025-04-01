@@ -18,18 +18,18 @@
         <form action="/registro" method="POST">
             <div>
                 <label>Nombre:</label>
-                <input type="text" name="nombre" required>
+                <input type="text" name="nombre" value="<%= typeof formData !== 'undefined' ? formData.nombre : '' %>" required>
             </div>
             <div>
                 <label>Apellido:</label>
-                <input type="text" name="apellido" required>
+                <input type="text" name="apellido" value="<%= typeof formData !== 'undefined' ? formData.apellido : '' %>" required>
             </div>
             <div>
                 <label>Email:</label>
-                <input type="email" name="email" required>
+                <input type="email" name="email" value="<%= typeof formData !== 'undefined' ? formData.email : '' %>" required>
             </div>
             <div>
-                <label>Contraseña:</label>
+                <label>Contraseña (mínimo 6 caracteres):</label>
                 <input type="password" name="password" required minlength="6">
             </div>
             <div>

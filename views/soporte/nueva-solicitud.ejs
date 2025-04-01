@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <main>
+        <h2>Solicitar Soporte Técnico</h2>
+        
+        <% if (typeof error !== 'undefined') { %>
+            <p style="color: red;"><%= error %></p>
+        <% } %>
+
+        <% if (typeof success !== 'undefined') { %>
+            <p style="color: green;"><%= success %></p>
+        <% } %>
+
+        <form action="/solicitar-soporte" method="POST">
+            <div>
+                <label>Equipo relacionado (opcional):</label>
+                <select name="id_producto">
+                    <option value="">-- Seleccione un equipo --</option>
+                    <% equipos.forEach(equipo => { %>
+                        <option value="<%= equipo.id_producto %>">
+                            <%= equipo.nombre %> - <%= equipo.marca %> <%= equipo.modelo %>
+                            <% if (equipo.numero_serie) { %> (Serie: <%= equipo.numero_serie %>) <% } %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+            
+            <div>
+                <label>Tipo de problema:</label>
+                <select name="tipo_problema" required>
+                    <option value="">-- Seleccione un tipo --</option>
+                    <option value="hardware">Hardware</option>
+                    <option value="software">Software</option>
+                    <option value="red">Problema de red</option>
+                    <option value="otro">Otro</option>
+                </select>
+            </div>
+            
+            <div>
+                <label>Nivel de urgencia:</label>
+                <select name="urgencia" required>
+                    <option value="baja">Baja</option>
+                    <option value="media" selected>Media</option>
+                    <option value="alta">Alta</option>
+                    <option value="critica">Crítica</option>
+                </select>
+            </div>
+            
+            <div>
+                <label>Descripción detallada del problema:</label>
+                <textarea name="descripcion_problema" rows="5" required></textarea>
+            </div>
+            
+            <button type="submit">Enviar Solicitud</button>
+        </form>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

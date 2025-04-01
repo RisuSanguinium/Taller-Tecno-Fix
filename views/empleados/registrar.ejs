@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        form div {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <main class="container">
+        <h2>Registrar Nuevo Empleado</h2>
+        
+        <% if (typeof error !== 'undefined') { %>
+            <p style="color: red;"><%= error %></p>
+        <% } %>
+
+        <form action="/empleados/registrar" method="POST">
+            <div>
+                <label>Nombre:</label>
+                <input type="text" name="nombre" value="<%= typeof formData !== 'undefined' ? formData.nombre : '' %>" required>
+            </div>
+            
+            <div>
+                <label>Apellido:</label>
+                <input type="text" name="apellido" value="<%= typeof formData !== 'undefined' ? formData.apellido : '' %>" required>
+            </div>
+            
+            <div>
+                <label>Cédula:</label>
+                <input type="text" name="cedula" value="<%= typeof formData !== 'undefined' ? formData.cedula : '' %>" required>
+            </div>
+            
+            <div>
+                <label>Teléfono:</label>
+                <input type="text" name="telefono" value="<%= typeof formData !== 'undefined' ? formData.telefono : '' %>">
+            </div>
+            
+            <div>
+                <label>Departamento:</label>
+                <input type="text" name="departamento" value="<%= typeof formData !== 'undefined' ? formData.departamento : '' %>" required>
+            </div>
+            
+            <div>
+                <label>Especialidad:</label>
+                <input type="text" name="especialidad" value="<%= typeof formData !== 'undefined' ? formData.especialidad : '' %>" required>
+            </div>
+            
+            <div>
+                <label>Email:</label>
+                <input type="email" name="email" value="<%= typeof formData !== 'undefined' ? formData.email : '' %>" required>
+            </div>
+            
+            <div>
+                <label>Contraseña:</label>
+                <input type="password" name="password" required minlength="6">
+            </div>
+            
+            <div>
+                <label>Confirmar Contraseña:</label>
+                <input type="password" name="confirmPassword" required>
+            </div>
+            
+            <button type="submit">Registrar Empleado</button>
+        </form>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

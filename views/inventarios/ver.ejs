@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .info-section {
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 5px 10px;
+            margin: 0 2px;
+            text-decoration: none;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <%- include('../partials/header') %>
+
+        <main class="container">
+            <% if (typeof success !=='undefined' ) { %>
+                <div style="color: green; margin: 10px 0;">
+                    <%= success %>
+                </div>
+                <% } %>
+
+                    <% if (typeof error !=='undefined' ) { %>
+                        <div style="color: red; margin: 10px 0;">
+                            <%= error %>
+                        </div>
+                        <% } %>
+
+                            <div class="info-section">
+                                <h2>Detalles del Inventario</h2>
+                                <p><strong>Nombre:</strong>
+                                    <%= inventario.nombre %>
+                                </p>
+                                <p><strong>Descripción:</strong>
+                                    <%= inventario.descripcion || 'N/A' %>
+                                </p>
+                                <p><strong>Ubicación:</strong>
+                                    <%= inventario.ubicacion || 'N/A' %>
+                                </p>
+                                <p><strong>Responsable:</strong>
+                                    <% if (inventario.nombre_responsable) { %>
+                                        <%= inventario.nombre_responsable %>
+                                            <%= inventario.apellido_responsable %>
+                                                <% } else { %>
+                                                    Sin asignar
+                                                    <% } %>
+                                </p>
+                                <p><strong>Fecha de creación:</strong>
+                                    <%= new Date(inventario.fecha_creacion).toLocaleDateString() %>
+                                </p>
+
+                                <div style="margin-top: 20px;">
+                                    <a href="/inventarios/editar/<%= inventario.id_inventario %>"
+                                        class="btn btn-info">Editar Inventario</a>
+                                    <a href="/inventarios/agregar-producto/<%= inventario.id_inventario %>"
+                                        class="btn btn-success">Agregar Producto</a>
+                                    <a href="/inventarios" class="btn btn-primary">Volver a la lista</a>
+                                </div>
+                            </div>
+
+                            <div class="info-section">
+                                <h3>Productos en este inventario</h3>
+
+                                <% if (productos.length> 0) { %>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Producto</th>
+                                                <th>Categoría</th>
+                                                <th>Marca</th>
+                                                <th>Modelo</th>
+                                                <th>Total</th>
+                                                <th>Disponible</th>
+                                                <th>Asignado</th>
+                                                <th>En reparación</th>
+                                                <th>Descartado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% productos.forEach(producto=> { %>
+                                                <tr>
+                                                    <td>
+                                                        <%= producto.nombre_producto %>
+                                                    </td>
+                                                    <td>
+                                                        <%= producto.categoria %>
+                                                    </td>
+                                                    <td>
+                                                        <%= producto.marca || 'N/A' %>
+                                                    </td>
+                                                    <td>
+                                                        <%= producto.modelo || 'N/A' %>
+                                                    </td>
+                                                    <td>
+                                                        <%= producto.cantidad %>
+                                                    </td>
+                                                    <td>
+                                                        <%= producto.cantidad_disponible %>
+                                                    </td>
+                                                    <td>
+                                                        <%= producto.cantidad_asignada %>
+                                                    </td>
+                                                    <td>
+                                                        <%= producto.cantidad_reparacion %>
+                                                    </td>
+                                                    <td>
+                                                        <%= producto.cantidad_descartada %>
+                                                    </td>
+                                                </tr>
+                                                <% }); %>
+                                        </tbody>
+                                    </table>
+                                    <% } else { %>
+                                        <p>No hay productos registrados en este inventario.</p>
+                                        <% } %>
+                            </div>
+        </main>
+
+        <%- include('../partials/footer') %>
+</body>
+
+</html>

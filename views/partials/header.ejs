@@ -4,7 +4,19 @@
         <a href="/" <%= currentPage === 'home' ? 'style="font-weight:bold"' : '' %>>Home</a> |
         
         <% if (locals.user) { %>
-            <span>Bienvenido <%= locals.user.nombre %> <%= locals.user.apellido %></span> |
+            <% if (locals.user.nombre && locals.user.apellido) { %>
+                <span>Bienvenido <%= locals.user.nombre %> <%= locals.user.apellido %></span> |
+            <% } %>
+            
+            <% if (locals.user.rol === 'Cliente') { %>
+                <a href="/solicitar-soporte" <%= currentPage === 'solicitar-soporte' ? 'style="font-weight:bold"' : '' %>>Solicitar Soporte</a> |
+            <% } %>
+            
+            <% if (locals.user.rol === 'Administrador') { %>
+                <a href="/empleados" <%= currentPage === 'empleados' ? 'style="font-weight:bold"' : '' %>>Lista Empleados</a> |
+                <a href="/inventarios" <%= currentPage === 'inventarios' ? 'style="font-weight:bold"' : '' %>>Lista Inventarios</a> |
+            <% } %>
+            
             <a href="/logout">Cerrar sesión</a>
         <% } else { %>
             <a href="/registro" <%= currentPage === 'registro' ? 'style="font-weight:bold"' : '' %>>Registrarse</a> |

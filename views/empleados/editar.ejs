@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        form div {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .actions {
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <main class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Editar Empleado</h2>
+            <a href="/empleados/ver/<%= empleado.id_empleado %>" class="btn btn-secondary">Cancelar</a>
+        </div>
+
+        <% if (typeof error !== 'undefined') { %>
+            <div style="color: red; margin: 10px 0;"><%= error %></div>
+        <% } %>
+
+        <form action="/empleados/editar/<%= empleado.id_empleado %>" method="POST">
+            <div>
+                <label>Nombre:</label>
+                <input type="text" name="nombre" value="<%= empleado.nombre %>" required>
+            </div>
+            
+            <div>
+                <label>Apellido:</label>
+                <input type="text" name="apellido" value="<%= empleado.apellido %>" required>
+            </div>
+            
+            <div>
+                <label>Cédula:</label>
+                <input type="text" name="cedula" value="<%= empleado.cedula %>" required>
+            </div>
+            
+            <div>
+                <label>Teléfono:</label>
+                <input type="text" name="telefono" value="<%= empleado.telefono %>">
+            </div>
+            
+            <div>
+                <label>Departamento:</label>
+                <input type="text" name="departamento" value="<%= empleado.departamento %>" required>
+            </div>
+            
+            <div>
+                <label>Especialidad:</label>
+                <input type="text" name="especialidad" value="<%= empleado.especialidad %>" required>
+            </div>
+            
+            <div>
+                <label>Email:</label>
+                <input type="email" name="email" value="<%= empleado.email %>" required>
+            </div>
+            
+            <div class="actions">
+                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                <a href="/empleados/ver/<%= empleado.id_empleado %>" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

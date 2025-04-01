@@ -14,8 +14,10 @@ app.use(session({
     }
 }));
 
+
 app.use((req, res, next) => {
     res.locals.user = req.session.user || null;
+    res.locals.query = req.query;
     next();
 });
 
@@ -27,6 +29,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Rutas
 app.use('/', require('./routers'));
+
 
 app.listen(5000, () => {
     console.log("Servidor Local http://localhost:5000");

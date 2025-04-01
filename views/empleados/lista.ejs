@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .actions {
+            white-space: nowrap;
+        }
+        .btn {
+            padding: 5px 10px;
+            margin: 0 2px;
+            text-decoration: none;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <main class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Lista de Empleados</h2>
+            <a href="/empleados/registrar" class="btn btn-primary">Registrar un nuevo empleado</a>
+        </div>
+
+        <% if (typeof success !== 'undefined') { %>
+            <div style="color: green; margin: 10px 0;"><%= success %></div>
+        <% } %>
+
+        <% if (typeof error !== 'undefined') { %>
+            <div style="color: red; margin: 10px 0;"><%= error %></div>
+        <% } %>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Cédula</th>
+                    <th>Departamento</th>
+                    <th>Especialidad</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% empleados.forEach(empleado => { %>
+                    <tr>
+                        <td><%= empleado.id_empleado %></td>
+                        <td><%= empleado.nombre %></td>
+                        <td><%= empleado.apellido %></td>
+                        <td><%= empleado.cedula %></td>
+                        <td><%= empleado.departamento %></td>
+                        <td><%= empleado.especialidad %></td>
+                        <td class="actions">
+                            <a href="/empleados/editar/<%= empleado.id_empleado %>" class="btn btn-info">Editar</a>
+                            <a href="/empleados/ver/<%= empleado.id_empleado %>" class="btn btn-primary">Ver</a>
+                            <a href="/empleados/eliminar/<%= empleado.id_empleado %>" class="btn btn-danger" onclick="return confirm('¿Está seguro de eliminar este empleado?')">Eliminar</a>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>
