@@ -10,6 +10,7 @@
             background-color: #000;
             color: #fff;
         }
+<<<<<<< HEAD
         h2, label, p {
             color: #fff;
         }
@@ -31,12 +32,20 @@
         .form-control:focus {
             background-color: #444;
             color: #fff;
+=======
+        h2 {
+            color: #0d6efd;
+        }
+        label {
+            color: #0d6efd;
+>>>>>>> 74d488db718575a4c172e2cd09fee6ea58808e48
         }
     </style>
 </head>
 <body>
     <%- include('../partials/header') %>
 
+<<<<<<< HEAD
     <main class="d-flex justify-content-center align-items-center min-vh-100">
         <div class="form-container">
             <h2 class="text-center">Registro de usuario</h2>
@@ -69,6 +78,38 @@
                 <button type="submit" class="btn btn-primary w-100">Registrarse</button>
             </form>
         </div>
+=======
+    <main class="container py-5">
+        <h2 class="text-center">Registro de usuario</h2>
+        
+        <% if (typeof error !== 'undefined') { %>
+            <p class="text-danger text-center"><%= error %></p>
+        <% } %>
+
+        <form action="/registro" method="POST" class="mx-auto w-50 bg-dark p-4 rounded">
+            <div class="mb-3">
+                <label class="form-label">Nombre:</label>
+                <input type="text" name="nombre" class="form-control text-white bg-black" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Apellido:</label>
+                <input type="text" name="apellido" class="form-control text-white bg-black" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email:</label>
+                <input type="email" name="email" class="form-control text-white bg-black" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Contraseña:</label>
+                <input type="password" name="password" class="form-control text-white bg-black" required minlength="6">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Confirmar Contraseña:</label>
+                <input type="password" name="confirmPassword" class="form-control text-white bg-black" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+        </form>
+>>>>>>> 74d488db718575a4c172e2cd09fee6ea58808e48
     </main>
 
     <%- include('../partials/footer') %>

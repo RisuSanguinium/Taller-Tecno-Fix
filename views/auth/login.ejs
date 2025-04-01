@@ -10,6 +10,7 @@
             background-color: #000;
             color: #fff;
         }
+<<<<<<< HEAD
         h2, label, p {
             color: #fff;
         }
@@ -34,12 +35,20 @@
         .form-control:focus {
             background-color: #444;
             color: #fff;
+=======
+        h2 {
+            color: #0d6efd;
+        }
+        label {
+            color: #0d6efd;
+>>>>>>> 74d488db718575a4c172e2cd09fee6ea58808e48
         }
     </style>
 </head>
 <body>
     <%- include('../partials/header') %>
 
+<<<<<<< HEAD
     <main class="d-flex justify-content-center align-items-center min-vh-100">
         <div class="form-container">
             <h2 class="text-center">Iniciar sesión</h2>
@@ -64,6 +73,26 @@
                 <button type="submit" class="btn btn-primary w-100">Ingresar</button>
             </form>
         </div>
+=======
+    <main class="container py-5">
+        <h2 class="text-center">Iniciar sesión</h2>
+        
+        <% if (typeof error !== 'undefined') { %>
+            <p class="text-danger text-center"><%= error %></p>
+        <% } %>
+
+        <form action="/login" method="POST" class="mx-auto w-50 bg-dark p-4 rounded">
+            <div class="mb-3">
+                <label class="form-label">Email:</label>
+                <input type="email" name="email" class="form-control text-white bg-black" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Contraseña:</label>
+                <input type="password" name="password" class="form-control text-white bg-black" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+        </form>
+>>>>>>> 74d488db718575a4c172e2cd09fee6ea58808e48
     </main>
 
     <%- include('../partials/footer') %>

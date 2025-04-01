@@ -6,15 +6,19 @@
     <title>Tecno-Fix</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+<<<<<<< HEAD
         body {
             background-color: #000;
             color: #fff;
         }
+=======
+>>>>>>> 74d488db718575a4c172e2cd09fee6ea58808e48
         ::selection {
             background-color: #007bff;
             color: white;
         }
         .active-link {
+<<<<<<< HEAD
             color: #007bff !important;
             font-weight: bold;
         }
@@ -23,10 +27,14 @@
         }
         .navbar {
             border-bottom: 1px solid #333;
+=======
+            color: white !important;
+>>>>>>> 74d488db718575a4c172e2cd09fee6ea58808e48
         }
     </style>
 </head>
 <body>
+<<<<<<< HEAD
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
@@ -75,6 +83,23 @@
                 </div>
             </div>
         </nav>
+=======
+    <header class="bg-dark text-white p-3 mb-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h1 class="h3 mb-0 text-primary">Tecno-Fix</h1>
+            <nav>
+                <a href="/" class="text-primary text-decoration-none me-3 <%= currentPage === 'home' ? 'fw-bold active-link' : '' %>">Home</a>
+                
+                <% if (locals.user) { %>
+                    <span class="me-3 text-white">Bienvenido <%= locals.user.nombre %> <%= locals.user.apellido %></span>
+                    <a href="/logout" class="btn btn-outline-primary btn-sm <%= currentPage === 'logout' ? 'active-link' : '' %>">Cerrar sesión</a>
+                <% } else { %>
+                    <a href="/registro" class="text-primary text-decoration-none me-3 <%= currentPage === 'registro' ? 'fw-bold active-link' : '' %>">Registrarse</a>
+                    <a href="/login" class="text-primary text-decoration-none <%= currentPage === 'login' ? 'fw-bold active-link' : '' %>">Iniciar sesión</a>
+                <% } %>
+            </nav>
+        </div>
+>>>>>>> 74d488db718575a4c172e2cd09fee6ea58808e48
     </header>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
