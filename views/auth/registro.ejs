@@ -9,31 +9,80 @@
         body {
             background-color: #000;
             color: #fff;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
         }
+
         h2 {
-            color: #0d6efd;
+            color: #00aaff;
+            text-align: center;
+            margin-bottom: 20px;
         }
+
         label {
-            color: #0d6efd;
+            color: #00aaff;
+            font-weight: bold;
         }
+
         .form-container {
             max-width: 500px;
             margin: auto;
-            padding: 2em;
+            padding: 30px;
             background-color: #222;
-            border-radius: 8px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 170, 255, 0.4);
+            margin-top: 20px; /* Espacio entre el formulario y el header */
         }
+
         .error {
             color: red;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
         }
+
         .form-control {
             background-color: #333;
             color: #fff;
-            border: 1px solid #555;
+            border: 1px solid #00aaff;
+            border-radius: 6px;
+            font-size: 16px;
+            padding: 12px;
+            width: 100%;
+            margin-bottom: 15px;
         }
+
         .form-control:focus {
             background-color: #444;
+            border-color: #00aaff;
             color: #fff;
+        }
+
+        .btn-primary {
+            background-color: #00aaff;
+            color: #000;
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #0088cc;
+            transform: scale(1.05);
+        }
+
+        .actions {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        main {
+            flex-grow: 1;
+            padding-top: 20px; /* Espacio entre el contenido y el header */
         }
     </style>
 </head>
@@ -42,34 +91,36 @@
 
     <main class="d-flex justify-content-center align-items-center min-vh-100">
         <div class="form-container">
-            <h2 class="text-center">Registro de usuario</h2>
+            <h2>Registro de usuario</h2>
             
             <% if (typeof error !== 'undefined') { %>
-                <p class="error text-center"><%= error %></p>
+                <p class="error"><%= error %></p>
             <% } %>
 
             <form action="/registro" method="POST">
-                <div class="mb-3">
+                <div>
                     <label class="form-label">Nombre:</label>
                     <input type="text" name="nombre" class="form-control" value="<%= typeof formData !== 'undefined' ? formData.nombre : '' %>" required>
                 </div>
-                <div class="mb-3">
+                <div>
                     <label class="form-label">Apellido:</label>
                     <input type="text" name="apellido" class="form-control" value="<%= typeof formData !== 'undefined' ? formData.apellido : '' %>" required>
                 </div>
-                <div class="mb-3">
+                <div>
                     <label class="form-label">Email:</label>
                     <input type="email" name="email" class="form-control" value="<%= typeof formData !== 'undefined' ? formData.email : '' %>" required>
                 </div>
-                <div class="mb-3">
+                <div>
                     <label class="form-label">Contraseña (mínimo 6 caracteres):</label>
                     <input type="password" name="password" class="form-control" required minlength="6">
                 </div>
-                <div class="mb-3">
+                <div>
                     <label class="form-label">Confirmar Contraseña:</label>
                     <input type="password" name="confirmPassword" class="form-control" required>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary">Registrarse</button>
+                </div>
             </form>
         </div>
     </main>
