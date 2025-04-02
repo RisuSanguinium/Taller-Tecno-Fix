@@ -4,89 +4,150 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        form div {
+        body {
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        h2 {
+            color: #00aaff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            color: #00aaff;
+            font-weight: bold;
+        }
+
+        .form-container {
+            max-width: 900px; 
+            margin: auto;
+            padding: 30px;
+            background-color: #222;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 170, 255, 0.4);
+            margin-top: 20px;
+        }
+
+        .error-message {
+            color: red;
+            font-weight: bold;
+            text-align: center;
             margin-bottom: 15px;
         }
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        input, select {
+
+        .form-control {
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #00aaff;
+            border-radius: 6px;
+            font-size: 16px;
+            padding: 12px;
             width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
+            margin-bottom: 15px;
+            min-width: 600px;
         }
-        button {
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
+
+        .form-control:focus {
+            background-color: #444;
+            border-color: #00aaff;
+            color: #fff;
+        }
+
+        .btn-primary {
+            background-color: #00aaff;
+            color: #000;
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 6px;
             cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #0088cc;
+            transform: scale(1.05);
+        }
+
+        main {
+            flex-grow: 1;
+            padding-top: 20px;
         }
     </style>
 </head>
 <body>
     <%- include('../partials/header') %>
 
-    <main class="container">
-        <h2>Registrar Nuevo Empleado</h2>
-        
-        <% if (typeof error !== 'undefined') { %>
-            <p style="color: red;"><%= error %></p>
-        <% } %>
+    <main class="d-flex justify-content-center align-items-center min-vh-100">
+        <div class="form-container">
+            <h2>Registrar Nuevo Empleado</h2>
+            
+            <% if (typeof error !== 'undefined') { %>
+                <div class="error-message"><%= error %></div>
+            <% } %>
 
-        <form action="/empleados/registrar" method="POST">
-            <div>
-                <label>Nombre:</label>
-                <input type="text" name="nombre" value="<%= typeof formData !== 'undefined' ? formData.nombre : '' %>" required>
-            </div>
-            
-            <div>
-                <label>Apellido:</label>
-                <input type="text" name="apellido" value="<%= typeof formData !== 'undefined' ? formData.apellido : '' %>" required>
-            </div>
-            
-            <div>
-                <label>Cédula:</label>
-                <input type="text" name="cedula" value="<%= typeof formData !== 'undefined' ? formData.cedula : '' %>" required>
-            </div>
-            
-            <div>
-                <label>Teléfono:</label>
-                <input type="text" name="telefono" value="<%= typeof formData !== 'undefined' ? formData.telefono : '' %>">
-            </div>
-            
-            <div>
-                <label>Departamento:</label>
-                <input type="text" name="departamento" value="<%= typeof formData !== 'undefined' ? formData.departamento : '' %>" required>
-            </div>
-            
-            <div>
-                <label>Especialidad:</label>
-                <input type="text" name="especialidad" value="<%= typeof formData !== 'undefined' ? formData.especialidad : '' %>" required>
-            </div>
-            
-            <div>
-                <label>Email:</label>
-                <input type="email" name="email" value="<%= typeof formData !== 'undefined' ? formData.email : '' %>" required>
-            </div>
-            
-            <div>
-                <label>Contraseña:</label>
-                <input type="password" name="password" required minlength="6">
-            </div>
-            
-            <div>
-                <label>Confirmar Contraseña:</label>
-                <input type="password" name="confirmPassword" required>
-            </div>
-            
-            <button type="submit">Registrar Empleado</button>
-        </form>
+            <form action="/empleados/registrar" method="POST">
+                <div>
+                    <label class="form-label">Nombre:</label>
+                    <input type="text" name="nombre" class="form-control" value="<%= typeof formData !== 'undefined' ? formData.nombre : '' %>" required>
+                </div>
+                
+                <div>
+                    <label class="form-label">Apellido:</label>
+                    <input type="text" name="apellido" class="form-control" value="<%= typeof formData !== 'undefined' ? formData.apellido : '' %>" required>
+                </div>
+                
+                <div>
+                    <label class="form-label">Cédula:</label>
+                    <input type="text" name="cedula" class="form-control" value="<%= typeof formData !== 'undefined' ? formData.cedula : '' %>" required>
+                </div>
+                
+                <div>
+                    <label class="form-label">Teléfono:</label>
+                    <input type="text" name="telefono" class="form-control" value="<%= typeof formData !== 'undefined' ? formData.telefono : '' %>">
+                </div>
+                
+                <div>
+                    <label class="form-label">Departamento:</label>
+                    <input type="text" name="departamento" class="form-control" value="<%= typeof formData !== 'undefined' ? formData.departamento : '' %>" required>
+                </div>
+                
+                <div>
+                    <label class="form-label">Especialidad:</label>
+                    <input type="text" name="especialidad" class="form-control" value="<%= typeof formData !== 'undefined' ? formData.especialidad : '' %>" required>
+                </div>
+                
+                <div>
+                    <label class="form-label">Email:</label>
+                    <input type="email" name="email" class="form-control" value="<%= typeof formData !== 'undefined' ? formData.email : '' %>" required>
+                </div>
+                
+                <div>
+                    <label class="form-label">Contraseña:</label>
+                    <input type="password" name="password" class="form-control" required minlength="6">
+                </div>
+                
+                <div>
+                    <label class="form-label">Confirmar Contraseña:</label>
+                    <input type="password" name="confirmPassword" class="form-control" required>
+                </div>
+                
+                <div class="actions">
+                    <button type="submit" class="btn btn-primary">Registrar Empleado</button>
+                </div>
+            </form>
+        </div>
     </main>
 
     <%- include('../partials/footer') %>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

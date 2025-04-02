@@ -10,19 +10,33 @@
             background-color: #000;
             color: #fff;
         }
+
         ::selection {
             background-color: #007bff;
             color: white;
         }
+
         .active-link {
             color: #007bff !important;
             font-weight: bold;
         }
+
         .navbar-brand, .nav-link, .navbar-text {
             color: #fff !important;
         }
+
         .navbar {
             border-bottom: 1px solid #333;
+        }
+
+        .navbar-text {
+            margin-top: 0;
+            margin-left: 15px; 
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
         }
     </style>
 </head>
@@ -30,7 +44,7 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
-                <a class="navbar-brand" href="/" class="text-primary">Tecno-Fix</a> <!-- Home -->
+                <a class="navbar-brand" href="/" class="text-primary">Tecno-Fix</a> 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -42,7 +56,6 @@
                                     <a href="/solicitar-soporte" class="nav-link <%= currentPage === 'solicitar-soporte' ? 'active-link' : '' %>">Solicitar Soporte</a>
                                 </li>
                             <% } %>
-
                             <% if (locals.user.rol === 'Administrador') { %>
                                 <li class="nav-item">
                                     <a href="/empleados" class="nav-link <%= currentPage === 'empleados' ? 'active-link' : '' %>">Empleados</a>

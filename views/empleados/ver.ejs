@@ -33,12 +33,15 @@
         }
         .detail-row {
             display: flex;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
         .detail-label {
             font-weight: bold;
             width: 150px;
             color: #00aaff;
+        }
+        .detail-value {
+            margin-left: 20px;
         }
         .actions {
             margin-top: 20px;
@@ -95,43 +98,43 @@
         <div class="empleado-details">
             <div class="detail-row">
                 <div class="detail-label">ID:</div>
-                <div><%= empleado.id_empleado %></div>
+                <div class="detail-value"><%= empleado.id_empleado %></div>
             </div>
             <div class="detail-row">
                 <div class="detail-label">Nombre:</div>
-                <div><%= empleado.nombre %></div>
+                <div class="detail-value"><%= empleado.nombre %></div>
             </div>
             <div class="detail-row">
                 <div class="detail-label">Apellido:</div>
-                <div><%= empleado.apellido %></div>
+                <div class="detail-value"><%= empleado.apellido %></div>
             </div>
             <div class="detail-row">
                 <div class="detail-label">Cédula:</div>
-                <div><%= empleado.cedula %></div>
+                <div class="detail-value"><%= empleado.cedula %></div>
             </div>
             <div class="detail-row">
                 <div class="detail-label">Teléfono:</div>
-                <div><%= empleado.telefono %></div>
+                <div class="detail-value"><%= empleado.telefono %></div>
             </div>
             <div class="detail-row">
                 <div class="detail-label">Departamento:</div>
-                <div><%= empleado.departamento %></div>
+                <div class="detail-value"><%= empleado.departamento %></div>
             </div>
             <div class="detail-row">
                 <div class="detail-label">Especialidad:</div>
-                <div><%= empleado.especialidad %></div>
+                <div class="detail-value"><%= empleado.especialidad %></div>
             </div>
             <div class="detail-row">
                 <div class="detail-label">Email:</div>
-                <div><%= empleado.email %></div>
+                <div class="detail-value"><%= empleado.email %></div>
             </div>
             <div class="detail-row">
                 <div class="detail-label">Rol:</div>
-                <div><%= empleado.rol %></div>
+                <div class="detail-value"><%= empleado.rol %></div>
             </div>
             <div class="detail-row">
                 <div class="detail-label">Nombre de usuario:</div>
-                <div><%= empleado.username %></div>
+                <div class="detail-value"><%= empleado.username %></div>
             </div>
         </div>
 
@@ -144,3 +147,4 @@
     <%- include('../partials/footer') %>
 </body>
 </html>
+
