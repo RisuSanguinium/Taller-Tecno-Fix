@@ -7,29 +7,41 @@
     <style>
         table {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+            border-collapse: separate;
+            border-spacing: 0 15px;
+            margin-top: 30px;
+            background-color: #222;
+            color: #fff;
+            border-radius: 6px;
+            overflow: hidden;
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
+        td {
+            border: 1px solid #00aaff;
+            padding: 12px;
         }
         th {
-            background-color: #f2f2f2;
+            border: 1px solid;
+            padding: 12px;
+            background-color: #00aaff;
+            color: #000;
+            text-align: right;
+        }
+        td {
+            text-align: justify;
         }
         .actions {
             white-space: nowrap;
+            text-align: center;
         }
         .btn {
-            padding: 5px 10px;
-            margin: 0 2px;
+            padding: 5px 8px;
+            margin: 0 10px 0 0;
             text-decoration: none;
             border-radius: 3px;
-            font-size: 14px;
+            font-size: 12px;
         }
         .btn-primary {
-            background-color: #007bff;
+            background-color: #55e923;
             color: white;
         }
         .btn-info {
@@ -40,13 +52,30 @@
             background-color: #dc3545;
             color: white;
         }
+        h2 {
+            font-size: 16px;
+            text-align: left;
+            width: auto;
+            margin-bottom: 0;
+            font-weight: bold;
+            flex-grow: 1;
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0 20px 0;
+        }
+        .header-container a {
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
     <%- include('../partials/header') %>
 
     <main class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="header-container">
             <h2>Lista de Inventarios</h2>
             <a href="/inventarios/registrar" class="btn btn-primary">Añadir Inventario</a>
         </div>
