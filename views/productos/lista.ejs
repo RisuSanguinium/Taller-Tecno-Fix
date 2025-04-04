@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .actions {
+            white-space: nowrap;
+        }
+        .btn {
+            padding: 5px 10px;
+            margin: 0 2px;
+            text-decoration: none;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .status-active {
+            color: green;
+        }
+        .status-inactive {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <main class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Lista de Productos</h2>
+            <a href="/productos/registrar" class="btn btn-success">Registrar nuevo producto</a>
+        </div>
+
+        <% if (typeof success !== 'undefined') { %>
+            <div style="color: green; margin: 10px 0;"><%= success %></div>
+        <% } %>
+
+        <% if (typeof error !== 'undefined') { %>
+            <div style="color: red; margin: 10px 0;"><%= error %></div>
+        <% } %>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Categoría</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>N° Serie</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% productos.forEach(producto => { %>
+                    <tr>
+                        <td><%= producto.id_producto %></td>
+                        <td><%= producto.nombre %></td>
+                        <td><%= producto.categoria %></td>
+                        <td><%= producto.marca || 'N/A' %></td>
+                        <td><%= producto.modelo || 'N/A' %></td>
+                        <td><%= producto.numero_serie || 'N/A' %></td>
+                        <td class="<%= producto.activo ? 'status-active' : 'status-inactive' %>">
+                            <%= producto.activo ? 'Activo' : 'Inactivo' %>
+                        </td>
+                        <td class="actions">
+                            <a href="/productos/editar/<%= producto.id_producto %>" class="btn btn-info">Editar</a>
+                            <a href="/productos/ver/<%= producto.id_producto %>" class="btn btn-primary">Ver</a>
+                            <a href="/productos/eliminar/<%= producto.id_producto %>" class="btn btn-danger" onclick="return confirm('¿Está seguro de eliminar este producto?')">Eliminar</a>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

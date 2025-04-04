@@ -13,9 +13,11 @@
             <% } %>
             
             <% if (locals.user.rol === 'Administrador') { %>
-                <a href="/empleados" <%= currentPage === 'empleados' ? 'style="font-weight:bold"' : '' %>>Lista Empleados</a> |
-                <a href="/inventarios" <%= currentPage === 'inventarios' ? 'style="font-weight:bold"' : '' %>>Lista Inventarios</a> |
+                <a href="/empleados" <%= currentPage === 'empleados' ? 'style="font-weight:bold"' : '' %>>Empleados</a> |
+                <a href="/inventarios" <%= currentPage === 'inventarios' ? 'style="font-weight:bold"' : '' %>>Inventarios</a> |
+                <a href="/productos" <%= currentPage === 'productos' ? 'style="font-weight:bold"' : '' %>>Productos</a> |
             <% } %>
+            
             
             <a href="/logout">Cerrar sesión</a>
         <% } else { %>

@@ -4,6 +4,7 @@ const authController = require('../controllers/authController');
 const soporteController = require('../controllers/soporteController');
 const empleadoController = require('../controllers/empleadoController');
 const inventarioController = require('../controllers/inventarioController');
+const productoController = require('../controllers/productoController');
 
 // Rutas públicas
 router.get('/', (req, res) => {
@@ -45,5 +46,14 @@ router.post('/inventarios/editar/:id', inventarioController.actualizarInventario
 router.get('/inventarios/eliminar/:id', inventarioController.eliminarInventario);
 router.get('/inventarios/agregar-producto/:id', inventarioController.mostrarFormularioAgregarProducto);
 router.post('/inventarios/agregar-producto/:id', inventarioController.agregarProducto);
+
+// Rutas de gestión de productos
+router.get('/productos', productoController.listarProductos);
+router.get('/productos/registrar', productoController.mostrarFormularioRegistro);
+router.post('/productos/registrar', productoController.registrarProducto);
+router.get('/productos/ver/:id', productoController.verProducto);
+router.get('/productos/editar/:id', productoController.mostrarFormularioEdicion);
+router.post('/productos/editar/:id', productoController.actualizarProducto);
+router.get('/productos/eliminar/:id', productoController.eliminarProducto);
 
 module.exports = router;
