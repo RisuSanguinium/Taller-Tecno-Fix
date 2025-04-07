@@ -224,6 +224,7 @@ const clienteController = {
                         p.marca,
                         p.modelo,
                         p.numero_serie,
+                        p.activo AS producto_activo,
                         s.fecha_solicitud,
                         s.fecha_cierre,
                         s.urgencia,
@@ -266,7 +267,6 @@ const clienteController = {
         );
     },
     
-    //manejar el pago
     marcarComoPagado: (req, res) => {
         if (!req.session.user || req.session.user.rol !== 'Cliente') {
             return res.redirect('/login');
@@ -274,16 +274,63 @@ const clienteController = {
     
         const id_proceso = req.params.id;
     
+        // Primero verificar si el producto es irreparable
         conexion.query(
-            'UPDATE ProcesoReparacion SET pagado = 1 WHERE id_proceso = ?',
+            `SELECT pr.id_estado, pr.id_solicitud, s.id_producto 
+             FROM ProcesoReparacion pr
+             JOIN SolicitudSoporte s ON pr.id_solicitud = s.id_solicitud
+             WHERE pr.id_proceso = ?`,
             [id_proceso],
             (error, results) => {
-                if (error) {
-                    console.error('Error al marcar como pagado:', error);
+                if (error || results.length === 0) {
+                    console.error('Error al verificar estado de reparación:', error);
                     return res.redirect('/equipos-soporte?error=Error al procesar el pago');
                 }
-    
-                res.redirect('/equipos-soporte?success=Reparación marcada como pagada');
+                
+                const estado = results[0].id_estado;
+                const id_producto = results[0].id_producto;
+                
+                if (estado === 14) { // Irreparable
+                    // Desactivar el producto
+                    conexion.query(
+                        'UPDATE Producto SET activo = 0 WHERE id_producto = ?',
+                        [id_producto],
+                        (error) => {
+                            if (error) {
+                                console.error('Error al desactivar producto:', error);
+                                return res.redirect('/equipos-soporte?error=Error al desactivar producto irreparable');
+                            }
+                            
+                            // Marcar como pagado
+                            conexion.query(
+                                'UPDATE ProcesoReparacion SET pagado = 1 WHERE id_proceso = ?',
+                                [id_proceso],
+                                (error) => {
+                                    if (error) {
+                                        console.error('Error al marcar como pagado:', error);
+                                        return res.redirect('/equipos-soporte?error=Error al procesar el pago');
+                                    }
+                                    
+                                    res.redirect('/equipos-soporte?success=Producto irreparable marcado como pagado y desactivado');
+                                }
+                            );
+                        }
+                    );
+                } else {
+                    // Solo marcar como pagado
+                    conexion.query(
+                        'UPDATE ProcesoReparacion SET pagado = 1 WHERE id_proceso = ?',
+                        [id_proceso],
+                        (error) => {
+                            if (error) {
+                                console.error('Error al marcar como pagado:', error);
+                                return res.redirect('/equipos-soporte?error=Error al procesar el pago');
+                            }
+                            
+                            res.redirect('/equipos-soporte?success=Reparación marcada como pagada');
+                        }
+                    );
+                }
             }
         );
     }

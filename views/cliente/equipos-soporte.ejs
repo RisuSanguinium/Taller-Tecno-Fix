@@ -10,6 +10,10 @@
             background-color: #28a745;
             color: white;
         }
+        .estado-irreparable {
+            background-color: #dc3545;
+            color: white;
+        }
         .btn-pagar {
             background-color: #007bff;
             color: white;
@@ -36,6 +40,10 @@
             color: #28a745;
             font-weight: bold;
         }
+        .equipo-desactivado {
+            opacity: 0.6;
+            background-color: #f8d7da;
+        }
     </style>
 </head>
 <body>
@@ -56,12 +64,15 @@
             <p>No tienes equipos en soporte actualmente.</p>
         <% } else { %>
             <% solicitudes.forEach(solicitud => { %>
-                <div class="equipo-card">
+                <div class="equipo-card <%= solicitud.estado_reparacion_id === 14 ? 'equipo-desactivado' : '' %>">
                     <div class="equipo-header">
                         <div class="equipo-title">
                             <%= solicitud.producto_nombre %> - <%= solicitud.marca %> <%= solicitud.modelo %>
                             <% if (solicitud.numero_serie) { %>
                                 (Serie: <%= solicitud.numero_serie %>)
+                            <% } %>
+                            <% if (solicitud.estado_reparacion_id === 14) { %>
+                                <span class="text-danger">(Equipo desactivado)</span>
                             <% } %>
                         </div>
                         <div class="estado estado-<%= (solicitud.estado_reparacion || solicitud.estado_solicitud).toLowerCase().replace(' ', '-') %>">
@@ -103,7 +114,7 @@
                             </div>
                         <% } %>
 
-                        <% if (solicitud.estado_reparacion_id === 13) { %>
+                        <% if (solicitud.estado_reparacion_id === 13 || solicitud.estado_reparacion_id === 14) { %>
                             <div class="costos">
                                 <div class="costo-item">
                                     <span class="label">Costo estimado:</span>

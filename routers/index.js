@@ -9,6 +9,7 @@ const clienteController = require('../controllers/clienteController');
 const bitacoraAController = require('../controllers/bitacoraAController');
 const bitacoraRController = require('../controllers/bitacoraRController');
 const dashboardController = require('../controllers/dashboardController');
+const reportePagosController = require('../controllers/reportePagosController');
 
 // Rutas públicas
 router.get('/', (req, res) => {
@@ -87,6 +88,7 @@ router.get('/solicitudes-soporte', empleadoController.listarSolicitudesSoporte);
 router.post('/solicitudes-soporte/aceptar/:id', empleadoController.aceptarSolicitud);
 router.post('/solicitudes-soporte/rechazar/:id', empleadoController.rechazarSolicitud);
 router.get('/en-reparacion', empleadoController.mostrarEnReparacion);
+router.post('/en-reparacion/actualizar-info/:id', empleadoController.actualizarInfo);
 router.post('/en-reparacion/completar/:id', empleadoController.completarReparacion);
 router.post('/en-reparacion/esperar-repuestos/:id', empleadoController.esperarRepuestos);
 router.post('/en-reparacion/irreparable/:id', empleadoController.marcarIrreparable);
@@ -99,5 +101,10 @@ router.get('/bitacora-reparaciones/pdf', bitacoraRController.generarPDF);
 
 // Rutas para los Graficos
 router.get('/estadisticas', dashboardController.mostrarEstadisticas);
+
+//Rutas para los reportes
+router.get('/reportes-pagos', reportePagosController.mostrarReporte);
+router.post('/reportes-pagos', reportePagosController.filtrarReporte);
+router.get('/reportes-pagos/pdf', reportePagosController.generarPDF);
 
 module.exports = router;
