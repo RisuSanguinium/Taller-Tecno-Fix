@@ -8,6 +8,7 @@ const productoController = require('../controllers/productoController');
 const clienteController = require('../controllers/clienteController');
 const bitacoraAController = require('../controllers/bitacoraAController');
 const bitacoraRController = require('../controllers/bitacoraRController');
+const dashboardController = require('../controllers/dashboardController');
 
 // Rutas públicas
 router.get('/', (req, res) => {
@@ -95,5 +96,8 @@ router.post('/en-reparacion/irreparable/:id', empleadoController.marcarIrreparab
 router.get('/bitacora-reparaciones', bitacoraRController.mostrarBitacora);
 router.post('/bitacora-reparaciones', bitacoraRController.filtrarBitacora);
 router.get('/bitacora-reparaciones/pdf', bitacoraRController.generarPDF);
+
+// Rutas para los Graficos
+router.get('/estadisticas', dashboardController.mostrarEstadisticas);
 
 module.exports = router;

@@ -20,6 +20,7 @@
                 <a href="/productos" <%= currentPage === 'productos' ? 'style="font-weight:bold"' : '' %>>Productos</a> |
                 <a href="/bitacora-asignaciones" <%= currentPage === 'bitacoraA' ? 'style="font-weight:bold"' : '' %>>Bitácora Asignaciones</a> |
                 <a href="/bitacora-reparaciones" <%= currentPage === 'bitacoraR' ? 'style="font-weight:bold"' : '' %>>Bitácora Reparaciones</a> |
+                <a href="/estadisticas" <%= currentPage === 'estadisticas' ? 'style="font-weight:bold"' : '' %>>Estadísticas</a> |
             <% } %>
 
             <% if (locals.user.rol === 'Empleado') { %>
