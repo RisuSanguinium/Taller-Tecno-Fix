@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        .solicitud-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+        }
+        .solicitud-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .solicitud-title {
+            font-weight: bold;
+        }
+        .urgencia {
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+        .urgencia-critica { background-color: #f8d7da; color: #721c24; }
+        .urgencia-alta { background-color: #fff3cd; color: #856404; }
+        .urgencia-media { background-color: #cce5ff; color: #004085; }
+        .urgencia-baja { background-color: #d4edda; color: #155724; }
+        .acciones {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 5px 10px;
+            border-radius: 3px;
+            text-decoration: none;
+            color: white;
+            cursor: pointer;
+        }
+        .btn-aceptar { background-color: #28a745; }
+        .btn-rechazar { background-color: #dc3545; }
+        .form-rechazo {
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <main class="container">
+        <h2>Solicitudes de Soporte Pendientes</h2>
+        
+        <% if (typeof error !== 'undefined') { %>
+            <div class="alert alert-danger"><%= error %></div>
+        <% } %>
+        
+        <% if (typeof success !== 'undefined') { %>
+            <div class="alert alert-success"><%= success %></div>
+        <% } %>
+
+        <% if (solicitudes.length === 0) { %>
+            <p>No hay solicitudes de soporte pendientes.</p>
+        <% } else { %>
+            <% solicitudes.forEach(solicitud => { %>
+                <div class="solicitud-card">
+                    <div class="solicitud-header">
+                        <div class="solicitud-title">
+                            Solicitud #<%= solicitud.id_solicitud %> - <%= solicitud.cliente_nombre %> <%= solicitud.cliente_apellido %>
+                        </div>
+                        <div class="urgencia urgencia-<%= solicitud.urgencia %>">
+                            <%= solicitud.urgencia.toUpperCase() %>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <p><strong>Producto:</strong> <%= solicitud.producto_nombre %> - <%= solicitud.marca %> <%= solicitud.modelo %></p>
+                        <p><strong>N° Serie:</strong> <%= solicitud.numero_serie || 'N/A' %></p>
+                        <p><strong>Fecha solicitud:</strong> <%= new Date(solicitud.fecha_solicitud).toLocaleString() %></p>
+                        <p><strong>Problema reportado:</strong></p>
+                        <p><%= solicitud.descripcion_problema %></p>
+                    </div>
+                    
+                    <div class="acciones">
+                        <form action="/solicitudes-soporte/aceptar/<%= solicitud.id_solicitud %>" method="POST" style="display: inline;">
+                            <button type="submit" class="btn btn-aceptar">Aceptar Solicitud</button>
+                        </form>
+                        
+                        <button class="btn btn-rechazar" onclick="mostrarFormRechazo(<%= solicitud.id_solicitud %>)">Rechazar Solicitud</button>
+                        
+                        <form id="form-rechazo-<%= solicitud.id_solicitud %>" class="form-rechazo" 
+                              action="/solicitudes-soporte/rechazar/<%= solicitud.id_solicitud %>" method="POST">
+                            <label for="motivo-<%= solicitud.id_solicitud %>">Motivo del rechazo:</label>
+                            <textarea id="motivo-<%= solicitud.id_solicitud %>" name="motivo_rechazo" required></textarea>
+                            <button type="submit" class="btn btn-rechazar">Confirmar Rechazo</button>
+                        </form>
+                    </div>
+                </div>
+            <% }); %>
+        <% } %>
+    </main>
+
+    <script>
+        function mostrarFormRechazo(id) {
+            const form = document.getElementById(`form-rechazo-${id}`);
+            form.style.display = form.style.display === 'block' ? 'none' : 'block';
+        }
+    </script>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

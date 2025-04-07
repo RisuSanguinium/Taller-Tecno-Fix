@@ -4,63 +4,117 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
+    <style>
+        form div {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        textarea {
+            min-height: 100px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .error {
+            color: red;
+            margin-bottom: 15px;
+        }
+        .success {
+            color: green;
+            margin-bottom: 15px;
+        }
+    </style>
 </head>
 <body>
     <%- include('../partials/header') %>
 
-    <main>
+    <main class="container">
         <h2>Solicitar Soporte Técnico</h2>
         
-        <% if (typeof error !== 'undefined') { %>
-            <p style="color: red;"><%= error %></p>
+        <% if (error) { %>
+            <div class="error"><%= error %></div>
+        <% } %>
+    
+        <% if (success) { %>
+            <div class="success"><%= success %></div>
+        <% } %>
+    
+        <% if (equipos.length === 0) { %>
+            <div class="error">No tiene equipos asignados para reportar problemas.</div>
+        <% } else { %>
+        
+        <% if (typeof solicitudError !== 'undefined' && solicitudError) { %>
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <%= solicitudError %>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
         <% } %>
 
-        <% if (typeof success !== 'undefined') { %>
-            <p style="color: green;"><%= success %></p>
+        <% if (equipos.length === 0) { %>
+            <div class="error">No tiene equipos asignados para reportar problemas.</div>
+        <% } else { %>
+            <form action="/solicitar-soporte" method="POST">
+                <div>
+                    <label>Equipo relacionado: <span style="color: red;">*</span></label>
+                    <select name="id_producto" required>
+                        <option value="">-- Seleccione un equipo --</option>
+                        <% equipos.forEach(equipo => { %>
+                            <option value="<%= equipo.id_producto %>" 
+                                <%= (typeof formData !== 'undefined' && formData.id_producto == equipo.id_producto) ? 'selected' : '' %>>
+                                <%= equipo.nombre %> - <%= equipo.marca %> <%= equipo.modelo %>
+                                <% if (equipo.numero_serie) { %> (Serie: <%= equipo.numero_serie %>) <% } %>
+                            </option>
+                        <% }); %>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>Tipo de problema: <span style="color: red;">*</span></label>
+                    <select name="tipo_problema" required>
+                        <option value="">-- Seleccione un tipo --</option>
+                        <option value="hardware" <%= (typeof formData !== 'undefined' && formData.tipo_problema === 'hardware') ? 'selected' : '' %>>Hardware</option>
+                        <option value="software" <%= (typeof formData !== 'undefined' && formData.tipo_problema === 'software') ? 'selected' : '' %>>Software</option>
+                        <option value="red" <%= (typeof formData !== 'undefined' && formData.tipo_problema === 'red') ? 'selected' : '' %>>Problema de red</option>
+                        <option value="otro" <%= (typeof formData !== 'undefined' && formData.tipo_problema === 'otro') ? 'selected' : '' %>>Otro</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>Nivel de urgencia: <span style="color: red;">*</span></label>
+                    <select name="urgencia" required>
+                        <option value="baja" <%= (typeof formData !== 'undefined' && formData.urgencia === 'baja') ? 'selected' : '' %>>Baja</option>
+                        <option value="media" <%= (typeof formData !== 'undefined' && formData.urgencia === 'media') ? 'selected' : 'selected' %>>Media</option>
+                        <option value="alta" <%= (typeof formData !== 'undefined' && formData.urgencia === 'alta') ? 'selected' : '' %>>Alta</option>
+                        <option value="critica" <%= (typeof formData !== 'undefined' && formData.urgencia === 'critica') ? 'selected' : '' %>>Crítica</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label>Descripción detallada del problema: <span style="color: red;">*</span></label>
+                    <textarea name="descripcion_problema" required><%= typeof formData !== 'undefined' ? formData.descripcion_problema : '' %></textarea>
+                </div>
+                
+                <button type="submit">Enviar Solicitud</button>
+            </form>
         <% } %>
-
-        <form action="/solicitar-soporte" method="POST">
-            <div>
-                <label>Equipo relacionado (opcional):</label>
-                <select name="id_producto">
-                    <option value="">-- Seleccione un equipo --</option>
-                    <% equipos.forEach(equipo => { %>
-                        <option value="<%= equipo.id_producto %>">
-                            <%= equipo.nombre %> - <%= equipo.marca %> <%= equipo.modelo %>
-                            <% if (equipo.numero_serie) { %> (Serie: <%= equipo.numero_serie %>) <% } %>
-                        </option>
-                    <% }); %>
-                </select>
-            </div>
-            
-            <div>
-                <label>Tipo de problema:</label>
-                <select name="tipo_problema" required>
-                    <option value="">-- Seleccione un tipo --</option>
-                    <option value="hardware">Hardware</option>
-                    <option value="software">Software</option>
-                    <option value="red">Problema de red</option>
-                    <option value="otro">Otro</option>
-                </select>
-            </div>
-            
-            <div>
-                <label>Nivel de urgencia:</label>
-                <select name="urgencia" required>
-                    <option value="baja">Baja</option>
-                    <option value="media" selected>Media</option>
-                    <option value="alta">Alta</option>
-                    <option value="critica">Crítica</option>
-                </select>
-            </div>
-            
-            <div>
-                <label>Descripción detallada del problema:</label>
-                <textarea name="descripcion_problema" rows="5" required></textarea>
-            </div>
-            
-            <button type="submit">Enviar Solicitud</button>
-        </form>
+        <% } %>
     </main>
 
     <%- include('../partials/footer') %>

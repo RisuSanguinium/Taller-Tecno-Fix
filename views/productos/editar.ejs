@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        form div {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .actions {
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <main class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Editar Producto</h2>
+            <a href="/productos/ver/<%= producto.id_producto %>" class="btn btn-secondary">Cancelar</a>
+        </div>
+
+        <% if (typeof error !== 'undefined') { %>
+            <div style="color: red; margin: 10px 0;"><%= error %></div>
+        <% } %>
+
+        <form action="/productos/editar/<%= producto.id_producto %>" method="POST">
+            <div>
+                <label>Categoría:</label>
+                <select name="id_categoria" required>
+                    <option value="">Seleccione una categoría</option>
+                    <% categorias.forEach(categoria => { %>
+                        <option value="<%= categoria.id_categoria %>" 
+                            <%= (producto.id_categoria == categoria.id_categoria) ? 'selected' : '' %>>
+                            <%= categoria.nombre %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+            
+            <div>
+                <label>Nombre del Producto:</label>
+                <input type="text" name="nombre" value="<%= producto.nombre %>" required>
+            </div>
+            
+            <div>
+                <label>Descripción:</label>
+                <textarea name="descripcion" rows="3"><%= producto.descripcion || '' %></textarea>
+            </div>
+            
+            <div>
+                <label>Marca:</label>
+                <input type="text" name="marca" value="<%= producto.marca || '' %>">
+            </div>
+            
+            <div>
+                <label>Modelo:</label>
+                <input type="text" name="modelo" value="<%= producto.modelo || '' %>">
+            </div>
+            
+            <div>
+                <label>Número de Serie:</label>
+                <input type="text" name="numero_serie" value="<%= producto.numero_serie || '' %>">
+            </div>
+            
+            <div>
+                <label>Especificaciones Técnicas:</label>
+                <textarea name="especificaciones" rows="3"><%= producto.especificaciones || '' %></textarea>
+            </div>
+            
+            <div>
+                <label>Fecha de Compra:</label>
+                <input type="date" name="fecha_compra" value="<%= producto.fecha_compra ? producto.fecha_compra.toISOString().split('T')[0] : '' %>">
+            </div>
+            
+            <div>
+                <label>Garantía hasta:</label>
+                <input type="date" name="garantia_hasta" value="<%= producto.garantia_hasta ? producto.garantia_hasta.toISOString().split('T')[0] : '' %>">
+            </div>
+            
+            <div class="actions">
+                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                <a href="/productos/ver/<%= producto.id_producto %>" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

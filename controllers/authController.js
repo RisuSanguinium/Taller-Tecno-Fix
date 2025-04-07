@@ -23,11 +23,12 @@ const authController = {
             });
         }
     
-        // Consulta mejorada para obtener datos del cliente
+        // Consulta mejorada para obtener todos los datos necesarios
         const query = `
-            SELECT u.id_usuario, u.password, 
+            SELECT u.id_usuario, u.password, u.id_rol,
                    COALESCE(e.nombre, c.nombre) AS nombre,
                    COALESCE(e.apellido, c.apellido) AS apellido,
+                   COALESCE(e.id_empleado, NULL) AS id_empleado,
                    r.nombre_rol as rol
             FROM Usuario u
             LEFT JOIN Empleado e ON u.id_usuario = e.id_usuario
@@ -67,12 +68,25 @@ const authController = {
                 // Crear sesión con todos los datos necesarios
                 req.session.user = {
                     id: user.id_usuario,
+                    id_rol: user.id_rol,
                     nombre: user.nombre,
                     apellido: user.apellido,
-                    rol: user.rol
+                    rol: user.rol,
+                    id_empleado: user.id_empleado || null // Añadimos el id_empleado si existe
                 };
     
-                res.redirect('/');
+                // Guardar la sesión antes de redirigir
+                req.session.save(err => {
+                    if (err) {
+                        console.error('Error al guardar sesión:', err);
+                        return res.render('auth/login', {
+                            title: 'Iniciar sesión - Tecno-Fix',
+                            error: 'Error en el servidor',
+                            currentPage: 'login'
+                        });
+                    }
+                    res.redirect('/');
+                });
     
             } catch (err) {
                 console.error('Error en login:', err);
@@ -116,7 +130,7 @@ const authController = {
                 formData: { nombre, apellido, email }
             });
         }
-
+    
         // Verificar si el email ya está registrado
         conexion.query('SELECT * FROM Usuario WHERE email = ?', [email], (error, users) => {
             if (error) {
@@ -128,7 +142,7 @@ const authController = {
                     formData: { nombre, apellido, email }
                 });
             }
-
+    
             if (users.length > 0) {
                 return res.render('auth/registro', {
                     title: 'Registro - Tecno-Fix',
@@ -137,7 +151,7 @@ const authController = {
                     formData: { nombre, apellido, email }
                 });
             }
-
+    
             // Hash de la contraseña
             bcrypt.hash(password, 10, (err, hashedPassword) => {
                 if (err) {
@@ -149,10 +163,10 @@ const authController = {
                         formData: { nombre, apellido, email }
                     });
                 }
-
+    
                 // Obtener el ID del rol de Cliente (id_rol = 3 según tu base de datos)
                 const clienteRolId = 3;
-
+    
                 // Crear el usuario en la base de datos
                 conexion.query(
                     'INSERT INTO Usuario (username, email, password, id_rol, activo) VALUES (?, ?, ?, ?, 1)',
@@ -167,11 +181,14 @@ const authController = {
                                 formData: { nombre, apellido, email }
                             });
                         }
-
-                        // Crear el registro del cliente
+    
+                        // Obtener la fecha actual en formato YYYY-MM-DD
+                        const fechaIngreso = new Date().toISOString().split('T')[0];
+    
+                        // Crear el registro del cliente con la fecha de ingreso
                         conexion.query(
-                            'INSERT INTO Cliente (id_usuario, nombre, apellido) VALUES (?, ?, ?)',
-                            [userResults.insertId, nombre, apellido],
+                            'INSERT INTO Cliente (id_usuario, nombre, apellido, fecha_ingreso) VALUES (?, ?, ?, ?)',
+                            [userResults.insertId, nombre, apellido, fechaIngreso],
                             (error) => {
                                 if (error) {
                                     console.error('Error al crear cliente:', error);
@@ -182,7 +199,7 @@ const authController = {
                                         formData: { nombre, apellido, email }
                                     });
                                 }
-
+    
                                 // Redirigir al login con mensaje de éxito
                                 res.redirect('/login?registro=exitoso');
                             }

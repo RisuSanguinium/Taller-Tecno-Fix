@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        /* Estilos anteriores... */
+        .estado-reparado {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-pagar {
+            background-color: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-pagar:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .costos {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .costo-item {
+            margin-bottom: 5px;
+        }
+        .pagado {
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <main class="container equipos-container">
+        <h2>Mis Equipos en Soporte</h2>
+        
+        <% if (typeof success !== 'undefined') { %>
+            <div class="alert alert-success"><%= success %></div>
+        <% } %>
+        
+        <% if (typeof error !== 'undefined') { %>
+            <div class="alert alert-danger"><%= error %></div>
+        <% } %>
+
+        <% if (solicitudes.length === 0) { %>
+            <p>No tienes equipos en soporte actualmente.</p>
+        <% } else { %>
+            <% solicitudes.forEach(solicitud => { %>
+                <div class="equipo-card">
+                    <div class="equipo-header">
+                        <div class="equipo-title">
+                            <%= solicitud.producto_nombre %> - <%= solicitud.marca %> <%= solicitud.modelo %>
+                            <% if (solicitud.numero_serie) { %>
+                                (Serie: <%= solicitud.numero_serie %>)
+                            <% } %>
+                        </div>
+                        <div class="estado estado-<%= (solicitud.estado_reparacion || solicitud.estado_solicitud).toLowerCase().replace(' ', '-') %>">
+                            <%= solicitud.estado_reparacion || solicitud.estado_solicitud %>
+                            <% if (solicitud.pagado) { %>
+                                <span class="pagado">(Pagado)</span>
+                            <% } %>
+                        </div>
+                    </div>
+                    
+                    <div class="detalles">
+                        <div class="detalle-item">
+                            <span class="label">Fecha solicitud:</span>
+                            <%= new Date(solicitud.fecha_solicitud).toLocaleDateString() %>
+                        </div>
+                        <div class="detalle-item">
+                            <span class="label">Urgencia:</span>
+                            <%= solicitud.urgencia.charAt(0).toUpperCase() + solicitud.urgencia.slice(1) %>
+                        </div>
+                        
+                        <% if (solicitud.diagnostico) { %>
+                            <div class="detalle-item">
+                                <span class="label">Diagnóstico:</span>
+                                <%= solicitud.diagnostico %>
+                            </div>
+                        <% } %>
+                        
+                        <% if (solicitud.acciones_realizadas) { %>
+                            <div class="detalle-item">
+                                <span class="label">Acciones realizadas:</span>
+                                <%= solicitud.acciones_realizadas %>
+                            </div>
+                        <% } %>
+                        
+                        <% if (solicitud.repuestos_utilizados) { %>
+                            <div class="detalle-item">
+                                <span class="label">Repuestos utilizados:</span>
+                                <%= solicitud.repuestos_utilizados %>
+                            </div>
+                        <% } %>
+
+                        <% if (solicitud.estado_reparacion_id === 13) { %>
+                            <div class="costos">
+                                <div class="costo-item">
+                                    <span class="label">Costo estimado:</span>
+                                    $<%= parseFloat(solicitud.costo_estimado || 0).toFixed(2) %>
+                                </div>
+                                <div class="costo-item">
+                                    <span class="label">Costo final:</span>
+                                    $<%= parseFloat(solicitud.costo_final || 0).toFixed(2) %>
+                                </div>
+                            </div>
+                        <% } %>
+
+                        <% if (solicitud.fecha_cierre) { %>
+                            <div class="detalle-item">
+                                <span class="label">Fecha cierre:</span>
+                                <%= new Date(solicitud.fecha_cierre).toLocaleDateString() %>
+                            </div>
+                        <% } %>
+
+                        <% if (solicitud.solucion) { %>
+                            <div class="detalle-item">
+                                <span class="label">Solución:</span>
+                                <%= solicitud.solucion %>
+                            </div>
+                        <% } %>
+
+                        <% if (solicitud.estado_reparacion_id === 13 && !solicitud.pagado) { %>
+                            <form action="/equipos-soporte/pagar/<%= solicitud.id_proceso %>" method="POST">
+                                <button type="submit" class="btn-pagar">Pagar Reparación</button>
+                            </form>
+                        <% } else if (solicitud.pagado) { %>
+                            <div class="detalle-item">
+                                <span class="label">Estado de pago:</span>
+                                <span class="pagado">Pagado</span>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            <% }); %>
+        <% } %>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

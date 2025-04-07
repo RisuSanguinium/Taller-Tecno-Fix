@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        .cliente-details {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .detail-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .detail-label {
+            font-weight: bold;
+            width: 150px;
+        }
+        .actions {
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <main class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Detalles del Cliente</h2>
+            <a href="/clientes" class="btn btn-secondary">Volver a la lista</a>
+        </div>
+
+        <% if (typeof success !== 'undefined') { %>
+            <div style="color: green; margin: 10px 0;"><%= success %></div>
+        <% } %>
+
+        <% if (typeof error !== 'undefined') { %>
+            <div style="color: red; margin: 10px 0;"><%= error %></div>
+        <% } %>
+
+        <div class="cliente-details">
+            <div class="detail-row">
+                <div class="detail-label">ID:</div>
+                <div><%= cliente.id_cliente %></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Nombre:</div>
+                <div><%= cliente.nombre %></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Apellido:</div>
+                <div><%= cliente.apellido %></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Cédula:</div>
+                <div><%= cliente.cedula %></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Teléfono:</div>
+                <div><%= cliente.telefono %></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Departamento:</div>
+                <div><%= cliente.departamento %></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Puesto:</div>
+                <div><%= cliente.puesto %></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Fecha de ingreso:</div>
+                <div><%= new Date(cliente.fecha_ingreso).toLocaleDateString() %></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Email:</div>
+                <div><%= cliente.email %></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Rol:</div>
+                <div><%= cliente.rol %></div>
+            </div>
+            <div class="detail-row">
+                <div class="detail-label">Nombre de usuario:</div>
+                <div><%= cliente.username %></div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="/clientes/editar/<%= cliente.id_cliente %>" class="btn btn-primary">Editar</a>
+            <a href="/clientes" class="btn btn-secondary">Volver</a>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

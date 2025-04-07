@@ -330,6 +330,8 @@ INSERT INTO `usuario` (`id_usuario`, `id_rol`, `username`, `password`, `email`, 
 	(1, 1, 'admin', '$2a$12$eLODQC2J1i3Xk/zadEr52ulaS6YPkWEq8jvkBLK7LugfkR37ox8ZO', 'admin@tecno-fix.com', '2025-03-26 17:26:32', NULL, 1),
 	(2, 7, 'jrubio', '$2a$12$BF7DbPDCu0HHfYoNuYqNqOqI/iTtIk1IstwYDDSiDROjvfUPzd8I6', 'jrubio@tecno-fix.com', '2025-03-26 17:26:32', NULL, 1);
 
+ALTER TABLE ProcesoReparacion ADD COLUMN pagado TINYINT(1) DEFAULT 0;
+
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;

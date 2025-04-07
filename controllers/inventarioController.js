@@ -287,10 +287,10 @@ const inventarioController = {
         if (!req.session.user || req.session.user.rol !== 'Administrador') {
             return res.redirect('/login');
         }
-
+    
         const idInventario = req.params.id;
         const { id_producto, cantidad } = req.body;
-
+    
         // Verificar si el producto ya existe en el inventario
         conexion.query(
             'SELECT * FROM InventarioProducto WHERE id_inventario = ? AND id_producto = ?',
@@ -300,18 +300,18 @@ const inventarioController = {
                     console.error('Error al verificar producto:', error);
                     return res.redirect(`/inventarios/ver/${idInventario}?error=Error al verificar producto`);
                 }
-
+    
                 if (results.length > 0) {
-                    // Actualizar cantidad si el producto ya existe
+                    // Actualizar cantidad y cantidad_disponible si el producto ya existe
                     conexion.query(
-                        'UPDATE InventarioProducto SET cantidad = cantidad + ? WHERE id_inventario = ? AND id_producto = ?',
-                        [cantidad, idInventario, id_producto],
+                        'UPDATE InventarioProducto SET cantidad = cantidad + ?, cantidad_disponible = cantidad_disponible + ? WHERE id_inventario = ? AND id_producto = ?',
+                        [cantidad, cantidad, idInventario, id_producto],
                         (error) => {
                             if (error) {
                                 console.error('Error al actualizar producto:', error);
                                 return res.redirect(`/inventarios/ver/${idInventario}?error=Error al actualizar cantidad del producto`);
                             }
-
+    
                             res.redirect(`/inventarios/ver/${idInventario}?success=Producto actualizado en el inventario`);
                         }
                     );
@@ -325,11 +325,119 @@ const inventarioController = {
                                 console.error('Error al agregar producto:', error);
                                 return res.redirect(`/inventarios/ver/${idInventario}?error=Error al agregar producto al inventario`);
                             }
-
+    
                             res.redirect(`/inventarios/ver/${idInventario}?success=Producto agregado al inventario`);
                         }
                     );
                 }
+            }
+        );
+    },
+
+    agregarCantidad: (req, res) => {
+        if (!req.session.user || req.session.user.rol !== 'Administrador') {
+            return res.redirect('/login');
+        }
+
+        const idInventario = req.params.id;
+        const { id_producto, cantidad } = req.body;
+
+        conexion.query(
+            'UPDATE InventarioProducto SET cantidad = cantidad + ?, cantidad_disponible = cantidad_disponible + ? WHERE id_inventario = ? AND id_producto = ?',
+            [cantidad, cantidad, idInventario, id_producto],
+            (error) => {
+                if (error) {
+                    console.error('Error al agregar cantidad:', error);
+                    return res.redirect(`/inventarios/ver/${idInventario}?error=Error al agregar cantidad`);
+                }
+
+                res.redirect(`/inventarios/ver/${idInventario}?success=Cantidad agregada exitosamente`);
+            }
+        );
+    },
+
+    // Método para quitar cantidad de un producto existente
+    quitarCantidad: (req, res) => {
+        if (!req.session.user || req.session.user.rol !== 'Administrador') {
+            return res.redirect('/login');
+        }
+
+        const idInventario = req.params.id;
+        const { id_producto, cantidad } = req.body;
+
+        // Primero verificar que no se quite más de lo disponible
+        conexion.query(
+            'SELECT cantidad, cantidad_disponible FROM InventarioProducto WHERE id_inventario = ? AND id_producto = ?',
+            [idInventario, id_producto],
+            (error, results) => {
+                if (error || results.length === 0) {
+                    console.error('Error al verificar cantidad:', error);
+                    return res.redirect(`/inventarios/ver/${idInventario}?error=Error al verificar cantidad disponible`);
+                }
+
+                const producto = results[0];
+                if (producto.cantidad - cantidad < 1) {
+                    return res.redirect(`/inventarios/ver/${idInventario}?error=No se puede dejar menos de 1 producto`);
+                }
+
+                if (producto.cantidad_disponible < cantidad) {
+                    return res.redirect(`/inventarios/ver/${idInventario}?error=No hay suficiente cantidad disponible`);
+                }
+
+                // Actualizar cantidades
+                conexion.query(
+                    'UPDATE InventarioProducto SET cantidad = cantidad - ?, cantidad_disponible = cantidad_disponible - ? WHERE id_inventario = ? AND id_producto = ?',
+                    [cantidad, cantidad, idInventario, id_producto],
+                    (error) => {
+                        if (error) {
+                            console.error('Error al quitar cantidad:', error);
+                            return res.redirect(`/inventarios/ver/${idInventario}?error=Error al quitar cantidad`);
+                        }
+
+                        res.redirect(`/inventarios/ver/${idInventario}?success=Cantidad quitada exitosamente`);
+                    }
+                );
+            }
+        );
+    },
+
+    // Método para eliminar un producto del inventario
+    eliminarProducto: (req, res) => {
+        if (!req.session.user || req.session.user.rol !== 'Administrador') {
+            return res.redirect('/login');
+        }
+
+        const idInventario = req.params.id;
+        const idProducto = req.params.idProducto;
+
+        // Verificar si el producto está asignado o en reparación
+        conexion.query(
+            'SELECT cantidad_asignada, cantidad_reparacion FROM InventarioProducto WHERE id_inventario = ? AND id_producto = ?',
+            [idInventario, idProducto],
+            (error, results) => {
+                if (error || results.length === 0) {
+                    console.error('Error al verificar producto:', error);
+                    return res.redirect(`/inventarios/ver/${idInventario}?error=Error al verificar producto`);
+                }
+
+                const producto = results[0];
+                if (producto.cantidad_asignada > 0 || producto.cantidad_reparacion > 0) {
+                    return res.redirect(`/inventarios/ver/${idInventario}?error=No se puede eliminar un producto con asignaciones o en reparación`);
+                }
+
+                // Eliminar el producto del inventario
+                conexion.query(
+                    'DELETE FROM InventarioProducto WHERE id_inventario = ? AND id_producto = ?',
+                    [idInventario, idProducto],
+                    (error) => {
+                        if (error) {
+                            console.error('Error al eliminar producto:', error);
+                            return res.redirect(`/inventarios/ver/${idInventario}?error=Error al eliminar producto`);
+                        }
+
+                        res.redirect(`/inventarios/ver/${idInventario}?success=Producto eliminado del inventario`);
+                    }
+                );
             }
         );
     }

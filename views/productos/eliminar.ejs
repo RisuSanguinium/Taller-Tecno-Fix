@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        .confirmation-box {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            background-color: #f8f9fa;
+        }
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0 10px;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .product-info {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <main class="container">
+        <div class="confirmation-box">
+            <h2>Confirmar Eliminación</h2>
+            
+            <div class="product-info">
+                <p>¿Está seguro que desea eliminar el siguiente producto?</p>
+                <p><strong>ID:</strong> <%= producto.id_producto %></p>
+                <p><strong>Nombre:</strong> <%= producto.nombre %></p>
+                <p><strong>Categoría:</strong> <%= producto.categoria %></p>
+            </div>
+
+            <form action="/productos/eliminar/<%= producto.id_producto %>" method="POST" style="display: inline;">
+                <button type="submit" class="btn btn-danger">Confirmar Eliminación</button>
+                <a href="/productos/ver/<%= producto.id_producto %>" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

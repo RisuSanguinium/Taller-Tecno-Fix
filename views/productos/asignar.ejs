@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        form div {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .producto-info {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .actions {
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <main class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Asignar Producto</h2>
+            <a href="/productos/ver/<%= producto.id_producto %>" class="btn btn-secondary">Cancelar</a>
+        </div>
+
+        <div class="producto-info">
+            <h3><%= producto.nombre %></h3>
+            <p><strong>Marca/Modelo:</strong> <%= producto.marca || 'N/A' %> / <%= producto.modelo || 'N/A' %></p>
+            <p><strong>N° Serie:</strong> <%= producto.numero_serie || 'N/A' %></p>
+            <p><strong>Inventario:</strong> <%= inventario.inventario_nombre %></p>
+            <p><strong>Disponible:</strong> <%= inventario.cantidad_disponible %></p>
+        </div>
+
+        <% if (typeof error !== 'undefined') { %>
+            <div style="color: red; margin: 10px 0;"><%= error %></div>
+        <% } %>
+
+        <form action="/productos/asignar/<%= producto.id_producto %>" method="POST">
+            <input type="hidden" name="id_inventario" value="<%= inventario.id_inventario %>">
+            
+            <div>
+                <label>Cliente:</label>
+                <select name="id_cliente" required>
+                    <option value="">Seleccione un cliente</option>
+                    <% clientes.forEach(cliente => { %>
+                        <option value="<%= cliente.id_cliente %>">
+                            <%= cliente.nombre %> <%= cliente.apellido %> - <%= cliente.cedula || 'Sin cédula' %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+            
+            <div>
+                <label>Fecha de Entrega:</label>
+                <input type="datetime-local" name="fecha_entrega">
+            </div>
+            
+            <div>
+                <label>Observaciones:</label>
+                <textarea name="observaciones" rows="3"></textarea>
+            </div>
+            
+            <div class="actions">
+                <button type="submit" class="btn btn-primary">Asignar Producto</button>
+                <a href="/productos/ver/<%= producto.id_producto %>" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

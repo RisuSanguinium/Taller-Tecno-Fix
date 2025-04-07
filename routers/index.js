@@ -5,6 +5,9 @@ const soporteController = require('../controllers/soporteController');
 const empleadoController = require('../controllers/empleadoController');
 const inventarioController = require('../controllers/inventarioController');
 const productoController = require('../controllers/productoController');
+const clienteController = require('../controllers/clienteController');
+const bitacoraAController = require('../controllers/bitacoraAController');
+const bitacoraRController = require('../controllers/bitacoraRController');
 
 // Rutas públicas
 router.get('/', (req, res) => {
@@ -46,6 +49,9 @@ router.post('/inventarios/editar/:id', inventarioController.actualizarInventario
 router.get('/inventarios/eliminar/:id', inventarioController.eliminarInventario);
 router.get('/inventarios/agregar-producto/:id', inventarioController.mostrarFormularioAgregarProducto);
 router.post('/inventarios/agregar-producto/:id', inventarioController.agregarProducto);
+router.post('/inventarios/agregar-cantidad/:id', inventarioController.agregarCantidad);
+router.post('/inventarios/quitar-cantidad/:id', inventarioController.quitarCantidad);
+router.get('/inventarios/eliminar-producto/:id/:idProducto', inventarioController.eliminarProducto);
 
 // Rutas de gestión de productos
 router.get('/productos', productoController.listarProductos);
@@ -55,5 +61,39 @@ router.get('/productos/ver/:id', productoController.verProducto);
 router.get('/productos/editar/:id', productoController.mostrarFormularioEdicion);
 router.post('/productos/editar/:id', productoController.actualizarProducto);
 router.get('/productos/eliminar/:id', productoController.eliminarProducto);
+router.get('/productos/asignar/:id', productoController.mostrarFormularioAsignacion);
+router.post('/productos/asignar/:id', productoController.asignarProducto);
+router.get('/productos/desasignar/:id', productoController.desasignarProducto);
+
+
+// Rutas de gestión de clientes
+router.get('/clientes', clienteController.listarClientes);
+router.get('/clientes/ver/:id', clienteController.verCliente);
+router.get('/clientes/editar/:id', clienteController.mostrarFormularioEdicion);
+router.post('/clientes/editar/:id', clienteController.actualizarCliente);
+router.get('/clientes/eliminar/:id', clienteController.eliminarCliente);
+router.get('/equipos-soporte', clienteController.mostrarEquiposSoporte);
+router.post('/equipos-soporte/pagar/:id', clienteController.marcarComoPagado);
+
+// Rutas de bitácora de asignaciones
+router.get('/bitacora-asignaciones', bitacoraAController.mostrarBitacora);
+router.post('/bitacora-asignaciones', bitacoraAController.filtrarBitacora);
+router.get('/bitacora-asignaciones/pdf', bitacoraAController.generarPDF);
+
+
+//Rutas de Empleado
+router.get('/solicitudes-soporte', empleadoController.listarSolicitudesSoporte);
+router.post('/solicitudes-soporte/aceptar/:id', empleadoController.aceptarSolicitud);
+router.post('/solicitudes-soporte/rechazar/:id', empleadoController.rechazarSolicitud);
+router.get('/en-reparacion', empleadoController.mostrarEnReparacion);
+router.post('/en-reparacion/completar/:id', empleadoController.completarReparacion);
+router.post('/en-reparacion/esperar-repuestos/:id', empleadoController.esperarRepuestos);
+router.post('/en-reparacion/irreparable/:id', empleadoController.marcarIrreparable);
+
+
+// Rutas para Bitácora de Reparaciones
+router.get('/bitacora-reparaciones', bitacoraRController.mostrarBitacora);
+router.post('/bitacora-reparaciones', bitacoraRController.filtrarBitacora);
+router.get('/bitacora-reparaciones/pdf', bitacoraRController.generarPDF);
 
 module.exports = router;

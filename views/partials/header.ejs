@@ -10,12 +10,21 @@
             
             <% if (locals.user.rol === 'Cliente') { %>
                 <a href="/solicitar-soporte" <%= currentPage === 'solicitar-soporte' ? 'style="font-weight:bold"' : '' %>>Solicitar Soporte</a> |
+                <a href="/equipos-soporte" <%= currentPage === 'equipos-soporte' ? 'style="font-weight:bold"' : '' %>>Equipos en Soporte</a> |
             <% } %>
             
             <% if (locals.user.rol === 'Administrador') { %>
                 <a href="/empleados" <%= currentPage === 'empleados' ? 'style="font-weight:bold"' : '' %>>Empleados</a> |
+                <a href="/clientes" <%= currentPage === 'clientes' ? 'style="font-weight:bold"' : '' %>>Clientes</a> |
                 <a href="/inventarios" <%= currentPage === 'inventarios' ? 'style="font-weight:bold"' : '' %>>Inventarios</a> |
                 <a href="/productos" <%= currentPage === 'productos' ? 'style="font-weight:bold"' : '' %>>Productos</a> |
+                <a href="/bitacora-asignaciones" <%= currentPage === 'bitacoraA' ? 'style="font-weight:bold"' : '' %>>Bitácora Asignaciones</a> |
+                <a href="/bitacora-reparaciones" <%= currentPage === 'bitacoraR' ? 'style="font-weight:bold"' : '' %>>Bitácora Reparaciones</a> |
+            <% } %>
+
+            <% if (locals.user.rol === 'Empleado') { %>
+                <a href="/solicitudes-soporte" <%= currentPage === 'solicitudes-soporte' ? 'style="font-weight:bold"' : '' %>>Solicitudes de Soporte</a> |
+                <a href="/en-reparacion" <%= currentPage === 'en-reparacion' ? 'style="font-weight:bold"' : '' %>>En Reparación</a> |
             <% } %>
             
             

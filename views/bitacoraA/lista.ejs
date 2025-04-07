@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .filter-form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="date"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn {
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        .btn-success {
+            background-color: #28a745;
+        }
+        .actions {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <main class="container">
+        <h2>Bitácora de Asignaciones</h2>
+
+        <% if (typeof success !== 'undefined') { %>
+            <div style="color: green; margin: 10px 0;"><%= success %></div>
+        <% } %>
+
+        <% if (typeof error !== 'undefined') { %>
+            <div style="color: red; margin: 10px 0;"><%= error %></div>
+        <% } %>
+
+        <div class="filter-form">
+            <form action="/bitacora-asignaciones" method="POST">
+                <div class="form-group">
+                    <label for="fechaInicio">Fecha de inicio:</label>
+                    <input type="date" id="fechaInicio" name="fechaInicio" value="<%= fechaInicio %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="fechaFin">Fecha de fin:</label>
+                    <input type="date" id="fechaFin" name="fechaFin" value="<%= fechaFin %>" required>
+                </div>
+                <button type="submit" class="btn">Filtrar</button>
+            </form>
+        </div>
+
+        <% if (registros.length > 0) { %>
+            <div class="actions">
+                <a href="/bitacora-asignaciones/pdf?fechaInicio=<%= fechaInicio %>&fechaFin=<%= fechaFin %>" 
+                   class="btn btn-success" target="_blank">Descargar PDF</a>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Producto</th>
+                        <th>Cliente</th>
+                        <th>Empleado</th>
+                        <th>Estado Anterior</th>
+                        <th>Estado Nuevo</th>
+                        <th>Usuario</th>
+                        <th>Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% registros.forEach(registro => { %>
+                        <tr>
+                            <td><%= new Date(registro.fecha_modificacion).toLocaleString() %></td>
+                            <td><%= registro.producto_nombre %></td>
+                            <td><%= registro.cliente_nombre %> <%= registro.cliente_apellido %></td>
+                            <td><%= registro.empleado_nombre %> <%= registro.empleado_apellido %></td>
+                            <td><%= registro.estado_anterior %></td>
+                            <td><%= registro.estado_nuevo %></td>
+                            <td><%= registro.usuario_modificacion %></td>
+                            <td><%= registro.observaciones %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <p>No hay registros en la bitácora para el rango de fechas seleccionado.</p>
+        <% } %>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

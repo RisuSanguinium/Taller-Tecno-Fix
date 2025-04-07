@@ -1,3 +1,4 @@
+<!-- inventarios/lista.ejs -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -36,9 +37,17 @@
             background-color: #17a2b8;
             color: white;
         }
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
         .btn-danger {
             background-color: #dc3545;
             color: white;
+        }
+        .btn-warning {
+            background-color: #ffc107;
+            color: black;
         }
     </style>
 </head>
@@ -85,8 +94,9 @@
                         </td>
                         <td><%= new Date(inventario.fecha_creacion).toLocaleDateString() %></td>
                         <td class="actions">
-                            <a href="/inventarios/editar/<%= inventario.id_inventario %>" class="btn btn-info">Editar</a>
                             <a href="/inventarios/ver/<%= inventario.id_inventario %>" class="btn btn-primary">Ver</a>
+                            <a href="/inventarios/editar/<%= inventario.id_inventario %>" class="btn btn-info">Editar</a>
+                            <a href="/inventarios/agregar-producto/<%= inventario.id_inventario %>" class="btn btn-success">Agregar Producto</a>
                             <a href="/inventarios/eliminar/<%= inventario.id_inventario %>" class="btn btn-danger" onclick="return confirm('¿Está seguro de eliminar este inventario?')">Eliminar</a>
                         </td>
                     </tr>

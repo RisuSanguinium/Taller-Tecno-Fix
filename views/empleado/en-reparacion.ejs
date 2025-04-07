@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        .reparacion-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        .reparacion-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .reparacion-title {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .estado {
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .estado-diagnostico { background-color: #fff3cd; color: #856404; }
+        .estado-espera { background-color: #cce5ff; color: #004085; }
+        .estado-reparacion { background-color: #d4edda; color: #155724; }
+        .estado-reparado { background-color: #28a745; color: white; }
+        .estado-irreparable { background-color: #dc3545; color: white; }
+        .detalles {
+            margin-top: 10px;
+        }
+        .detalle-item {
+            margin-bottom: 8px;
+        }
+        .label {
+            font-weight: bold;
+            display: inline-block;
+            width: 150px;
+        }
+        .form-completar {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        textarea, input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 5px;
+        }
+        .btn-completar { background-color: #28a745; }
+        .btn-esperar { background-color: #ffc107; color: #212529; }
+        .btn-irreparable { background-color: #dc3545; }
+        .btn-info { background-color: #17a2b8; }
+        .text-danger {
+            color: #dc3545;
+        }
+        .border-danger {
+            border-color: #dc3545 !important;
+        }
+        .alert {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <main class="container">
+        <h2>Equipos en Reparación</h2>
+        
+        <% if (typeof error !== 'undefined') { %>
+            <div class="alert alert-danger"><%= error %></div>
+        <% } %>
+        
+        <% if (typeof success !== 'undefined') { %>
+            <div class="alert alert-success"><%= success %></div>
+        <% } %>
+
+        <% if (reparaciones.length === 0) { %>
+            <p>No tienes equipos en reparación actualmente.</p>
+        <% } else { %>
+            <% reparaciones.forEach(reparacion => { %>
+                <div class="reparacion-card">
+                    <div class="reparacion-header">
+                        <div class="reparacion-title">
+                            <%= reparacion.producto_nombre %> - <%= reparacion.marca %> <%= reparacion.modelo %>
+                            <% if (reparacion.numero_serie) { %>
+                                (Serie: <%= reparacion.numero_serie %>)
+                            <% } %>
+                        </div>
+                        <div class="estado estado-<%= reparacion.estado.toLowerCase().replace(' ', '-') %>">
+                            <%= reparacion.estado %>
+                        </div>
+                    </div>
+                    
+                    <div class="detalles">
+                        <div class="detalle-item">
+                            <span class="label">Cliente:</span>
+                            <%= reparacion.cliente_nombre %> <%= reparacion.cliente_apellido %>
+                        </div>
+                        <div class="detalle-item">
+                            <span class="label">Fecha inicio:</span>
+                            <%= new Date(reparacion.fecha_inicio).toLocaleString() %>
+                        </div>
+                        <% if (reparacion.fecha_fin) { %>
+                            <div class="detalle-item">
+                                <span class="label">Fecha fin:</span>
+                                <%= new Date(reparacion.fecha_fin).toLocaleString() %>
+                            </div>
+                        <% } %>
+                        <div class="detalle-item">
+                            <span class="label">Urgencia:</span>
+                            <%= reparacion.urgencia.charAt(0).toUpperCase() + reparacion.urgencia.slice(1) %>
+                        </div>
+                        <div class="detalle-item">
+                            <span class="label">Problema reportado:</span>
+                            <%= reparacion.descripcion_problema %>
+                        </div>
+                        
+                        <% if (reparacion.diagnostico) { %>
+                            <div class="detalle-item">
+                                <span class="label">Diagnóstico:</span>
+                                <%= reparacion.diagnostico %>
+                            </div>
+                        <% } %>
+                        
+                        <% if (reparacion.acciones_realizadas) { %>
+                            <div class="detalle-item">
+                                <span class="label">Acciones realizadas:</span>
+                                <%= reparacion.acciones_realizadas %>
+                            </div>
+                        <% } %>
+                        
+                        <% if (reparacion.repuestos_utilizados) { %>
+                            <div class="detalle-item">
+                                <span class="label">Repuestos utilizados:</span>
+                                <%= reparacion.repuestos_utilizados %>
+                            </div>
+                        <% } %>
+                        
+                        <% if (reparacion.costo_estimado) { %>
+                            <div class="detalle-item">
+                                <span class="label">Costo estimado:</span>
+                                $<%= parseFloat(reparacion.costo_estimado).toFixed(2) %>
+                            </div>
+                        <% } %>
+                        
+                        <% if (reparacion.costo_final) { %>
+                            <div class="detalle-item">
+                                <span class="label">Costo final:</span>
+                                $<%= parseFloat(reparacion.costo_final).toFixed(2) %>
+                            </div>
+                        <% } %>
+                        
+                        <% if (reparacion.observaciones) { %>
+                            <div class="detalle-item">
+                                <span class="label">Observaciones:</span>
+                                <%= reparacion.observaciones %>
+                            </div>
+                        <% } %>
+                    </div>
+                    
+                    <% if (reparacion.id_estado === 10) { %> <!-- Diagnóstico -->
+                        <div class="acciones">
+                            <button type="button" class="btn btn-completar" 
+                                onclick="document.getElementById('form-completar-<%= reparacion.id_proceso %>').style.display='block'">
+                                Completar Reparación
+                            </button>
+                            
+                            <button type="button" class="btn btn-esperar" 
+                                onclick="document.getElementById('form-esperar-<%= reparacion.id_proceso %>').style.display='block'">
+                                Esperar Repuestos
+                            </button>
+                            
+                            <button type="button" class="btn btn-irreparable" 
+                                onclick="document.getElementById('form-irreparable-<%= reparacion.id_proceso %>').style.display='block'">
+                                Marcar como Irreparable
+                            </button>
+                            
+                            <!-- Formulario para completar reparación -->
+                            <form id="form-completar-info-<%= reparacion.id_proceso %>" class="form-completar" 
+                                action="/en-reparacion/completar/<%= reparacion.id_proceso %>" method="POST" style="display: none;">
+                                <input type="hidden" name="estado_actual" value="<%= reparacion.id_estado %>">
+                                
+                                <% if (!reparacion.acciones_realizadas) { %>
+                                    <div class="form-group">
+                                        <label for="acciones-<%= reparacion.id_proceso %>">Acciones realizadas: <span class="text-danger">*</span></label>
+                                        <textarea id="acciones-<%= reparacion.id_proceso %>" name="acciones_realizadas" required class="border-danger"></textarea>
+                                        <small class="text-danger">Este campo es requerido para continuar</small>
+                                    </div>
+                                <% } %>
+                                
+                                <% if (!reparacion.repuestos_utilizados) { %>
+                                    <div class="form-group">
+                                        <label for="repuestos-<%= reparacion.id_proceso %>">Repuestos utilizados: <span class="text-danger">*</span></label>
+                                        <textarea id="repuestos-<%= reparacion.id_proceso %>" name="repuestos_utilizados" required class="border-danger"></textarea>
+                                        <small class="text-danger">Este campo es requerido para continuar</small>
+                                    </div>
+                                <% } %>
+                                
+                                <% if (!reparacion.costo_estimado) { %>
+                                    <div class="form-group">
+                                        <label for="costo-<%= reparacion.id_proceso %>">Costo estimado: <span class="text-danger">*</span></label>
+                                        <input type="number" step="0.01" id="costo-<%= reparacion.id_proceso %>" 
+                                               name="costo_estimado" required class="border-danger">
+                                        <small class="text-danger">Este campo es requerido para continuar</small>
+                                    </div>
+                                <% } %>
+                                
+                                <div class="form-group">
+                                    <label for="observaciones-<%= reparacion.id_proceso %>">Observaciones:</label>
+                                    <textarea id="observaciones-<%= reparacion.id_proceso %>" name="observaciones"><%= reparacion.observaciones || '' %></textarea>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-completar">Guardar Información</button>
+                                <button type="button" class="btn btn-secondary" onclick="document.getElementById('form-completar-info-<%= reparacion.id_proceso %>').style.display='none'">Cancelar</button>
+                            </form>
+                            
+                            <!-- Formulario para esperar repuestos -->
+                            <form id="form-esperar-<%= reparacion.id_proceso %>" class="form-completar" 
+                                  action="/en-reparacion/esperar-repuestos/<%= reparacion.id_proceso %>" method="POST" style="display: none;">
+                                <input type="hidden" name="estado_actual" value="<%= reparacion.id_estado %>">
+                                
+                                <div class="form-group">
+                                    <label for="obs-esperar-<%= reparacion.id_proceso %>">Observaciones: <span class="text-danger">*</span></label>
+                                    <textarea id="obs-esperar-<%= reparacion.id_proceso %>" name="observaciones" required>Esperando repuestos: <%= reparacion.observaciones || '' %></textarea>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-esperar">Confirmar Espera</button>
+                                <button type="button" class="btn btn-secondary" onclick="document.getElementById('form-esperar-<%= reparacion.id_proceso %>').style.display='none'">Cancelar</button>
+                            </form>
+                            
+                            <!-- Formulario para marcar como irreparable -->
+                            <form id="form-irreparable-<%= reparacion.id_proceso %>" class="form-completar" 
+                                  action="/en-reparacion/irreparable/<%= reparacion.id_proceso %>" method="POST" style="display: none;">
+                                <input type="hidden" name="estado_actual" value="<%= reparacion.id_estado %>">
+                                
+                                <div class="form-group">
+                                    <label for="motivo-<%= reparacion.id_proceso %>">Motivo: <span class="text-danger">*</span></label>
+                                    <textarea id="motivo-<%= reparacion.id_proceso %>" name="motivo" required>No reparable debido a: <%= reparacion.observaciones || '' %></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="acciones-irreparable-<%= reparacion.id_proceso %>">Acciones realizadas: <span class="text-danger">*</span></label>
+                                    <textarea id="acciones-irreparable-<%= reparacion.id_proceso %>" name="acciones_realizadas" required><%= reparacion.acciones_realizadas || '' %></textarea>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-irreparable">Confirmar como Irreparable</button>
+                                <button type="button" class="btn btn-secondary" onclick="document.getElementById('form-irreparable-<%= reparacion.id_proceso %>').style.display='none'">Cancelar</button>
+                            </form>
+                        </div>
+                    <% } else if (reparacion.id_estado === 11) { %> <!-- Espera repuestos -->
+                        <div class="acciones">
+                            <% if (reparacion.acciones_realizadas && reparacion.repuestos_utilizados && reparacion.costo_estimado) { %>
+                                <form action="/en-reparacion/completar/<%= reparacion.id_proceso %>" method="POST">
+                                    <input type="hidden" name="estado_actual" value="<%= reparacion.id_estado %>">
+                                    <input type="hidden" name="acciones_realizadas" value="<%= reparacion.acciones_realizadas %>">
+                                    <input type="hidden" name="repuestos_utilizados" value="<%= reparacion.repuestos_utilizados %>">
+                                    <input type="hidden" name="costo_final" value="<%= reparacion.costo_estimado %>">
+                                    <input type="hidden" name="observaciones" value="<%= reparacion.observaciones %>">
+                                    <button type="submit" class="btn btn-completar">Continuar Reparación</button>
+                                </form>
+                            <% } else { %>
+                                <button type="button" class="btn btn-info" 
+                                    onclick="document.getElementById('form-completar-info-<%= reparacion.id_proceso %>').style.display='block'">
+                                    Completar Información Requerida
+                                </button>
+                                
+                                <form id="form-completar-info-<%= reparacion.id_proceso %>" class="form-completar" 
+                                    action="/en-reparacion/completar/<%= reparacion.id_proceso %>" method="POST" style="display: none;">
+                                    <input type="hidden" name="estado_actual" value="<%= reparacion.id_estado %>">
+                                    
+                                    <% if (!reparacion.acciones_realizadas) { %>
+                                        <div class="form-group">
+                                            <label for="acciones-<%= reparacion.id_proceso %>">Acciones realizadas: <span class="text-danger">*</span></label>
+                                            <textarea id="acciones-<%= reparacion.id_proceso %>" name="acciones_realizadas" required class="border-danger"></textarea>
+                                            <small class="text-danger">Este campo es requerido para continuar</small>
+                                        </div>
+                                    <% } else { %>
+                                        <input type="hidden" name="acciones_realizadas" value="<%= reparacion.acciones_realizadas %>">
+                                    <% } %>
+                                    
+                                    <% if (!reparacion.repuestos_utilizados) { %>
+                                        <div class="form-group">
+                                            <label for="repuestos-<%= reparacion.id_proceso %>">Repuestos utilizados: <span class="text-danger">*</span></label>
+                                            <textarea id="repuestos-<%= reparacion.id_proceso %>" name="repuestos_utilizados" required class="border-danger"></textarea>
+                                            <small class="text-danger">Este campo es requerido para continuar</small>
+                                        </div>
+                                    <% } else { %>
+                                        <input type="hidden" name="repuestos_utilizados" value="<%= reparacion.repuestos_utilizados %>">
+                                    <% } %>
+                                    
+                                    <% if (!reparacion.costo_estimado) { %>
+                                        <div class="form-group">
+                                            <label for="costo-<%= reparacion.id_proceso %>">Costo estimado: <span class="text-danger">*</span></label>
+                                            <input type="number" step="0.01" id="costo-<%= reparacion.id_proceso %>" 
+                                                   name="costo_estimado" required class="border-danger">
+                                            <small class="text-danger">Este campo es requerido para continuar</small>
+                                        </div>
+                                    <% } else { %>
+                                        <input type="hidden" name="costo_estimado" value="<%= reparacion.costo_estimado %>">
+                                    <% } %>
+                                    
+                                    <div class="form-group">
+                                        <label for="observaciones-<%= reparacion.id_proceso %>">Observaciones:</label>
+                                        <textarea id="observaciones-<%= reparacion.id_proceso %>" name="observaciones"><%= reparacion.observaciones || '' %></textarea>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-completar">Guardar Información</button>
+                                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('form-completar-info-<%= reparacion.id_proceso %>').style.display='none'">Cancelar</button>
+                                </form>
+                            <% } %>
+                        </div>
+                    <% } else if (reparacion.id_estado === 12) { %> <!-- En reparación -->
+                        <div class="acciones">
+                            <form action="/en-reparacion/completar/<%= reparacion.id_proceso %>" method="POST">
+                                <input type="hidden" name="estado_actual" value="<%= reparacion.id_estado %>">
+                                <input type="hidden" name="acciones_realizadas" value="<%= reparacion.acciones_realizadas %>">
+                                <input type="hidden" name="repuestos_utilizados" value="<%= reparacion.repuestos_utilizados %>">
+                                <input type="hidden" name="costo_final" value="<%= reparacion.costo_estimado %>">
+                                <input type="hidden" name="observaciones" value="<%= reparacion.observaciones %>">
+                                <button type="submit" class="btn btn-completar">Completar Reparación</button>
+                            </form>
+                            
+                            <form action="/en-reparacion/irreparable/<%= reparacion.id_proceso %>" method="POST">
+                                <input type="hidden" name="estado_actual" value="<%= reparacion.id_estado %>">
+                                <button type="submit" class="btn btn-irreparable">Marcar como Irreparable</button>
+                            </form>
+                        </div>
+                    <% } %>
+                </div>
+            <% }); %>
+        <% } %>
+    </main>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        // Cierra los formularios al hacer click fuera de ellos
+        document.addEventListener('click', function(event) {
+            const forms = document.querySelectorAll('.form-completar');
+            forms.forEach(form => {
+                if (!form.contains(event.target) && 
+                    !event.target.matches('[onclick*="form-completar"]') && 
+                    !event.target.matches('[onclick*="form-esperar"]') && 
+                    !event.target.matches('[onclick*="form-irreparable"]')) {
+                    form.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

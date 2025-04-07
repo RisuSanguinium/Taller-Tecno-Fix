@@ -1,0 +1,294 @@
+const conexion = require('../database/db');
+
+const clienteController = {
+    listarClientes: (req, res) => {
+        if (!req.session.user || req.session.user.rol !== 'Administrador') {
+            return res.redirect('/login');
+        }
+    
+        conexion.query(`
+            SELECT c.*, u.email 
+            FROM Cliente c
+            JOIN Usuario u ON c.id_usuario = u.id_usuario
+            WHERE u.activo = 1
+            ORDER BY c.id_cliente
+        `, (error, clientes) =>  {
+            if (error) {
+                console.error('Error al obtener clientes:', error);
+                return res.render('clientes/lista', {
+                    title: 'Lista de Clientes - Tecno-Fix',
+                    currentPage: 'clientes',
+                    clientes: [],
+                    error: 'Error al cargar la lista de clientes'
+                });
+            }
+
+            res.render('clientes/lista', {
+                title: 'Lista de Clientes - Tecno-Fix',
+                currentPage: 'clientes',
+                clientes: clientes || []
+            });
+        });
+    },
+
+    verCliente: (req, res) => {
+        if (!req.session.user || req.session.user.rol !== 'Administrador') {
+            return res.redirect('/login');
+        }
+    
+        const idCliente = req.params.id;
+    
+        conexion.query(`
+            SELECT c.*, u.email, u.username, r.nombre_rol as rol 
+            FROM Cliente c
+            JOIN Usuario u ON c.id_usuario = u.id_usuario
+            JOIN Rol r ON u.id_rol = r.id_rol
+            WHERE c.id_cliente = ? AND u.activo = 1
+        `, [idCliente], (error, results) => {
+            if (error || results.length === 0) {
+                console.error('Error al obtener cliente:', error);
+                return res.redirect('/clientes?error=Cliente no encontrado');
+            }
+    
+            const cliente = results[0];
+            
+            res.render('clientes/ver', {
+                title: 'Detalles del Cliente - Tecno-Fix',
+                currentPage: 'clientes',
+                cliente: cliente
+            });
+        });
+    },
+
+    mostrarFormularioEdicion: (req, res) => {
+        if (!req.session.user || req.session.user.rol !== 'Administrador') {
+            return res.redirect('/login');
+        }
+    
+        const idCliente = req.params.id;
+    
+        conexion.query(`
+            SELECT c.*, u.email 
+            FROM Cliente c
+            JOIN Usuario u ON c.id_usuario = u.id_usuario
+            WHERE c.id_cliente = ? AND u.activo = 1
+        `, [idCliente], (error, results) => {
+            if (error || results.length === 0) {
+                console.error('Error al obtener cliente:', error);
+                return res.redirect('/clientes?error=Cliente no encontrado');
+            }
+    
+            const cliente = results[0];
+            
+            res.render('clientes/editar', {
+                title: 'Editar Cliente - Tecno-Fix',
+                currentPage: 'clientes',
+                cliente: cliente
+            });
+        });
+    },
+
+    actualizarCliente: (req, res) => {
+        if (!req.session.user || req.session.user.rol !== 'Administrador') {
+            return res.redirect('/login');
+        }
+    
+        const idCliente = req.params.id;
+        const { nombre, apellido, cedula, telefono, departamento, puesto, fecha_ingreso, email } = req.body;
+    
+        // Primero obtener el id_usuario asociado
+        conexion.query(
+            'SELECT id_usuario FROM Cliente WHERE id_cliente = ?',
+            [idCliente],
+            (error, results) => {
+                if (error || results.length === 0) {
+                    console.error('Error al buscar cliente:', error);
+                    return res.redirect('/clientes?error=Cliente no encontrado');
+                }
+    
+                const idUsuario = results[0].id_usuario;
+    
+                // Actualizar datos del cliente
+                conexion.query(
+                    `UPDATE Cliente SET 
+                        nombre = ?, 
+                        apellido = ?, 
+                        cedula = ?, 
+                        telefono = ?, 
+                        departamento = ?, 
+                        puesto = ?,
+                        fecha_ingreso = ?
+                    WHERE id_cliente = ?`,
+                    [nombre, apellido, cedula, telefono, departamento, puesto, fecha_ingreso, idCliente],
+                    (error) => {
+                        if (error) {
+                            console.error('Error al actualizar cliente:', error);
+                            return res.redirect(`/clientes/editar/${idCliente}?error=Error al actualizar cliente`);
+                        }
+    
+                        // Actualizar email del usuario
+                        conexion.query(
+                            'UPDATE Usuario SET email = ? WHERE id_usuario = ?',
+                            [email, idUsuario],
+                            (error) => {
+                                if (error) {
+                                    console.error('Error al actualizar email:', error);
+                                    return res.redirect(`/clientes/editar/${idCliente}?error=Error al actualizar email`);
+                                }
+    
+                                res.redirect(`/clientes/ver/${idCliente}?success=Cliente actualizado exitosamente`);
+                            }
+                        );
+                    }
+                );
+            }
+        );
+    },
+
+    eliminarCliente: (req, res) => {
+        if (!req.session.user || req.session.user.rol !== 'Administrador') {
+            return res.redirect('/login');
+        }
+    
+        const idCliente = req.params.id;
+    
+        // Verificar si el cliente tiene asignaciones activas
+        conexion.query(
+            'SELECT COUNT(*) as count FROM Asignacion WHERE id_cliente = ? AND activa = 1',
+            [idCliente],
+            (error, results) => {
+                if (error) {
+                    console.error('Error al verificar asignaciones:', error);
+                    return res.redirect('/clientes?error=Error al verificar asignaciones del cliente');
+                }
+    
+                if (results[0].count > 0) {
+                    return res.redirect('/clientes?error=No se puede desactivar el cliente porque tiene asignaciones activas');
+                }
+    
+                // Obtener el id_usuario asociado
+                conexion.query(
+                    'SELECT id_usuario FROM Cliente WHERE id_cliente = ?',
+                    [idCliente],
+                    (error, results) => {
+                        if (error || results.length === 0) {
+                            console.error('Error al buscar cliente:', error);
+                            return res.redirect('/clientes?error=Cliente no encontrado');
+                        }
+    
+                        const idUsuario = results[0].id_usuario;
+    
+                        // Desactivar el usuario (eliminación lógica)
+                        conexion.query(
+                            'UPDATE Usuario SET activo = 0 WHERE id_usuario = ?',
+                            [idUsuario],
+                            (error) => {
+                                if (error) {
+                                    console.error('Error al desactivar usuario:', error);
+                                    return res.redirect('/clientes?error=Error al desactivar cliente');
+                                }
+    
+                                res.redirect('/clientes?success=Cliente desactivado exitosamente');
+                            }
+                        );
+                    }
+                );
+            }
+        );
+    },
+
+    mostrarEquiposSoporte: (req, res) => {
+        if (!req.session.user || req.session.user.rol !== 'Cliente') {
+            return res.redirect('/login');
+        }
+    
+        // Obtener el id_cliente del usuario
+        conexion.query(
+            'SELECT id_cliente FROM Cliente WHERE id_usuario = ?',
+            [req.session.user.id],
+            (error, clienteResults) => {
+                if (error || !clienteResults || clienteResults.length === 0) {
+                    console.error('Error al obtener cliente:', error);
+                    return res.render('error', { 
+                        message: 'No se encontró su información de cliente' 
+                    });
+                }
+    
+                const id_cliente = clienteResults[0].id_cliente;
+    
+                // Obtener todas las solicitudes de soporte del cliente con su estado
+                conexion.query(`
+                    SELECT 
+                        s.id_solicitud,
+                        p.nombre AS producto_nombre,
+                        p.marca,
+                        p.modelo,
+                        p.numero_serie,
+                        s.fecha_solicitud,
+                        s.fecha_cierre,
+                        s.urgencia,
+                        s.solucion,
+                        e.nombre_estado AS estado_solicitud,
+                        pr.id_proceso,
+                        pr.id_estado AS estado_reparacion_id,
+                        er.nombre_estado AS estado_reparacion,
+                        pr.fecha_inicio,
+                        pr.fecha_fin,
+                        pr.diagnostico,
+                        pr.acciones_realizadas,
+                        pr.repuestos_utilizados,
+                        pr.costo_estimado,
+                        pr.costo_final,
+                        pr.observaciones,
+                        pr.pagado
+                    FROM SolicitudSoporte s
+                    JOIN Producto p ON s.id_producto = p.id_producto
+                    JOIN Estado e ON s.id_estado = e.id_estado
+                    LEFT JOIN ProcesoReparacion pr ON s.id_solicitud = pr.id_solicitud
+                    LEFT JOIN Estado er ON pr.id_estado = er.id_estado
+                    WHERE s.id_cliente = ?
+                    ORDER BY s.fecha_solicitud DESC
+                `, [id_cliente], (error, solicitudes) => {
+                    if (error) {
+                        console.error('Error al obtener equipos en soporte:', error);
+                        return res.render('error', { 
+                            message: 'Error al cargar los equipos en soporte' 
+                        });
+                    }
+    
+                    res.render('cliente/equipos-soporte', {
+                        title: 'Mis Equipos en Soporte',
+                        currentPage: 'equipos-soporte',
+                        solicitudes: solicitudes || []
+                    });
+                });
+            }
+        );
+    },
+    
+    //manejar el pago
+    marcarComoPagado: (req, res) => {
+        if (!req.session.user || req.session.user.rol !== 'Cliente') {
+            return res.redirect('/login');
+        }
+    
+        const id_proceso = req.params.id;
+    
+        conexion.query(
+            'UPDATE ProcesoReparacion SET pagado = 1 WHERE id_proceso = ?',
+            [id_proceso],
+            (error, results) => {
+                if (error) {
+                    console.error('Error al marcar como pagado:', error);
+                    return res.redirect('/equipos-soporte?error=Error al procesar el pago');
+                }
+    
+                res.redirect('/equipos-soporte?success=Reparación marcada como pagada');
+            }
+        );
+    }
+
+
+};
+
+module.exports = clienteController;
