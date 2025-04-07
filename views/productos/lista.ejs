@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <style>
-
         table {
             width: 100%;
             border-collapse: separate;
@@ -19,7 +18,6 @@
         td {
             border: 1px solid #00aaff;
             padding: 12px;
-            
         }
         th {
             border: 1px solid;
@@ -66,21 +64,31 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 30px 0 20px 0;
+            margin: 30px 0 30px 0;
         }
         .header-container a {
             margin-left: 10px;
         }
+        .btn-success{
+            background-color: #00aaff;
+            color: white;
+            padding: 5px 8px;
+            margin: 0 10px 0 0;
+            text-decoration: none;
+            border-radius: 3px;
+            font-size: 12px;
+
+        }
     </style>
-    
 </head>
 <body>
     <%- include('../partials/header') %>
 
     <main class="container">
-        <div class="header-container">
-            <h2>Lista de Empleados</h2>
-            <a href="/empleados/registrar" class="btn btn-primary">Registrar un nuevo empleado</a>
+        <br>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>Lista de Productos</h2>
+            <a href="/productos/registrar" class="btn btn-primary">Registrar nuevo producto</a>
         </div>
 
         <% if (typeof success !== 'undefined') { %>
@@ -96,26 +104,30 @@
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>Cédula</th>
-                    <th>Departamento</th>
-                    <th>Especialidad</th>
+                    <th>Categoría</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>N° Serie</th>
+                    <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <% empleados.forEach(empleado => { %>
+                <% productos.forEach(producto => { %>
                     <tr>
-                        <td><%= empleado.id_empleado %></td>
-                        <td><%= empleado.nombre %></td>
-                        <td><%= empleado.apellido %></td>
-                        <td><%= empleado.cedula %></td>
-                        <td><%= empleado.departamento %></td>
-                        <td><%= empleado.especialidad %></td>
+                        <td><%= producto.id_producto %></td>
+                        <td><%= producto.nombre %></td>
+                        <td><%= producto.categoria %></td>
+                        <td><%= producto.marca || 'N/A' %></td>
+                        <td><%= producto.modelo || 'N/A' %></td>
+                        <td><%= producto.numero_serie || 'N/A' %></td>
+                        <td class="<%= producto.activo ? 'status-active' : 'status-inactive' %>">
+                            <%= producto.activo ? 'Activo' : 'Inactivo' %>
+                        </td>
                         <td class="actions">
-                            <a href="/empleados/editar/<%= empleado.id_empleado %>" class="btn btn-info">Editar</a>
-                            <a href="/empleados/ver/<%= empleado.id_empleado %>" class="btn btn-primary">Ver</a>
-                            <a href="/empleados/eliminar/<%= empleado.id_empleado %>" class="btn btn-danger" onclick="return confirm('¿Está seguro de eliminar este empleado?')">Eliminar</a>
+                            <a href="/productos/editar/<%= producto.id_producto %>" class="btn btn-info">Editar</a>
+                            <a href="/productos/ver/<%= producto.id_producto %>" class="btn btn-primary">Ver</a>
+                            <a href="/productos/eliminar/<%= producto.id_producto %>" class="btn btn-danger" onclick="return confirm('¿Está seguro de eliminar este producto?')">Eliminar</a>
                         </td>
                     </tr>
                 <% }); %>

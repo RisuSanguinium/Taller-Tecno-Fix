@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-    
     <style>
         body {
             background-color: #121212;
@@ -108,22 +107,62 @@
             min-width: 200px;
         }
     </style>
-
 </head>
 <body>
     <%- include('../partials/header') %>
 
     <main class="container">
-        <h2>Registrar Nuevo Inventario</h2>
+        <h2>Registrar Nuevo Producto</h2>
         
         <% if (typeof error !== 'undefined') { %>
             <div class="error"><%= error %></div>
         <% } %>
 
-        <form action="/inventarios/registrar" method="POST">
-            <div class="form-group">
-                <label for="nombre">Nombre del Inventario:</label>
-                <input type="text" id="nombre" name="nombre" required>
+        <form action="/productos/registrar" method="POST">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_categoria">Categoría:</label>
+                    <select id="id_categoria" name="id_categoria" required>
+                        <option value="">Seleccione una categoría...</option>
+                        <% categorias.forEach(categoria => { %>
+                            <option value="<%= categoria.id_categoria %>"><%= categoria.nombre %></option>
+                        <% }); %>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="marca">Marca:</label>
+                    <input type="text" id="marca" name="marca">
+                </div>
+
+                <div class="form-group">
+                    <label for="modelo">Modelo:</label>
+                    <input type="text" id="modelo" name="modelo">
+                </div>
+
+                <div class="form-group">
+                    <label for="numero_serie">Número de Serie:</label>
+                    <input type="text" id="numero_serie" name="numero_serie">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fecha_compra">Fecha de Compra:</label>
+                    <input type="date" id="fecha_compra" name="fecha_compra">
+                </div>
+
+                <div class="form-group">
+                    <label for="garantia_hasta">Garantía hasta:</label>
+                    <input type="date" id="garantia_hasta" name="garantia_hasta">
+                </div>
             </div>
 
             <div class="form-group">
@@ -132,25 +171,13 @@
             </div>
 
             <div class="form-group">
-                <label for="ubicacion">Ubicación:</label>
-                <input type="text" id="ubicacion" name="ubicacion">
+                <label for="especificaciones">Especificaciones Técnicas:</label>
+                <textarea id="especificaciones" name="especificaciones" rows="5"></textarea>
             </div>
 
             <div class="form-group">
-                <label for="responsable">Responsable:</label>
-                <select id="responsable" name="responsable">
-                    <option value="">Seleccione un responsable...</option>
-                    <% empleados.forEach(empleado => { %>
-                        <option value="<%= empleado.id_empleado %>">
-                            <%= empleado.nombre %> <%= empleado.apellido %>
-                        </option>
-                    <% }); %>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Registrar Inventario</button>
-                <a href="/inventarios" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Registrar Producto</button>
+                <a href="/productos" class="btn btn-secondary">Cancelar</a>
             </div>
         </form>
     </main>

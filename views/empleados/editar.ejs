@@ -97,7 +97,6 @@
     <main class="container">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h2>Editar Empleado</h2>
-            <a href="/empleados/ver/<%= empleado.id_empleado %>" class="btn btn-secondary">Cancelar</a>
         </div>
 
         <% if (typeof error !== 'undefined') { %>
@@ -142,6 +141,7 @@
             
             <div class="actions">
                 <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                <a href="/empleados/ver/<%= empleado.id_empleado %>" class="btn btn-secondary">Cancelar</a>
             </div>
         </form>
     </main>
