@@ -4,37 +4,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
+
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            background: #111;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 170, 255, 0.4);
+            margin: 20px auto;
+        }
+        h2 {
+            color: #00aaff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
         .cliente-details {
-            background: #f9f9f9;
+            background: #222;
             padding: 20px;
             border-radius: 5px;
             margin-top: 20px;
         }
         .detail-row {
             display: flex;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
         .detail-label {
             font-weight: bold;
             width: 150px;
+            color: #00aaff;
+        }
+        .detail-value {
+            margin-left: 20px;
         }
         .actions {
             margin-top: 20px;
+            text-align: center;
         }
         .btn {
-            padding: 8px 15px;
+            padding: 12px 20px;
             text-decoration: none;
-            border-radius: 4px;
-            margin-right: 10px;
+            border-radius: 6px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            border: none;
+            transition: background 0.3s, transform 0.2s;
         }
         .btn-primary {
-            background-color: #007bff;
-            color: white;
+            background-color: #00aaff;
+            color: #000;
+        }
+        .btn-primary:hover {
+            background-color: #0088cc;
+            transform: scale(1.05);
         }
         .btn-secondary {
-            background-color: #6c757d;
+            background-color: #555;
             color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #777;
+            transform: scale(1.05);
+        }
+        .btn:hover {
+            opacity: 0.9;
         }
     </style>
 </head>
@@ -44,7 +85,6 @@
     <main class="container">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h2>Detalles del Cliente</h2>
-            <a href="/clientes" class="btn btn-secondary">Volver a la lista</a>
         </div>
 
         <% if (typeof success !== 'undefined') { %>
@@ -58,47 +98,47 @@
         <div class="cliente-details">
             <div class="detail-row">
                 <div class="detail-label">ID:</div>
-                <div><%= cliente.id_cliente %></div>
+                <div class="detail-value"><%= cliente.id_cliente %></div>
             </div>
             <div class="detail-row">
                 <div class="detail-label">Nombre:</div>
-                <div><%= cliente.nombre %></div>
+                <div class="detail-value"><%= cliente.nombre %></div>
             </div>
             <div class="detail-row">
                 <div class="detail-label">Apellido:</div>
-                <div><%= cliente.apellido %></div>
+                <div class="detail-value"><%= cliente.apellido %></div>
             </div>
             <div class="detail-row">
                 <div class="detail-label">Cédula:</div>
-                <div><%= cliente.cedula %></div>
+                <div class="detail-value"><%= cliente.cedula %></div>
             </div>
             <div class="detail-row">
                 <div class="detail-label">Teléfono:</div>
-                <div><%= cliente.telefono %></div>
+                <div class="detail-value"><%= cliente.telefono %></div>
             </div>
             <div class="detail-row">
                 <div class="detail-label">Departamento:</div>
-                <div><%= cliente.departamento %></div>
+                <div class="detail-value"><%= cliente.departamento %></div>
             </div>
             <div class="detail-row">
                 <div class="detail-label">Puesto:</div>
-                <div><%= cliente.puesto %></div>
+                <div class="detail-value"><%= cliente.puesto %></div>
             </div>
             <div class="detail-row">
                 <div class="detail-label">Fecha de ingreso:</div>
-                <div><%= new Date(cliente.fecha_ingreso).toLocaleDateString() %></div>
+                <div class="detail-value"><%= new Date(cliente.fecha_ingreso).toLocaleDateString() %></div>
             </div>
             <div class="detail-row">
                 <div class="detail-label">Email:</div>
-                <div><%= cliente.email %></div>
+                <div class="detail-value"><%= cliente.email %></div>
             </div>
             <div class="detail-row">
                 <div class="detail-label">Rol:</div>
-                <div><%= cliente.rol %></div>
+                <div class="detail-value"><%= cliente.rol %></div>
             </div>
             <div class="detail-row">
                 <div class="detail-label">Nombre de usuario:</div>
-                <div><%= cliente.username %></div>
+                <div class="detail-value"><%= cliente.username %></div>
             </div>
         </div>
 

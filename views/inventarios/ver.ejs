@@ -1,291 +1,150 @@
-<!-- inventarios/ver.ejs -->
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <%= title %>
-    </title>
+    <title><%= title %></title>
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            background: #111;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 170, 255, 0.4);
+            margin: 20px auto;
+        }
+        h2, h3 {
+            color: #00aaff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .info-section {
+            background: #222;
+            padding: 20px;
+            border-radius: 5px;
             margin-top: 20px;
         }
-
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
+        p {
+            margin: 10px 0;
         }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        .info-section {
-            margin-bottom: 30px;
-        }
-
         .btn {
-            padding: 5px 10px;
-            margin: 0 2px;
+            padding: 12px 20px;
             text-decoration: none;
-            border-radius: 3px;
-            font-size: 14px;
+            border-radius: 6px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            border: none;
+            transition: background 0.3s, transform 0.2s;
         }
-
         .btn-primary {
-            background-color: #007bff;
-            color: white;
+            background-color: #00aaff;
+            color: #000;
         }
-
+        .btn-primary:hover {
+            background-color: #0088cc;
+            transform: scale(1.05);
+        }
         .btn-info {
             background-color: #17a2b8;
             color: white;
         }
-
         .btn-success {
             background-color: #28a745;
             color: white;
         }
-
-        .btn-warning {
-            background-color: #ffc107;
-            color: black;
-        }
-
-        .btn-danger {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
+        table {
             width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #222;
+            color: white;
+            border-radius: 6px;
+            overflow: hidden;
         }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 30%;
+        th, td {
+            border: 1px solid #00aaff;
+            padding: 10px;
+            text-align: left;
         }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover {
+        th {
+            background-color: #00aaff;
             color: black;
-            text-decoration: none;
-            cursor: pointer;
         }
     </style>
 </head>
-
 <body>
     <%- include('../partials/header') %>
 
-        <main class="container">
-            <% if (typeof success !=='undefined' ) { %>
-                <div style="color: green; margin: 10px 0;">
-                    <%= success %>
-                </div>
-                <% } %>
+    <main class="container">
+        <% if (typeof success !== 'undefined') { %>
+            <div style="color: green; margin: 10px 0;"><%= success %></div>
+        <% } %>
 
-                    <% if (typeof error !=='undefined' ) { %>
-                        <div style="color: red; margin: 10px 0;">
-                            <%= error %>
-                        </div>
-                        <% } %>
+        <% if (typeof error !== 'undefined') { %>
+            <div style="color: red; margin: 10px 0;"><%= error %></div>
+        <% } %>
 
-                            <div class="info-section">
-                                <h2>Detalles del Inventario</h2>
-                                <p><strong>Nombre:</strong>
-                                    <%= inventario.nombre %>
-                                </p>
-                                <p><strong>Descripción:</strong>
-                                    <%= inventario.descripcion || 'N/A' %>
-                                </p>
-                                <p><strong>Ubicación:</strong>
-                                    <%= inventario.ubicacion || 'N/A' %>
-                                </p>
-                                <p><strong>Responsable:</strong>
-                                    <% if (inventario.nombre_responsable) { %>
-                                        <%= inventario.nombre_responsable %>
-                                            <%= inventario.apellido_responsable %>
-                                                <% } else { %>
-                                                    Sin asignar
-                                                    <% } %>
-                                </p>
-                                <p><strong>Fecha de creación:</strong>
-                                    <%= new Date(inventario.fecha_creacion).toLocaleDateString() %>
-                                </p>
+        <div class="info-section">
+            <h2>Detalles del Inventario</h2>
+            <p><strong>Nombre:</strong> <%= inventario.nombre %></p>
+            <p><strong>Descripción:</strong> <%= inventario.descripcion || 'N/A' %></p>
+            <p><strong>Ubicación:</strong> <%= inventario.ubicacion || 'N/A' %></p>
+            <p><strong>Responsable:</strong> <%= inventario.nombre_responsable ? `${inventario.nombre_responsable} ${inventario.apellido_responsable}` : 'Sin asignar' %></p>
+            <p><strong>Fecha de creación:</strong> <%= new Date(inventario.fecha_creacion).toLocaleDateString() %></p>
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="/inventarios/editar/<%= inventario.id_inventario %>" class="btn btn-info">Editar Inventario</a>
+                <a href="/inventarios/agregar-producto/<%= inventario.id_inventario %>" class="btn btn-success">Agregar Producto</a>
+                <a href="/inventarios" class="btn btn-primary">Volver a la lista</a>
+            </div>
+        </div>
 
-                                <div style="margin-top: 20px;">
-                                    <a href="/inventarios/editar/<%= inventario.id_inventario %>"
-                                        class="btn btn-info">Editar Inventario</a>
-                                    <a href="/inventarios/agregar-producto/<%= inventario.id_inventario %>"
-                                        class="btn btn-success">Agregar Producto</a>
-                                    <a href="/inventarios" class="btn btn-primary">Volver a la lista</a>
-                                </div>
-                            </div>
+        <div class="info-section">
+            <h3>Productos en este inventario</h3>
+            <% if (productos.length > 0) { %>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Categoría</th>
+                            <th>Marca</th>
+                            <th>Modelo</th>
+                            <th>Total</th>
+                            <th>Disponible</th>
+                            <th>Asignado</th>
+                            <th>En reparación</th>
+                            <th>Descartado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% productos.forEach(producto => { %>
+                            <tr>
+                                <td><%= producto.nombre_producto %></td>
+                                <td><%= producto.categoria %></td>
+                                <td><%= producto.marca || 'N/A' %></td>
+                                <td><%= producto.modelo || 'N/A' %></td>
+                                <td><%= producto.cantidad %></td>
+                                <td><%= producto.cantidad_disponible %></td>
+                                <td><%= producto.cantidad_asignada %></td>
+                                <td><%= producto.cantidad_reparacion %></td>
+                                <td><%= producto.cantidad_descartada %></td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <p>No hay productos registrados en este inventario.</p>
+            <% } %>
+        </div>
+    </main>
 
-                            <div class="info-section">
-                                <h3>Productos en este inventario</h3>
-
-                                <% if (productos.length> 0) { %>
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Producto</th>
-                                                <th>Categoría</th>
-                                                <th>Marca</th>
-                                                <th>Modelo</th>
-                                                <th>Total</th>
-                                                <th>Disponible</th>
-                                                <th>Asignado</th>
-                                                <th>En reparación</th>
-                                                <th>Descartado</th>
-                                                <th>Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <% productos.forEach(producto=> { %>
-                                                <tr>
-                                                    <td>
-                                                        <%= producto.nombre_producto %>
-                                                    </td>
-                                                    <td>
-                                                        <%= producto.categoria %>
-                                                    </td>
-                                                    <td>
-                                                        <%= producto.marca || 'N/A' %>
-                                                    </td>
-                                                    <td>
-                                                        <%= producto.modelo || 'N/A' %>
-                                                    </td>
-                                                    <td>
-                                                        <%= producto.cantidad %>
-                                                    </td>
-                                                    <td>
-                                                        <%= producto.cantidad_disponible %>
-                                                    </td>
-                                                    <td>
-                                                        <%= producto.cantidad_asignada %>
-                                                    </td>
-                                                    <td>
-                                                        <%= producto.cantidad_reparacion %>
-                                                    </td>
-                                                    <td>
-                                                        <%= producto.cantidad_descartada %>
-                                                    </td>
-                                                    <td class="actions">
-                                                        <a href="/productos/ver/<%= producto.id_producto %>" class="btn btn-primary">Ver</a>
-                                                        <button onclick="openAddModal(<%= producto.id_producto %>)" class="btn btn-success">Agregar</button>
-                                                        <button onclick="openRemoveModal(<%= producto.id_producto %>)" class="btn btn-warning">Quitar</button>
-                                                        <a href="/inventarios/eliminar-producto/<%= inventario.id_inventario %>/<%= producto.id_producto %>" 
-                                                           class="btn btn-danger" 
-                                                           onclick="return confirm('¿Está seguro de eliminar este producto del inventario?')">Eliminar</a>
-                                                    </td>
-                                                </tr>
-                                                <% }); %>
-                                        </tbody>
-                                    </table>
-                                    <% } else { %>
-                                        <p>No hay productos registrados en este inventario.</p>
-                                        <% } %>
-                            </div>
-
-                            <!-- Modal para agregar producto -->
-                            <div id="addModal" class="modal">
-                                <div class="modal-content">
-                                    <span class="close" onclick="closeAddModal()">&times;</span>
-                                    <h3>Agregar cantidad</h3>
-                                    <form id="addForm" method="POST">
-                                        <input type="hidden" id="addProductId" name="id_producto">
-                                        <div>
-                                            <label>Cantidad a agregar:</label>
-                                            <input type="number" name="cantidad" min="1" required>
-                                        </div>
-                                        <div style="margin-top: 15px;">
-                                            <button type="submit" class="btn btn-success">Agregar</button>
-                                            <button type="button" class="btn btn-secondary" onclick="closeAddModal()">Cancelar</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-
-                            <!-- Modal para quitar producto -->
-                            <div id="removeModal" class="modal">
-                                <div class="modal-content">
-                                    <span class="close" onclick="closeRemoveModal()">&times;</span>
-                                    <h3>Quitar cantidad</h3>
-                                    <form id="removeForm" method="POST">
-                                        <input type="hidden" id="removeProductId" name="id_producto">
-                                        <div>
-                                            <label>Cantidad a quitar:</label>
-                                            <input type="number" name="cantidad" min="1" required>
-                                        </div>
-                                        <div style="margin-top: 15px;">
-                                            <button type="submit" class="btn btn-warning">Quitar</button>
-                                            <button type="button" class="btn btn-secondary" onclick="closeRemoveModal()">Cancelar</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-        </main>
-
-        <%- include('../partials/footer') %>
-
-        <script>
-            // Funciones para el modal de agregar
-            function openAddModal(productId) {
-                document.getElementById('addProductId').value = productId;
-                document.getElementById('addForm').action = `/inventarios/agregar-cantidad/<%= inventario.id_inventario %>`;
-                document.getElementById('addModal').style.display = 'block';
-            }
-
-            function closeAddModal() {
-                document.getElementById('addModal').style.display = 'none';
-            }
-
-            // Funciones para el modal de quitar
-            function openRemoveModal(productId) {
-                document.getElementById('removeProductId').value = productId;
-                document.getElementById('removeForm').action = `/inventarios/quitar-cantidad/<%= inventario.id_inventario %>`;
-                document.getElementById('removeModal').style.display = 'block';
-            }
-
-            function closeRemoveModal() {
-                document.getElementById('removeModal').style.display = 'none';
-            }
-
-            // Cerrar modales al hacer clic fuera de ellos
-            window.onclick = function(event) {
-                if (event.target == document.getElementById('addModal')) {
-                    closeAddModal();
-                }
-                if (event.target == document.getElementById('removeModal')) {
-                    closeRemoveModal();
-                }
-            }
-        </script>
+    <%- include('../partials/footer') %>
 </body>
-
 </html>

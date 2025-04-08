@@ -5,40 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #222;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 170, 255, 0.4);
+        }
+        h2 {
+            font-size: 24px;
+            color: #00aaff;
+            text-align: left;
+            margin-bottom: 20px;
+        }
         form div {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         label {
-            display: block;
-            margin-bottom: 5px;
+            font-size: 14px;
+            color: #00aaff;
             font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
         }
         input, select, textarea {
             width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #444;
+            background-color: #333;
+            font-size: 14px;
+            color: #fff;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #00aaff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
         }
         .actions {
-            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .btn {
-            padding: 8px 15px;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 16px;
+            text-align: center;
             text-decoration: none;
-            border-radius: 4px;
-            margin-right: 10px;
             cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
         }
         .btn-primary {
-            background-color: #007bff;
+            background-color: #00aaff;
+            color: #000;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0088cc;
+            transform: scale(1.05);
+        }
+        .btn-secondary {
+            background-color: #555;
             color: white;
             border: none;
         }
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-            border: none;
+        .btn-secondary:hover {
+            background-color: #777;
+            transform: scale(1.05);
+        }
+        .error-message {
+            color: red;
+            margin: 10px 0;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -48,7 +95,7 @@
     <main class="container">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <h2>Editar Producto</h2>
-            <a href="/productos/ver/<%= producto.id_producto %>" class="btn btn-secondary">Cancelar</a>
+            
         </div>
 
         <% if (typeof error !== 'undefined') { %>
@@ -76,7 +123,7 @@
             
             <div>
                 <label>Descripción:</label>
-                <textarea name="descripcion" rows="3"><%= producto.descripcion || '' %></textarea>
+                <textarea name="descripcion" rows="4" style="resize: vertical; width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #444; background-color: #333; color: #fff; font-size: 14px;" placeholder="Ingrese una descripción del producto..."><%= producto.descripcion || '' %></textarea>
             </div>
             
             <div>
@@ -96,7 +143,7 @@
             
             <div>
                 <label>Especificaciones Técnicas:</label>
-                <textarea name="especificaciones" rows="3"><%= producto.especificaciones || '' %></textarea>
+                <textarea name="especificaciones" rows="4" style="resize: vertical; width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #444; background-color: #333; color: #fff; font-size: 14px;" placeholder="Ingrese las especificaciones del producto..."><%= producto.especificaciones || '' %></textarea>
             </div>
             
             <div>

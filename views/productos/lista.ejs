@@ -1,122 +1,187 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
+    <title>
+        <%= title %>
+    </title>
     <style>
         table {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+            border-collapse: separate;
+            border-spacing: 0 15px;
+            margin-top: 30px;
+            background-color: #222;
+            color: #fff;
+            border-radius: 6px;
+            overflow: hidden;
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
+
+        th,
+        td {
+            border: 1px solid #00aaff;
+            padding: 12px;
             text-align: left;
         }
+
         th {
-            background-color: #f2f2f2;
+            background-color: #00aaff;
+            color: #000;
+            text-align: center;
         }
+
+        td {
+            text-align: justify;
+        }
+
         .actions {
             white-space: nowrap;
+            text-align: center;
         }
+
         .btn {
-            padding: 5px 10px;
-            margin: 0 2px;
+            padding: 5px 8px;
+            margin: 0 10px 0 0;
             text-decoration: none;
             border-radius: 3px;
-            font-size: 14px;
+            font-size: 12px;
         }
+
         .btn-primary {
-            background-color: #007bff;
+            background-color: #55e923;
             color: white;
         }
-        .btn-success {
-            background-color: #28a745;
-            color: white;
-        }
+
         .btn-info {
             background-color: #17a2b8;
             color: white;
         }
+
         .btn-danger {
             background-color: #dc3545;
             color: white;
         }
-        .status-available { color: green; }
-        .status-assigned { color: orange; }
-        .status-repair { color: #ffc107; }
-        .status-discarded { color: #6c757d; }
-        .status-lost { color: #dc3545; }
+
+        h2 {
+            font-size: 16px;
+            text-align: left;
+            width: auto;
+            margin-bottom: 0;
+            font-weight: bold;
+            flex-grow: 1;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0 20px 0;
+        }
+
+        .header-container a {
+            margin-left: 10px;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-top: 20px;
+        }
     </style>
 </head>
+
 <body>
     <%- include('../partials/header') %>
 
-    <main class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h2>Lista de Productos</h2>
-            <a href="/productos/registrar" class="btn btn-primary">Agregar Producto</a>
-        </div>
+        <main class="container">
+            <div class="btn-container">
+                <h2>Lista de Productos</h2>
+                <a href="/productos/registrar" class="btn btn-primary">Agregar Producto</a>
+            </div>
 
-        <% if (typeof success !== 'undefined') { %>
-            <div style="color: green; margin: 10px 0;"><%= success %></div>
-        <% } %>
+            <% if (typeof success !=='undefined' ) { %>
+                <div class="success-message">
+                    <%= success %>
+                </div>
+                <% } %>
 
-        <% if (typeof error !== 'undefined') { %>
-            <div style="color: red; margin: 10px 0;"><%= error %></div>
-        <% } %>
+                    <% if (typeof error !=='undefined' ) { %>
+                        <div class="error-message">
+                            <%= error %>
+                        </div>
+                        <% } %>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Marca</th>
-                    <th>Modelo</th>
-                    <th>Categoría</th>
-                    <th>N° Serie</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% productos.forEach(producto => { %>
-                    <tr>
-                        <td><%= producto.id_producto %></td>
-                        <td><%= producto.nombre %></td>
-                        <td><%= producto.marca || 'N/A' %></td>
-                        <td><%= producto.modelo || 'N/A' %></td>
-                        <td><%= producto.categoria_nombre || 'Sin categoría' %></td>
-                        <td><%= producto.numero_serie || 'N/A' %></td>
-                        <td>
-                            <% if (producto.id_estado === 1) { %>
-                                <span class="status-available">Disponible</span>
-                            <% } else if (producto.id_estado === 2) { %>
-                                <span class="status-assigned">Asignado</span>
-                            <% } else if (producto.id_estado === 3) { %>
-                                <span class="status-repair">En reparación</span>
-                            <% } else if (producto.id_estado === 4) { %>
-                                <span class="status-discarded">Descartado</span>
-                            <% } else if (producto.id_estado === 5) { %>
-                                <span class="status-lost">Perdido</span>
-                            <% } else { %>
-                                <span>Desconocido</span>
-                            <% } %>
-                        </td>
-                        <td class="actions">
-                            <a href="/productos/ver/<%= producto.id_producto %>" class="btn btn-info">Ver</a>
-                            <a href="/productos/editar/<%= producto.id_producto %>" class="btn btn-primary">Editar</a>
-                            <a href="/productos/asignar/<%= producto.id_producto %>" class="btn btn-success">Asignar</a>
-                            <a href="/productos/eliminar/<%= producto.id_producto %>" class="btn btn-danger" onclick="return confirm('¿Está seguro de eliminar este producto?')">Eliminar</a>
-                        </td>
-                    </tr>
-                <% }); %>
-            </tbody>
-        </table>
-    </main>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Marca</th>
+                                        <th>Modelo</th>
+                                        <th>Categoría</th>
+                                        <th>N° Serie</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% productos.forEach(producto=> { %>
+                                        <tr>
+                                            <td>
+                                                <%= producto.id_producto %>
+                                            </td>
+                                            <td>
+                                                <%= producto.nombre %>
+                                            </td>
+                                            <td>
+                                                <%= producto.marca || 'N/A' %>
+                                            </td>
+                                            <td>
+                                                <%= producto.modelo || 'N/A' %>
+                                            </td>
+                                            <td>
+                                                <%= producto.categoria_nombre || 'Sin categoría' %>
+                                            </td>
+                                            <td>
+                                                <%= producto.numero_serie || 'N/A' %>
+                                            </td>
+                                            <td>
+                                                <% if (producto.id_estado===1) { %>
+                                                    <span class="status-available">Disponible</span>
+                                                    <% } else if (producto.id_estado===2) { %>
+                                                        <span class="status-assigned">Asignado</span>
+                                                        <% } else if (producto.id_estado===3) { %>
+                                                            <span class="status-repair">En reparación</span>
+                                                            <% } else if (producto.id_estado===4) { %>
+                                                                <span class="status-discarded">Descartado</span>
+                                                                <% } else if (producto.id_estado===5) { %>
+                                                                    <span class="status-lost">Perdido</span>
+                                                                    <% } else { %>
+                                                                        <span>Desconocido</span>
+                                                                        <% } %>
+                                            </td>
+                                            <td class="actions">
+                                                <a href="/productos/ver/<%= producto.id_producto %>"
+                                                    class="btn btn-info">Ver</a>
+                                                <a href="/productos/editar/<%= producto.id_producto %>"
+                                                    class="btn btn-primary">Editar</a>
+                                                <a href="/productos/asignar/<%= producto.id_producto %>"
+                                                    class="btn btn-success">Asignar</a>
+                                                <a href="/productos/eliminar/<%= producto.id_producto %>"
+                                                    class="btn btn-danger"
+                                                    onclick="return confirm('¿Está seguro de eliminar este producto?')">Eliminar</a>
+                                            </td>
+                                        </tr>
+                                        <% }); %>
+                                </tbody>
+                            </table>
+        </main>
 
-    <%- include('../partials/footer') %>
+        <%- include('../partials/footer') %>
 </body>
+
 </html>

@@ -4,41 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
+
     <style>
-        form div {
-            margin-bottom: 15px;
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
         }
+    
+        main.container {
+            max-width: 900px;
+            margin: 30px auto;
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+        }
+    
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #f5f5f5;
+        }
+    
+        form {
+            margin-top: 20px;
+        }
+    
+        .form-group {
+            margin-bottom: 20px;
+        }
+    
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-weight: bold;
+            color: #cccccc;
         }
-        select, textarea {
+    
+        input, textarea, select {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 6px;
+            background-color: #2c2c2c;
+            color: #f0f0f0;
+            box-sizing: border-box;
         }
+    
+        input:focus, textarea:focus, select:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
         textarea {
-            min-height: 100px;
+            height: 150px; 
         }
-        button {
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .error {
-            color: red;
-            margin-bottom: 15px;
-        }
-        .success {
-            color: green;
-            margin-bottom: 15px;
+
+        button[type="submit"] {
+            display: block;
+            margin: 20px auto;
         }
     </style>
+    
+
 </head>
 <body>
     <%- include('../partials/header') %>
@@ -86,6 +117,7 @@
                 </div>
                 
                 <div>
+                    <br>
                     <label>Tipo de problema: <span style="color: red;">*</span></label>
                     <select name="tipo_problema" required>
                         <option value="">-- Seleccione un tipo --</option>
@@ -97,6 +129,7 @@
                 </div>
                 
                 <div>
+                    <br>
                     <label>Nivel de urgencia: <span style="color: red;">*</span></label>
                     <select name="urgencia" required>
                         <option value="baja" <%= (typeof formData !== 'undefined' && formData.urgencia === 'baja') ? 'selected' : '' %>>Baja</option>
@@ -107,11 +140,13 @@
                 </div>
                 
                 <div>
+                    <br>
                     <label>Descripción detallada del problema: <span style="color: red;">*</span></label>
                     <textarea name="descripcion_problema" required><%= typeof formData !== 'undefined' ? formData.descripcion_problema : '' %></textarea>
                 </div>
+                <br>
                 
-                <button type="submit">Enviar Solicitud</button>
+                <button type="submit" class="btn btn-info" >Enviar Solicitud</button>
             </form>
         <% } %>
         <% } %>

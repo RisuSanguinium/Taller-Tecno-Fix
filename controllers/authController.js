@@ -163,8 +163,7 @@ const authController = {
                         formData: { nombre, apellido, email }
                     });
                 }
-    
-                // Obtener el ID del rol de Cliente (id_rol = 3 según tu base de datos)
+                
                 const clienteRolId = 3;
     
                 // Crear el usuario en la base de datos

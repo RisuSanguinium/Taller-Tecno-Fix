@@ -139,9 +139,9 @@ const empleadoController = {
         if (!req.session.user || req.session.user.rol !== 'Administrador') {
             return res.redirect('/login');
         }
-    
+
         const idEmpleado = req.params.id;
-    
+
         conexion.query(`
             SELECT e.*, u.email, u.username, r.nombre_rol as rol 
             FROM Empleado e
@@ -153,9 +153,9 @@ const empleadoController = {
                 console.error('Error al obtener empleado:', error);
                 return res.redirect('/empleados?error=Empleado no encontrado');
             }
-    
+
             const empleado = results[0];
-            
+
             res.render('empleados/ver', {
                 title: 'Detalles del Empleado - Tecno-Fix',
                 currentPage: 'empleados',
@@ -168,9 +168,9 @@ const empleadoController = {
         if (!req.session.user || req.session.user.rol !== 'Administrador') {
             return res.redirect('/login');
         }
-    
+
         const idEmpleado = req.params.id;
-    
+
         conexion.query(`
             SELECT e.*, u.email 
             FROM Empleado e
@@ -181,9 +181,9 @@ const empleadoController = {
                 console.error('Error al obtener empleado:', error);
                 return res.redirect('/empleados?error=Empleado no encontrado');
             }
-    
+
             const empleado = results[0];
-            
+
             res.render('empleados/editar', {
                 title: 'Editar Empleado - Tecno-Fix',
                 currentPage: 'empleados',
@@ -196,10 +196,10 @@ const empleadoController = {
         if (!req.session.user || req.session.user.rol !== 'Administrador') {
             return res.redirect('/login');
         }
-    
+
         const idEmpleado = req.params.id;
         const { nombre, apellido, cedula, telefono, departamento, especialidad, email } = req.body;
-    
+
         // Primero obtener el id_usuario asociado
         conexion.query(
             'SELECT id_usuario FROM Empleado WHERE id_empleado = ?',
@@ -209,9 +209,9 @@ const empleadoController = {
                     console.error('Error al buscar empleado:', error);
                     return res.redirect('/empleados?error=Empleado no encontrado');
                 }
-    
+
                 const idUsuario = results[0].id_usuario;
-    
+
                 // Actualizar datos del empleado
                 conexion.query(
                     `UPDATE Empleado SET 
@@ -228,7 +228,7 @@ const empleadoController = {
                             console.error('Error al actualizar empleado:', error);
                             return res.redirect(`/empleados/editar/${idEmpleado}?error=Error al actualizar empleado`);
                         }
-    
+
                         // Actualizar email del usuario
                         conexion.query(
                             'UPDATE Usuario SET email = ? WHERE id_usuario = ?',
@@ -238,7 +238,7 @@ const empleadoController = {
                                     console.error('Error al actualizar email:', error);
                                     return res.redirect(`/empleados/editar/${idEmpleado}?error=Error al actualizar email`);
                                 }
-    
+
                                 res.redirect(`/empleados/ver/${idEmpleado}?success=Empleado actualizado exitosamente`);
                             }
                         );
@@ -252,9 +252,9 @@ const empleadoController = {
         if (!req.session.user || req.session.user.rol !== 'Administrador') {
             return res.redirect('/login');
         }
-    
+
         const idEmpleado = req.params.id;
-    
+
         // Primero verificamos si el empleado tiene responsabilidades
         conexion.query(
             `SELECT 
@@ -267,16 +267,16 @@ const empleadoController = {
                     console.error('Error al verificar responsabilidades:', error);
                     return res.redirect('/empleados?error=Error al verificar responsabilidades del empleado');
                 }
-    
-                const tieneResponsabilidades = 
-                    results[0].inventarios > 0 || 
-                    results[0].asignaciones > 0 || 
+
+                const tieneResponsabilidades =
+                    results[0].inventarios > 0 ||
+                    results[0].asignaciones > 0 ||
                     results[0].reparaciones > 0;
-    
+
                 if (tieneResponsabilidades) {
                     return res.redirect('/empleados?error=El empleado no se puede eliminar debido a que aún tiene responsabilidades en la empresa');
                 }
-    
+
                 // Si no tiene responsabilidades, procedemos con la eliminación
                 conexion.query(
                     'SELECT id_usuario FROM Empleado WHERE id_empleado = ?',
@@ -286,9 +286,9 @@ const empleadoController = {
                             console.error('Error al buscar empleado:', error);
                             return res.redirect('/empleados?error=Empleado no encontrado');
                         }
-    
+
                         const idUsuario = results[0].id_usuario;
-    
+
                         // Eliminar empleado
                         conexion.query(
                             'DELETE FROM Empleado WHERE id_empleado = ?',
@@ -298,7 +298,7 @@ const empleadoController = {
                                     console.error('Error al eliminar empleado:', error);
                                     return res.redirect('/empleados?error=Error al eliminar empleado');
                                 }
-    
+
                                 // Eliminar usuario
                                 conexion.query(
                                     'DELETE FROM Usuario WHERE id_usuario = ?',
@@ -308,7 +308,7 @@ const empleadoController = {
                                             console.error('Error al eliminar usuario:', error);
                                             return res.redirect('/empleados?error=Error al eliminar usuario asociado');
                                         }
-    
+
                                         res.redirect('/empleados?success=Empleado eliminado exitosamente');
                                     }
                                 );
@@ -369,10 +369,10 @@ const empleadoController = {
         if (!req.session.user || req.session.user.rol !== 'Empleado') {
             return res.redirect('/login');
         }
-    
+
         const id_solicitud = req.params.id;
         const id_empleado = req.session.user.id_empleado;
-    
+
         // 1. Cambiar estado de la solicitud a "En proceso" (id_estado 7)
         // 2. Crear proceso de reparación con estado "Diagnóstico" (id_estado 10)
         conexion.beginTransaction(err => {
@@ -380,7 +380,7 @@ const empleadoController = {
                 console.error('Error al iniciar transacción:', err);
                 return res.redirect('/solicitudes-soporte?error=Error al procesar la solicitud');
             }
-    
+
             conexion.query(
                 'UPDATE SolicitudSoporte SET id_estado = 7 WHERE id_solicitud = ?',
                 [id_solicitud],
@@ -391,7 +391,7 @@ const empleadoController = {
                             res.redirect('/solicitudes-soporte?error=Error al actualizar la solicitud');
                         });
                     }
-    
+
                     conexion.query(
                         `INSERT INTO ProcesoReparacion 
                         (id_solicitud, id_empleado_asignado, id_estado, fecha_inicio)
@@ -404,7 +404,7 @@ const empleadoController = {
                                     res.redirect('/solicitudes-soporte?error=Error al crear proceso de reparación');
                                 });
                             }
-    
+
                             conexion.commit(err => {
                                 if (err) {
                                     return conexion.rollback(() => {
@@ -412,7 +412,7 @@ const empleadoController = {
                                         res.redirect('/solicitudes-soporte?error=Error al confirmar la operación');
                                     });
                                 }
-    
+
                                 res.redirect('/solicitudes-soporte?success=Solicitud aceptada y en proceso de reparación');
                             });
                         }
@@ -449,14 +449,14 @@ const empleadoController = {
     },
 
     // Mostrar equipos en reparación asignados al empleado
-mostrarEnReparacion: (req, res) => {
-    if (!req.session.user || req.session.user.rol !== 'Empleado') {
-        return res.redirect('/login');
-    }
+    mostrarEnReparacion: (req, res) => {
+        if (!req.session.user || req.session.user.rol !== 'Empleado') {
+            return res.redirect('/login');
+        }
 
-    const id_empleado = req.session.user.id_empleado;
+        const id_empleado = req.session.user.id_empleado;
 
-    conexion.query(`
+        conexion.query(`
         SELECT 
             pr.id_proceso,
             pr.id_estado,
@@ -493,46 +493,46 @@ mostrarEnReparacion: (req, res) => {
             END,
             pr.fecha_inicio
     `, [id_empleado], (error, reparaciones) => {
-        if (error) {
-            console.error('Error al obtener reparaciones:', error);
-            return res.render('error', { message: 'Error al cargar las reparaciones' });
-        }
+            if (error) {
+                console.error('Error al obtener reparaciones:', error);
+                return res.render('error', { message: 'Error al cargar las reparaciones' });
+            }
 
-        res.render('empleado/en-reparacion', {
-            title: 'Equipos en Reparación',
-            currentPage: 'en-reparacion',
-            reparaciones: reparaciones || []
+            res.render('empleado/en-reparacion', {
+                title: 'Equipos en Reparación',
+                currentPage: 'en-reparacion',
+                reparaciones: reparaciones || []
+            });
         });
-    });
-},
+    },
 
-// Completar reparación (pasar a estado Reparado - 13)
-completarReparacion: (req, res) => {
-    if (!req.session.user || req.session.user.rol !== 'Empleado') {
-        return res.redirect('/login');
-    }
-
-    const id_proceso = req.params.id;
-    const { acciones_realizadas, repuestos_utilizados, costo_estimado, observaciones } = req.body;
-
-    // Validar campos requeridos
-    if (!acciones_realizadas || !repuestos_utilizados || !costo_estimado) {
-        console.log("Faltan campos requeridos");
-        return res.redirect(`/en-reparacion?error=Debe completar todos los campos requeridos para finalizar la reparación`);
-    }
-
-    // Calcular costo final (costo estimado + 15%)
-    const costoFinal = parseFloat(costo_estimado) * 1.15;
-
-    conexion.beginTransaction(err => {
-        if (err) {
-            console.error('Error al iniciar transacción:', err);
-            return res.redirect('/en-reparacion?error=Error al procesar la solicitud');
+    // Completar reparación (pasar a estado Reparado - 13)
+    completarReparacion: (req, res) => {
+        if (!req.session.user || req.session.user.rol !== 'Empleado') {
+            return res.redirect('/login');
         }
 
-        // 1. Actualizar el proceso de reparación con todos los datos
-        conexion.query(
-            `UPDATE ProcesoReparacion SET 
+        const id_proceso = req.params.id;
+        const { acciones_realizadas, repuestos_utilizados, costo_estimado, observaciones } = req.body;
+
+        // Validar campos requeridos
+        if (!acciones_realizadas || !repuestos_utilizados || !costo_estimado) {
+            console.log("Faltan campos requeridos");
+            return res.redirect(`/en-reparacion?error=Debe completar todos los campos requeridos para finalizar la reparación`);
+        }
+
+        // Calcular costo final (costo estimado + 15%)
+        const costoFinal = parseFloat(costo_estimado) * 1.15;
+
+        conexion.beginTransaction(err => {
+            if (err) {
+                console.error('Error al iniciar transacción:', err);
+                return res.redirect('/en-reparacion?error=Error al procesar la solicitud');
+            }
+
+            // 1. Actualizar el proceso de reparación con todos los datos
+            conexion.query(
+                `UPDATE ProcesoReparacion SET 
                 acciones_realizadas = ?,
                 repuestos_utilizados = ?,
                 costo_estimado = ?,
@@ -541,41 +541,41 @@ completarReparacion: (req, res) => {
                 id_estado = 13,  -- Reparado
                 fecha_fin = NOW()
             WHERE id_proceso = ?`,
-            [
-                acciones_realizadas,
-                repuestos_utilizados,
-                costo_estimado,
-                costoFinal,
-                observaciones,
-                id_proceso
-            ],
-            (error, results) => {
-                if (error) {
-                    return conexion.rollback(() => {
-                        console.error('Error al actualizar reparación:', error);
-                        res.redirect('/en-reparacion?error=Error al actualizar la reparación');
-                    });
-                }
+                [
+                    acciones_realizadas,
+                    repuestos_utilizados,
+                    costo_estimado,
+                    costoFinal,
+                    observaciones,
+                    id_proceso
+                ],
+                (error, results) => {
+                    if (error) {
+                        return conexion.rollback(() => {
+                            console.error('Error al actualizar reparación:', error);
+                            res.redirect('/en-reparacion?error=Error al actualizar la reparación');
+                        });
+                    }
 
-                // 2. Actualizar la solicitud a estado Resuelta (8)
-                conexion.query(
-                    `UPDATE SolicitudSoporte s
+                    // 2. Actualizar la solicitud a estado Resuelta (8)
+                    conexion.query(
+                        `UPDATE SolicitudSoporte s
                     JOIN ProcesoReparacion pr ON s.id_solicitud = pr.id_solicitud
                     SET s.id_estado = 8, s.fecha_cierre = NOW(), 
                     s.solucion = 'Reparación completada satisfactoriamente'
                     WHERE pr.id_proceso = ?`,
-                    [id_proceso],
-                    (error, results) => {
-                        if (error) {
-                            return conexion.rollback(() => {
-                                console.error('Error al actualizar solicitud:', error);
-                                res.redirect('/en-reparacion?error=Error al actualizar la solicitud');
-                            });
-                        }
+                        [id_proceso],
+                        (error, results) => {
+                            if (error) {
+                                return conexion.rollback(() => {
+                                    console.error('Error al actualizar solicitud:', error);
+                                    res.redirect('/en-reparacion?error=Error al actualizar la solicitud');
+                                });
+                            }
 
-                        // 3. Registrar en bitácora
-                        conexion.query(
-                            `INSERT INTO BitacoraReparacion 
+                            // 3. Registrar en bitácora
+                            conexion.query(
+                                `INSERT INTO BitacoraReparacion 
                             (id_proceso, id_estado_anterior, id_estado_nuevo, id_empleado, observaciones)
                             SELECT 
                                 ?,
@@ -584,172 +584,210 @@ completarReparacion: (req, res) => {
                                 ?,
                                 ?
                             FROM ProcesoReparacion WHERE id_proceso = ?`,
-                            [id_proceso, req.session.user.id_empleado, 'Reparación completada', id_proceso],
-                            (error, results) => {
-                                if (error) {
-                                    return conexion.rollback(() => {
-                                        console.error('Error al registrar en bitácora:', error);
-                                        res.redirect('/en-reparacion?error=Error al registrar en bitácora');
-                                    });
-                                }
-
-                                conexion.commit(err => {
-                                    if (err) {
+                                [id_proceso, req.session.user.id_empleado, 'Reparación completada', id_proceso],
+                                (error, results) => {
+                                    if (error) {
                                         return conexion.rollback(() => {
-                                            console.error('Error al confirmar transacción:', err);
-                                            res.redirect('/en-reparacion?error=Error al confirmar la operación');
+                                            console.error('Error al registrar en bitácora:', error);
+                                            res.redirect('/en-reparacion?error=Error al registrar en bitácora');
                                         });
                                     }
 
-                                    res.redirect('/en-reparacion?success=Reparación completada exitosamente');
-                                });
-                            }
-                        );
-                    }
-                );
-            }
-        );
-    });
-},
+                                    conexion.commit(err => {
+                                        if (err) {
+                                            return conexion.rollback(() => {
+                                                console.error('Error al confirmar transacción:', err);
+                                                res.redirect('/en-reparacion?error=Error al confirmar la operación');
+                                            });
+                                        }
 
-// Pasar a estado Espera repuestos (11)
-esperarRepuestos: (req, res) => {
-    if (!req.session.user || req.session.user.rol !== 'Empleado') {
-        return res.redirect('/login');
-    }
+                                        res.redirect('/en-reparacion?success=Reparación completada exitosamente');
+                                    });
+                                }
+                            );
+                        }
+                    );
+                }
+            );
+        });
+    },
 
-    const id_proceso = req.params.id;
-    const { observaciones } = req.body;
-
-    conexion.beginTransaction(err => {
-        if (err) {
-            console.error('Error al iniciar transacción:', err);
-            return res.redirect('/en-reparacion?error=Error al procesar la solicitud');
+    // Pasar a estado Espera repuestos (11)
+    esperarRepuestos: (req, res) => {
+        if (!req.session.user || req.session.user.rol !== 'Empleado') {
+            return res.redirect('/login');
         }
 
-        // 1. Actualizar estado del proceso
-        conexion.query(
-            'UPDATE ProcesoReparacion SET id_estado = 11, observaciones = ? WHERE id_proceso = ?',
-            [observaciones, id_proceso],
-            (error, results) => {
-                if (error) {
-                    return conexion.rollback(() => {
-                        console.error('Error al actualizar reparación:', error);
-                        res.redirect('/en-reparacion?error=Error al actualizar la reparación');
-                    });
-                }
+        const id_proceso = req.params.id;
+        const { observaciones } = req.body;
 
-                // 2. Registrar en bitácora
-                conexion.query(
-                    `INSERT INTO BitacoraReparacion 
-                    (id_proceso, id_estado_anterior, id_estado_nuevo, id_empleado, observaciones)
-                    VALUES (?, ?, 11, ?, ?)`,  // Nuevo estado: Espera repuestos (11)
-                    [id_proceso, req.body.estado_actual, req.session.user.id_empleado, observaciones],
-                    (error, results) => {
-                        if (error) {
-                            return conexion.rollback(() => {
-                                console.error('Error al registrar en bitácora:', error);
-                                res.redirect('/en-reparacion?error=Error al registrar en bitácora');
-                            });
-                        }
+        conexion.beginTransaction(err => {
+            if (err) {
+                console.error('Error al iniciar transacción:', err);
+                return res.redirect('/en-reparacion?error=Error al procesar la solicitud');
+            }
 
-                        conexion.commit(err => {
-                            if (err) {
-                                return conexion.rollback(() => {
-                                    console.error('Error al confirmar transacción:', err);
-                                    res.redirect('/en-reparacion?error=Error al confirmar la operación');
-                                });
-                            }
-
-                            res.redirect('/en-reparacion?success=Reparación puesta en espera de repuestos');
+            // 1. Actualizar estado del proceso
+            conexion.query(
+                'UPDATE ProcesoReparacion SET id_estado = 11, observaciones = ? WHERE id_proceso = ?',
+                [observaciones, id_proceso],
+                (error, results) => {
+                    if (error) {
+                        return conexion.rollback(() => {
+                            console.error('Error al actualizar reparación:', error);
+                            res.redirect('/en-reparacion?error=Error al actualizar la reparación');
                         });
                     }
-                );
-            }
-        );
-    });
-},
 
-// Marcar como irreparable (14)
-marcarIrreparable: (req, res) => {
-    if (!req.session.user || req.session.user.rol !== 'Empleado') {
-        return res.redirect('/login');
-    }
+                    // 2. Registrar en bitácora
+                    conexion.query(
+                        `INSERT INTO BitacoraReparacion 
+                    (id_proceso, id_estado_anterior, id_estado_nuevo, id_empleado, observaciones)
+                    VALUES (?, ?, 11, ?, ?)`,  // Nuevo estado: Espera repuestos (11)
+                        [id_proceso, req.body.estado_actual, req.session.user.id_empleado, observaciones],
+                        (error, results) => {
+                            if (error) {
+                                return conexion.rollback(() => {
+                                    console.error('Error al registrar en bitácora:', error);
+                                    res.redirect('/en-reparacion?error=Error al registrar en bitácora');
+                                });
+                            }
 
-    const id_proceso = req.params.id;
-    const { motivo, acciones_realizadas } = req.body;
+                            conexion.commit(err => {
+                                if (err) {
+                                    return conexion.rollback(() => {
+                                        console.error('Error al confirmar transacción:', err);
+                                        res.redirect('/en-reparacion?error=Error al confirmar la operación');
+                                    });
+                                }
 
-    conexion.beginTransaction(err => {
-        if (err) {
-            console.error('Error al iniciar transacción:', err);
-            return res.redirect('/en-reparacion?error=Error al procesar la solicitud');
+                                res.redirect('/en-reparacion?success=Reparación puesta en espera de repuestos');
+                            });
+                        }
+                    );
+                }
+            );
+        });
+    },
+
+    // Marcar como irreparable (14)
+    marcarIrreparable: (req, res) => {
+        if (!req.session.user || req.session.user.rol !== 'Empleado') {
+            return res.redirect('/login');
         }
 
-        // 1. Actualizar el proceso de reparación
-        conexion.query(
-            `UPDATE ProcesoReparacion SET 
+        const id_proceso = req.params.id;
+        const { motivo, acciones_realizadas } = req.body;
+
+        conexion.beginTransaction(err => {
+            if (err) {
+                console.error('Error al iniciar transacción:', err);
+                return res.redirect('/en-reparacion?error=Error al procesar la solicitud');
+            }
+
+            // 1. Actualizar el proceso de reparación
+            conexion.query(
+                `UPDATE ProcesoReparacion SET 
                 acciones_realizadas = ?,
                 id_estado = 14,  -- Irreparable
                 fecha_fin = NOW(),
                 observaciones = ?
             WHERE id_proceso = ?`,
-            [acciones_realizadas, motivo, id_proceso],
-            (error, results) => {
-                if (error) {
-                    return conexion.rollback(() => {
-                        console.error('Error al actualizar reparación:', error);
-                        res.redirect('/en-reparacion?error=Error al actualizar la reparación');
-                    });
-                }
+                [acciones_realizadas, motivo, id_proceso],
+                (error, results) => {
+                    if (error) {
+                        return conexion.rollback(() => {
+                            console.error('Error al actualizar reparación:', error);
+                            res.redirect('/en-reparacion?error=Error al actualizar la reparación');
+                        });
+                    }
 
-                // 2. Actualizar la solicitud a estado Resuelta (8)
-                conexion.query(
-                    `UPDATE SolicitudSoporte s
+                    // 2. Actualizar la solicitud a estado Resuelta (8)
+                    conexion.query(
+                        `UPDATE SolicitudSoporte s
                     JOIN ProcesoReparacion pr ON s.id_solicitud = pr.id_solicitud
                     SET s.id_estado = 8, s.fecha_cierre = NOW(), 
                     s.solucion = 'Equipo irreparable: ${motivo}'
                     WHERE pr.id_proceso = ?`,
-                    [id_proceso],
-                    (error, results) => {
-                        if (error) {
-                            return conexion.rollback(() => {
-                                console.error('Error al actualizar solicitud:', error);
-                                res.redirect('/en-reparacion?error=Error al actualizar la solicitud');
-                            });
-                        }
+                        [id_proceso],
+                        (error, results) => {
+                            if (error) {
+                                return conexion.rollback(() => {
+                                    console.error('Error al actualizar solicitud:', error);
+                                    res.redirect('/en-reparacion?error=Error al actualizar la solicitud');
+                                });
+                            }
 
-                        // 3. Registrar en bitácora
-                        conexion.query(
-                            `INSERT INTO BitacoraReparacion 
+                            // 3. Registrar en bitácora
+                            conexion.query(
+                                `INSERT INTO BitacoraReparacion 
                             (id_proceso, id_estado_anterior, id_estado_nuevo, id_empleado, observaciones)
                             VALUES (?, ?, 14, ?, ?)`,  //-- A Irreparable (14)
-                            [id_proceso, req.body.estado_actual, req.session.user.id_empleado, motivo],
-                            (error, results) => {
-                                if (error) {
-                                    return conexion.rollback(() => {
-                                        console.error('Error al registrar en bitácora:', error);
-                                        res.redirect('/en-reparacion?error=Error al registrar en bitácora');
-                                    });
-                                }
-
-                                conexion.commit(err => {
-                                    if (err) {
+                                [id_proceso, req.body.estado_actual, req.session.user.id_empleado, motivo],
+                                (error, results) => {
+                                    if (error) {
                                         return conexion.rollback(() => {
-                                            console.error('Error al confirmar transacción:', err);
-                                            res.redirect('/en-reparacion?error=Error al confirmar la operación');
+                                            console.error('Error al registrar en bitácora:', error);
+                                            res.redirect('/en-reparacion?error=Error al registrar en bitácora');
                                         });
                                     }
 
-                                    res.redirect('/en-reparacion?success=Equipo marcado como irreparable');
-                                });
-                            }
-                        );
-                    }
-                );
+                                    conexion.commit(err => {
+                                        if (err) {
+                                            return conexion.rollback(() => {
+                                                console.error('Error al confirmar transacción:', err);
+                                                res.redirect('/en-reparacion?error=Error al confirmar la operación');
+                                            });
+                                        }
+
+                                        res.redirect('/en-reparacion?success=Equipo marcado como irreparable');
+                                    });
+                                }
+                            );
+                        }
+                    );
+                }
+            );
+        });
+    },
+
+
+    actualizarInfo: (req, res) => {
+        if (!req.session.user || req.session.user.rol !== 'Empleado') {
+            return res.redirect('/login');
+        }
+    
+        const id_proceso = req.params.id;
+        const { acciones_realizadas, repuestos_utilizados, costo_estimado, observaciones } = req.body;
+    
+        // Validación mejorada
+        if (!acciones_realizadas?.trim() || !repuestos_utilizados?.trim() || !costo_estimado) {
+            return res.redirect(`/en-reparacion/?error=Todos los campos requeridos deben estar completos`);
+        }
+    
+        conexion.query(
+            `UPDATE ProcesoReparacion SET 
+            acciones_realizadas = ?,
+            repuestos_utilizados = ?,
+            costo_estimado = ?,
+            observaciones = ?
+            WHERE id_proceso = ?`,
+            [
+                acciones_realizadas.trim(),
+                repuestos_utilizados.trim(),
+                parseFloat(costo_estimado),
+                observaciones?.trim() || null,
+                id_proceso
+            ],
+            (error) => {
+                if (error) {
+                    console.error('Error al actualizar información:', error);
+                    return res.redirect(`/en-reparacion/${id_proceso}?error=Error al actualizar la información`);
+                }
+                res.redirect(`/en-reparacion/?success=Información actualizada correctamente`);
             }
         );
-    });
-}
+    }
 
 
 };

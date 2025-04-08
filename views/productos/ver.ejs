@@ -1,221 +1,303 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
+    <title>
+        <%= title %>
+    </title>
+
     <style>
-        .producto-details {
-            background: #f9f9f9;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            background: #111;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 170, 255, 0.4);
+            margin: 20px auto;
+        }
+
+        h2,
+        h3 {
+            color: #00aaff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .info-section {
+            background: #222;
             padding: 20px;
             border-radius: 5px;
             margin-top: 20px;
         }
-        .detail-row {
-            display: flex;
-            margin-bottom: 10px;
+
+        p {
+            margin: 10px 0;
         }
-        .detail-label {
-            font-weight: bold;
-            width: 200px;
-        }
-        .detail-value {
-            flex: 1;
-        }
-        .actions {
-            margin-top: 20px;
-        }
+
         .btn {
-            padding: 8px 15px;
+            padding: 12px 20px;
             text-decoration: none;
-            border-radius: 4px;
-            margin-right: 10px;
+            border-radius: 6px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            border: none;
+            transition: background 0.3s, transform 0.2s;
         }
+
         .btn-primary {
-            background-color: #007bff;
+            background-color: #00aaff;
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background-color: #0088cc;
+            transform: scale(1.05);
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
             color: white;
         }
+
         .btn-success {
             background-color: #28a745;
             color: white;
         }
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-        }
-        .status-available { color: green; }
-        .status-assigned { color: orange; }
-        .status-repair { color: #ffc107; }
-        .status-discarded { color: #6c757d; }
-        .status-lost { color: #dc3545; }
-        .asignaciones-table {
+
+        table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            background: #222;
+            color: white;
+            border-radius: 6px;
+            overflow: hidden;
         }
-        .asignaciones-table th, .asignaciones-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
+
+        th,
+        td {
+            border: 1px solid #00aaff;
+            padding: 10px;
             text-align: left;
         }
-        .asignaciones-table th {
-            background-color: #f2f2f2;
+
+        th {
+            background-color: #00aaff;
+            color: black;
         }
     </style>
+
+
 </head>
+
 <body>
     <%- include('../partials/header') %>
 
-    <main class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h2>Detalles del Producto</h2>
-            <a href="/productos" class="btn btn-secondary">Volver a la lista</a>
-        </div>
+        <main class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Detalles del Producto</h2>
+            </div>
 
-        <% if (typeof success !== 'undefined') { %>
-            <div style="color: green; margin: 10px 0;"><%= success %></div>
-        <% } %>
+            <% if (typeof success !=='undefined' ) { %>
+                <div style="color: green; margin: 10px 0;">
+                    <%= success %>
+                </div>
+                <% } %>
 
-        <% if (typeof error !== 'undefined') { %>
-            <div style="color: red; margin: 10px 0;"><%= error %></div>
-        <% } %>
+                    <% if (typeof error !=='undefined' ) { %>
+                        <div style="color: red; margin: 10px 0;">
+                            <%= error %>
+                        </div>
+                        <% } %>
 
-        <div class="producto-details">
-            <div class="detail-row">
-                <div class="detail-label">ID:</div>
-                <div class="detail-value"><%= producto.id_producto %></div>
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">Nombre:</div>
-                <div class="detail-value"><%= producto.nombre %></div>
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">Categoría:</div>
-                <div class="detail-value"><%= producto.categoria_nombre || 'Sin categoría' %></div>
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">Marca:</div>
-                <div class="detail-value"><%= producto.marca || 'N/A' %></div>
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">Modelo:</div>
-                <div class="detail-value"><%= producto.modelo || 'N/A' %></div>
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">Número de Serie:</div>
-                <div class="detail-value"><%= producto.numero_serie || 'N/A' %></div>
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">Estado:</div>
-                <div class="detail-value">
-                    <% if (producto.id_estado === 1) { %>
-                        <span class="status-available">Disponible</span>
-                    <% } else if (producto.id_estado === 2) { %>
-                        <span class="status-assigned">Asignado</span>
-                    <% } else if (producto.id_estado === 3) { %>
-                        <span class="status-repair">En reparación</span>
-                    <% } else if (producto.id_estado === 4) { %>
-                        <span class="status-discarded">Descartado</span>
-                    <% } else if (producto.id_estado === 5) { %>
-                        <span class="status-lost">Perdido</span>
-                    <% } else { %>
-                        <span>Desconocido</span>
-                    <% } %>
-                </div>
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">Fecha de Compra:</div>
-                <div class="detail-value"><%= producto.fecha_compra ? new Date(producto.fecha_compra).toLocaleDateString() : 'N/A' %></div>
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">Garantía hasta:</div>
-                <div class="detail-value"><%= producto.garantia_hasta ? new Date(producto.garantia_hasta).toLocaleDateString() : 'N/A' %></div>
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">Descripción:</div>
-                <div class="detail-value"><%= producto.descripcion || 'N/A' %></div>
-            </div>
-            <div class="detail-row">
-                <div class="detail-label">Especificaciones:</div>
-                <div class="detail-value"><%= producto.especificaciones || 'N/A' %></div>
-            </div>
-            
-            <% if (inventario) { %>
-                <div class="detail-row">
-                    <div class="detail-label">Inventario:</div>
-                    <div class="detail-value"><%= inventario.nombre %></div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Cantidad Total:</div>
-                    <div class="detail-value"><%= inventario.cantidad %></div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Disponible:</div>
-                    <div class="detail-value"><%= inventario.cantidad_disponible %></div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">Asignado:</div>
-                    <div class="detail-value"><%= inventario.cantidad_asignada %></div>
-                </div>
-            <% } else { %>
-                <div class="detail-row">
-                    <div class="detail-label">Inventario:</div>
-                    <div class="detail-value" style="color: red;">Este producto no pertenece a ningún inventario</div>
-                </div>
-            <% } %>
-        </div>
+                            <div class="producto-details">
+                                <div class="detail-row">
+                                    <div>ID:  <%= producto.id_producto %></div>
+                                        
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Nombre:  <%= producto.nombre %></div>
+                                    <div class="detail-value">
+                                    </div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Categoría: <%= producto.categoria_nombre || 'Sin categoría' %></div>
+                                    <div class="detail-value">
+                                    </div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Marca: <%= producto.marca || 'N/A' %></div>
+                                    <div class="detail-value">
+                                        
+                                    </div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Modelo: <%= producto.modelo || 'N/A' %></div>
+                                    <div class="detail-value">
+                                        
+                                    </div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Número de Serie: <%= producto.numero_serie || 'N/A' %></div>
+                                    <div class="detail-value">
+                                    </div>
+                                </div>
+                                <div class="detail-row">
 
-        <% if (asignaciones && asignaciones.length > 0) { %>
-            <h3 style="margin-top: 30px;">Asignaciones Activas</h3>
-            <table class="asignaciones-table">
-                <thead>
-                    <tr>
-                        <th>Cliente</th>
-                        <th>Empleado Asignador</th>
-                        <th>Fecha Asignación</th>
-                        <th>Fecha Entrega</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% asignaciones.forEach(asignacion => { %>
-                        <tr>
-                            <td><%= asignacion.cliente_nombre %> <%= asignacion.cliente_apellido %></td>
-                            <td>
-                                <% if (asignacion.empleado_nombre) { %>
-                                    <%= asignacion.empleado_nombre %> <%= asignacion.empleado_apellido %>
-                                <% } else { %>
-                                    N/A
+
+                                    <div class="detail-label">Estado:  <% if (producto.id_estado===1) { %></div>
+                                    <div class="detail-value">
+                                            <span class="status-available">Disponible</span>
+                                            <% } else if (producto.id_estado===2) { %>
+                                                <span class="status-assigned">Asignado</span>
+                                                <% } else if (producto.id_estado===3) { %>
+                                                    <span class="status-repair">En reparación</span>
+                                                    <% } else if (producto.id_estado===4) { %>
+                                                        <span class="status-discarded">Descartado</span>
+                                                        <% } else if (producto.id_estado===5) { %>
+                                                            <span class="status-lost">Perdido</span>
+                                                            <% } else { %>
+                                                                <span>Desconocido</span>
+                                                                <% } %>
+                                    </div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Fecha de Compra:  <%= producto.fecha_compra ? new Date(producto.fecha_compra).toLocaleDateString()
+                                        : 'N/A' %></div>
+                                    <div class="detail-value">
+                                       
+                                    </div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Garantía hasta:          <%= producto.garantia_hasta ? new
+                                        Date(producto.garantia_hasta).toLocaleDateString() : 'N/A' %></div>
+                                    <div class="detail-value">
+                                
+                                    </div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Descripción: <%= producto.descripcion || 'N/A' %></div>
+                                    <div class="detail-value">
+                                        
+                                    </div>
+                                </div>
+                                <div class="detail-row">
+                                    <div class="detail-label">Especificaciones: <%= producto.especificaciones || 'N/A' %></div>
+                                    <div class="detail-value">
+                                        
+                                    </div>
+                                </div>
+
+                                <% if (inventario) { %>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Inventario: <%= inventario.nombre %></div>
+                                        <div class="detail-value">
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Cantidad Total:  <%= inventario.cantidad %></div>
+                                        <div class="detail-value">
+                                           
+                                        </div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Disponible:  <%= inventario.cantidad_disponible %></div>
+                                        <div class="detail-value">
+                                           
+                                        </div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Asignado: <%= inventario.cantidad_asignada %></div>
+                                        <div class="detail-value">
+                                            
+                                        </div>
+                                    </div>
+                                    <% } else { %>
+                                        <div class="detail-row">
+                                            <div class="detail-label">Inventario:</div>
+                                            <div class="detail-value" style="color: red;">Este producto no pertenece a
+                                                ningún inventario</div>
+                                        </div>
+                                        <% } %>
+                            </div>
+
+                            <% if (asignaciones && asignaciones.length> 0) { %>
+                                <h3 style="margin-top: 30px;">Asignaciones Activas</h3>
+                                <table class="asignaciones-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Cliente</th>
+                                            <th>Empleado Asignador</th>
+                                            <th>Fecha Asignación</th>
+                                            <th>Fecha Entrega</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% asignaciones.forEach(asignacion=> { %>
+                                            <tr>
+                                                <td>
+                                                    <%= asignacion.cliente_nombre %>
+                                                        <%= asignacion.cliente_apellido %>
+                                                </td>
+                                                <td>
+                                                    <% if (asignacion.empleado_nombre) { %>
+                                                        <%= asignacion.empleado_nombre %>
+                                                            <%= asignacion.empleado_apellido %>
+                                                                <% } else { %>
+                                                                    N/A
+                                                                    <% } %>
+                                                </td>
+                                                <td>
+                                                    <%= new Date(asignacion.fecha_asignacion).toLocaleString() %>
+                                                </td>
+                                                <td>
+                                                    <%= asignacion.fecha_entrega ? new
+                                                        Date(asignacion.fecha_entrega).toLocaleString() : 'Pendiente' %>
+                                                </td>
+                                                <td class="action-cell">
+                                                    <a href="/productos/desasignar/<%= asignacion.id_asignacion %>?id_producto=<%= producto.id_producto %>"
+                                                        class="btn btn-danger"
+                                                        onclick="return confirm('¿Está seguro de desasignar este producto? Se devolverá al inventario.')">
+                                                        Desasignar
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <% }); %>
+                                    </tbody>
+                                </table>
                                 <% } %>
-                            </td>
-                            <td><%= new Date(asignacion.fecha_asignacion).toLocaleString() %></td>
-                            <td><%= asignacion.fecha_entrega ? new Date(asignacion.fecha_entrega).toLocaleString() : 'Pendiente' %></td>
-                            <td class="action-cell">
-                                <a href="/productos/desasignar/<%= asignacion.id_asignacion %>?id_producto=<%= producto.id_producto %>" 
-                                   class="btn btn-danger"
-                                   onclick="return confirm('¿Está seguro de desasignar este producto? Se devolverá al inventario.')">
-                                    Desasignar
-                                </a>
-                            </td>
-                        </tr>
-                    <% }); %>
-                </tbody>
-            </table>
-        <% } %>
 
-        <div class="actions">
-            <a href="/productos/editar/<%= producto.id_producto %>" class="btn btn-primary">Editar</a>
-            <% if (inventario && inventario.cantidad_disponible > 0) { %>
-                <a href="/productos/asignar/<%= producto.id_producto %>" class="btn btn-success">Asignar</a>
-            <% } else if (inventario) { %>
-                <button class="btn btn-success" disabled title="No hay productos disponibles en el inventario">Asignar</button>
-            <% } else { %>
-                <button class="btn btn-success" disabled title="Primero el producto tiene que pertenecer a un inventario">Asignar</button>
-            <% } %>
-            <a href="/productos" class="btn btn-secondary">Volver</a>
-        </div>
-    </main>
+                                    <div class="actions">
+                                        <a href="/productos/editar/<%= producto.id_producto %>"
+                                            class="btn btn-primary">Editar</a>
+                                        <% if (inventario && inventario.cantidad_disponible> 0) { %>
+                                            <a href="/productos/asignar/<%= producto.id_producto %>"
+                                                class="btn btn-success">Asignar</a>
+                                            <% } else if (inventario) { %>
+                                                <button class="btn btn-success" disabled
+                                                    title="No hay productos disponibles en el inventario">Asignar</button>
+                                                <% } else { %>
+                                                    <button class="btn btn-success" disabled
+                                                        title="Primero el producto tiene que pertenecer a un inventario">Asignar</button>
+                                                    <% } %>
+                                                        <a href="/productos" class="btn btn-secondary">Volver</a>
+                                    </div>
+        </main>
 
-    <%- include('../partials/footer') %>
+        <%- include('../partials/footer') %>
 </body>
+
 </html>

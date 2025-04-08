@@ -5,35 +5,120 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
     <style>
-        /* Estilos anteriores... */
+
+        h2 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #ff021b;
+        }
+
+        .equipo-card {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #1e1e1e;
+            border-radius: 20px;
+        }
+
+        .equipo-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .equipo-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .estado {
+            font-size: 1rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: capitalize;
+        }
+
         .estado-reparado {
             background-color: #28a745;
             color: white;
         }
+
+        .estado-irreparable {
+            background-color: #ff0019;
+            color: white;
+        }
+
         .btn-pagar {
             background-color: #007bff;
             color: white;
-            padding: 5px 10px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: 25px;
             cursor: pointer;
-            margin-top: 10px;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
         }
+
+        .btn-pagar:hover {
+            background-color: #0056b3;
+        }
+
         .btn-pagar:disabled {
             background-color: #6c757d;
             cursor: not-allowed;
         }
+
         .costos {
-            margin-top: 10px;
+            margin-top: 15px;
             padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
+            background-color: #1e1e1e;
+            border-radius: 8px;
         }
+
         .costo-item {
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+            font-size: 1rem;
         }
+
         .pagado {
-            color: #28a745;
+            color: #ffff;
+            font-weight: bold;
+        }
+
+        .equipo-desactivado {
+            opacity: 0.7;
+            background-color: #1e1e1e;
+        }
+
+        .center-btn {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .detalle-item {
+            margin-bottom: 10px;
+            font-size: 1rem;
+            
+
+        }
+
+        .label {
             font-weight: bold;
         }
     </style>
@@ -41,8 +126,10 @@
 <body>
     <%- include('../partials/header') %>
 
-    <main class="container equipos-container">
+    <main class="container">
+        <br>
         <h2>Mis Equipos en Soporte</h2>
+        <br>    
         
         <% if (typeof success !== 'undefined') { %>
             <div class="alert alert-success"><%= success %></div>
@@ -56,12 +143,15 @@
             <p>No tienes equipos en soporte actualmente.</p>
         <% } else { %>
             <% solicitudes.forEach(solicitud => { %>
-                <div class="equipo-card">
+                <div class="equipo-card <%= solicitud.estado_reparacion_id === 14 ? 'equipo-desactivado' : '' %>">
                     <div class="equipo-header">
                         <div class="equipo-title">
                             <%= solicitud.producto_nombre %> - <%= solicitud.marca %> <%= solicitud.modelo %>
                             <% if (solicitud.numero_serie) { %>
                                 (Serie: <%= solicitud.numero_serie %>)
+                            <% } %>
+                            <% if (solicitud.estado_reparacion_id === 14) { %>
+                                <span class="text-danger">(Equipo desactivado)</span>
                             <% } %>
                         </div>
                         <div class="estado estado-<%= (solicitud.estado_reparacion || solicitud.estado_solicitud).toLowerCase().replace(' ', '-') %>">
@@ -103,7 +193,7 @@
                             </div>
                         <% } %>
 
-                        <% if (solicitud.estado_reparacion_id === 13) { %>
+                        <% if (solicitud.estado_reparacion_id === 13 || solicitud.estado_reparacion_id === 14) { %>
                             <div class="costos">
                                 <div class="costo-item">
                                     <span class="label">Costo estimado:</span>
@@ -131,9 +221,11 @@
                         <% } %>
 
                         <% if (solicitud.estado_reparacion_id === 13 && !solicitud.pagado) { %>
-                            <form action="/equipos-soporte/pagar/<%= solicitud.id_proceso %>" method="POST">
-                                <button type="submit" class="btn-pagar">Pagar Reparación</button>
-                            </form>
+                            <div class="center-btn">
+                                <form action="/equipos-soporte/pagar/<%= solicitud.id_proceso %>" method="POST">
+                                    <button type="submit" class="btn-pagar">Pagar Reparación</button>
+                                </form>
+                            </div>
                         <% } else if (solicitud.pagado) { %>
                             <div class="detalle-item">
                                 <span class="label">Estado de pago:</span>

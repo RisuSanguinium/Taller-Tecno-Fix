@@ -4,69 +4,188 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
+
+
+
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
         table {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+            border-collapse: separate;
+            border-spacing: 0 15px;
+            margin-top: 30px;
+            background-color: #222;
+            color: #fff;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
+        td, th {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #00aaff;
         }
         th {
-            background-color: #f2f2f2;
-        }
-        .filter-form {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
+            background-color: #00aaff;
+            color: #000;
             font-weight: bold;
         }
-        input[type="date"] {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+        td {
+            text-align: justify;
+        }
+        .actions {
+            white-space: nowrap;
+            text-align: center;
+            margin-top: 20px;
         }
         .btn {
+            padding: 10px 15px;
+            margin: 10px 5px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .btn-primary {
+            background-color: #55e923;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #4db81d;
+        }
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+        .btn-info:hover {
+            background-color: #138496;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        h2 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #00aaff;
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0;
+        }
+        .header-container a {
+            margin-left: 10px;
+            color: #00aaff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .filter-form {
+            background-color: #444;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .filter-form .form-group {
+            margin-bottom: 15px;
+        }
+        .filter-form label {
+            font-size: 14px;
+            color: #ddd;
+        }
+        .filter-form input[type="date"] {
+            padding: 8px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: 1px solid #888;
+            width: 100%;
+            
+        }
+        .filter-form .form-group-left {
+            width: 48%;
+        }
+        .filter-form .form-group-right {
+            width: 48%;
+        }
+        .filter-form button {
+            background-color: #00aaff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        .filter-form button:hover {
+            background-color: #0088cc;
+        }
+        .message {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .message-success {
+            background-color: #4caf50;
+            color: white;
+        }
+        .message-error {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .date-filter {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #1c1c1c;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .date-filter button {
             padding: 8px 15px;
             background-color: #007bff;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
         }
-        .btn-success {
-            background-color: #28a745;
-        }
-        .actions {
-            margin-top: 20px;
-        }
-        .estado-cell {
-            font-weight: bold;
-        }
-        .estado-diagnostico { color: #856404; }
-        .estado-reparacion { color: #155724; }
-        .estado-espera { color: #004085; }
-        .estado-irreparable { color: #dc3545; }
+
+
+
     </style>
+
+
 </head>
 <body>
     <%- include('../partials/header') %>
 
     <main class="container">
+        <br>
         <h2>Bitácora de Reparaciones</h2>
+        <br>
 
         <% if (typeof success !== 'undefined') { %>
             <div style="color: green; margin: 10px 0;"><%= success %></div>
@@ -76,24 +195,18 @@
             <div style="color: red; margin: 10px 0;"><%= error %></div>
         <% } %>
 
-        <div class="filter-form">
-            <form action="/bitacora-reparaciones" method="POST">
-                <div class="form-group">
-                    <label for="fechaInicio">Fecha de inicio:</label>
-                    <input type="date" id="fechaInicio" name="fechaInicio" value="<%= fechaInicio %>" required>
-                </div>
-                <div class="form-group">
-                    <label for="fechaFin">Fecha de fin:</label>
-                    <input type="date" id="fechaFin" name="fechaFin" value="<%= fechaFin %>" required>
-                </div>
-                <button type="submit" class="btn">Filtrar</button>
-            </form>
-        </div>
+        <form method="GET" class="date-filter">
+            <label>Desde:</label>
+            <input type="date" name="inicio" value="<%= fechaInicio %>">
+            <label>Hasta:</label>
+            <input type="date" name="fin" value="<%= fechaFin %>">
+            <button type="submit">Filtrar</button>
+        </form>
 
         <% if (registros.length > 0) { %>
             <div class="actions">
                 <a href="/bitacora-reparaciones/pdf?fechaInicio=<%= fechaInicio %>&fechaFin=<%= fechaFin %>" 
-                   class="btn btn-success" target="_blank">Descargar PDF</a>
+                   class="btn btn-info" target="_blank">Descargar PDF</a>
             </div>
 
             <table>

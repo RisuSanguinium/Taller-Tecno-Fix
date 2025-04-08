@@ -4,34 +4,134 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
+
+    <style> 
+        body {
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        h2 {
+            color: #00aaff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            color: #00aaff;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-container {
+            max-width: 900px; 
+            margin: auto;
+            padding: 30px;
+            background-color: #222;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 170, 255, 0.4);
+            margin-top: 20px; 
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .success {
+            color: limegreen;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #00aaff;
+            border-radius: 6px;
+            font-size: 16px;
+            padding: 12px;
+            width: 100%;
+            margin-bottom: 15px;
+            min-width: 600px; 
+        }
+
+        .form-control:focus {
+            background-color: #444;
+            border-color: #00aaff;
+            color: #fff;
+        }
+
+        .btn-primary {
+            background-color: #00aaff;
+            color: #000;
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s, transform 0.2s;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0088cc;
+            transform: scale(1.05);
+        }
+
+        .actions {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        main {
+            flex-grow: 1;
+            padding-top: 20px;
+        }
+    </style>
+
 </head>
+
 <body>
+
     <%- include('../partials/header') %>
 
-    <main>
-        <h2>Iniciar sesión</h2>
-        
-        <% if (typeof error !== 'undefined') { %>
-            <p style="color: red;"><%= error %></p>
-        <% } %>
+    <main class="d-flex justify-content-center align-items-center" style="flex-grow: 1;">
+        <div class="form-container">
+            <h2>Iniciar sesión</h2>
+            
+            <% if (typeof error !== 'undefined') { %>
+                <div class="error"><%= error %></div>
+            <% } %>
 
-        <% if (locals.query && locals.query.registro === 'exitoso') { %>
-            <p style="color: green;">¡Registro exitoso! Por favor inicie sesión.</p>
-        <% } %>
+            <% if (locals.query && locals.query.registro === 'exitoso') { %>
+                <div class="success">¡Registro exitoso! Por favor inicie sesión.</div>
+            <% } %>
 
-        <form action="/login" method="POST">
-            <div>
-                <label>Email:</label>
-                <input type="email" name="email" required>
-            </div>
-            <div>
-                <label>Contraseña:</label>
-                <input type="password" name="password" required>
-            </div>
-            <button type="submit">Ingresar</button>
-        </form>
+            <form action="/login" method="POST">
+                <div>
+                    <label>Email:</label>
+                    <input type="email" name="email" class="form-control" required>
+                </div>
+                <div>
+                    <label>Contraseña:</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn-primary">Ingresar</button>
+                </div>
+            </form>
+        </div>
     </main>
 
     <%- include('../partials/footer') %>
+
 </body>
 </html>

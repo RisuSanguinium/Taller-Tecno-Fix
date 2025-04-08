@@ -50,27 +50,6 @@
             font-weight: bold;
             transition: background-color 0.3s ease;
         }
-        .btn-primary {
-            background-color: #55e923;
-            color: white;
-        }
-        .btn-primary:hover {
-            background-color: #4db81d;
-        }
-        .btn-info {
-            background-color: #17a2b8;
-            color: white;
-        }
-        .btn-info:hover {
-            background-color: #138496;
-        }
-        .btn-danger {
-            background-color: #dc3545;
-            color: white;
-        }
-        .btn-danger:hover {
-            background-color: #c82333;
-        }
         h2 {
             font-size: 24px;
             text-align: center;
@@ -112,14 +91,8 @@
             border-radius: 4px;
             border: 1px solid #888;
             width: 100%;
-            text-align: center;
         }
-        .filter-form .form-group-left {
-            width: 48%;
-        }
-        .filter-form .form-group-right {
-            width: 48%;
-        }
+
         .filter-form button {
             background-color: #00aaff;
             color: white;
@@ -129,23 +102,6 @@
             cursor: pointer;
             font-size: 14px;
             transition: background-color 0.3s ease;
-        }
-        .filter-form button:hover {
-            background-color: #0088cc;
-        }
-        .message {
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        .message-success {
-            background-color: #4caf50;
-            color: white;
-        }
-        .message-error {
-            background-color: #f44336;
-            color: white;
         }
 
         .date-filter {
@@ -170,8 +126,7 @@
             cursor: pointer;
         }
 
-
-
+       
     </style>
 </head>
 <body>
@@ -179,15 +134,15 @@
 
     <main class="container">
         <br>
-        <h2>Bitácora de Asignaciones</h2>
+        <h2>Reporte de Pagos de Reparaciones</h2>
         <br>
 
         <% if (typeof success !== 'undefined') { %>
-            <div class="message message-success"><%= success %></div>
+            <div style="color: green; margin: 10px 0;"><%= success %></div>
         <% } %>
 
         <% if (typeof error !== 'undefined') { %>
-            <div class="message message-error"><%= error %></div>
+            <div style="color: red; margin: 10px 0;"><%= error %></div>
         <% } %>
 
         <form method="GET" class="date-filter">
@@ -198,42 +153,46 @@
             <button type="submit">Filtrar</button>
         </form>
 
-        <% if (registros.length > 0) { %>
+
+        <% if (pagos.length > 0) { %>
             <div class="actions">
-                <a href="/bitacora-asignaciones/pdf?fechaInicio=<%= fechaInicio %>&fechaFin=<%= fechaFin %>" 
+                <a href="/reportes-pagos/pdf?fechaInicio=<%= fechaInicio %>&fechaFin=<%= fechaFin %>" 
                    class="btn btn-info" target="_blank">Descargar PDF</a>
             </div>
 
             <table>
                 <thead>
                     <tr>
-                        <th>Fecha</th>
+                        <th>Fecha Pago</th>
                         <th>Producto</th>
                         <th>Cliente</th>
-                        <th>Empleado</th>
-                        <th>Estado Anterior</th>
-                        <th>Estado Nuevo</th>
-                        <th>Usuario</th>
-                        <th>Observaciones</th>
+                        <th>Técnico</th>
+                        <th class="text-right">Costo</th>
+                        <th>Solicitud</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% registros.forEach(registro => { %>
+                    <% let total = 0; %>
+                    <% pagos.forEach(pago => { %>
+                        <% total += parseFloat(pago.costo_final); %>
                         <tr>
-                            <td><%= new Date(registro.fecha_modificacion).toLocaleString() %></td>
-                            <td><%= registro.producto_nombre %></td>
-                            <td><%= registro.cliente_nombre %> <%= registro.cliente_apellido %></td>
-                            <td><%= registro.empleado_nombre %> <%= registro.empleado_apellido %></td>
-                            <td><%= registro.estado_anterior %></td>
-                            <td><%= registro.estado_nuevo %></td>
-                            <td><%= registro.usuario_modificacion %></td>
-                            <td><%= registro.observaciones %></td>
+                            <td><%= new Date(pago.fecha_pago).toLocaleDateString() %></td>
+                            <td><%= pago.producto_nombre %> (Serie: <%= pago.numero_serie %>)</td>
+                            <td><%= pago.cliente_nombre %> <%= pago.cliente_apellido %></td>
+                            <td><%= pago.tecnico_nombre %> <%= pago.tecnico_apellido %></td>
+                            <td class="text-right">$<%= parseFloat(pago.costo_final).toFixed(2) %></td>
+                            <td><%= pago.id_solicitud %></td>
                         </tr>
                     <% }); %>
+                    <tr class="text-bold">
+                        <td colspan="4">Total</td>
+                        <td class="text-right">$<%= total.toFixed(2) %></td>
+                        <td></td>
+                    </tr>
                 </tbody>
             </table>
         <% } else { %>
-            <p>No hay registros en la bitácora para el rango de fechas seleccionado.</p>
+            <p>No hay pagos registrados para el rango de fechas seleccionado.</p>
         <% } %>
     </main>
 
