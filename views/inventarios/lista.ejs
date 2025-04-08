@@ -108,14 +108,18 @@
                         <td>
                             <% if (inventario.nombre_responsable) { %>
                                 <%= inventario.nombre_responsable %> <%= inventario.apellido_responsable %>
+                                <% if (inventario.empleado_activo === 0) { %>
+                                    <span style="color: red;">(Empleado desactivado)</span>
+                                <% } %>
                             <% } else { %>
                                 Sin asignar
                             <% } %>
                         </td>
                         <td><%= new Date(inventario.fecha_creacion).toLocaleDateString() %></td>
                         <td class="actions">
-                            <a href="/inventarios/editar/<%= inventario.id_inventario %>" class="btn btn-info">Editar</a>
                             <a href="/inventarios/ver/<%= inventario.id_inventario %>" class="btn btn-primary">Ver</a>
+                            <a href="/inventarios/editar/<%= inventario.id_inventario %>" class="btn btn-info">Editar</a>
+                            <a href="/inventarios/agregar-producto/<%= inventario.id_inventario %>" class="btn btn-success">Agregar Producto</a>
                             <a href="/inventarios/eliminar/<%= inventario.id_inventario %>" class="btn btn-danger" onclick="return confirm('¿Está seguro de eliminar este inventario?')">Eliminar</a>
                         </td>
                     </tr>

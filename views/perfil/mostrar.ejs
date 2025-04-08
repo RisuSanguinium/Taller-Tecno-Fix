@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+    
+        main.container {
+            max-width: 900px;
+            margin: 30px auto;
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+        }
+    
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #f5f5f5;
+        }
+    
+        .profile-container {
+            margin-top: 20px;
+        }
+    
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #444;
+        }
+    
+        .profile-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+    
+        .detail-group {
+            margin-bottom: 20px;
+        }
+    
+        .detail-label {
+            font-weight: bold;
+            color: #cccccc;
+            margin-bottom: 8px;
+        }
+    
+        .detail-value {
+            padding: 10px;
+            background-color: #2c2c2c;
+            border-radius: 6px;
+            border: 1px solid #444;
+            color: #f0f0f0;
+        }
+    
+        .btn-edit {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+    
+        .btn-edit:hover {
+            background-color: #0069d9;
+        }
+    
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+        }
+    
+        .alert-success {
+            background-color: #155724;
+            color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <main class="container">
+        <% if (typeof success !== 'undefined') { %>
+            <div class="alert alert-success"><%= success %></div>
+        <% } %>
+
+        <div class="profile-container">
+            <div class="profile-header">
+                <h2>Mi Perfil</h2>
+                <a href="/perfil/editar" class="btn-edit">Editar Perfil</a>
+            </div>
+
+            <div class="profile-details">
+                <div class="detail-group">
+                    <div class="detail-label">Rol</div>
+                    <div class="detail-value"><%= usuario.rol %></div>
+                </div>
+
+                <div class="detail-group">
+                    <div class="detail-label">Nombre de usuario</div>
+                    <div class="detail-value"><%= perfil.username %></div>
+                </div>
+
+                <div class="detail-group">
+                    <div class="detail-label">Email</div>
+                    <div class="detail-value"><%= perfil.email %></div>
+                </div>
+
+                <% if (usuario.rol === 'Empleado' || usuario.rol === 'Cliente') { %>
+                    <div class="detail-group">
+                        <div class="detail-label">Nombre</div>
+                        <div class="detail-value"><%= perfil.nombre %></div>
+                    </div>
+
+                    <div class="detail-group">
+                        <div class="detail-label">Apellido</div>
+                        <div class="detail-value"><%= perfil.apellido %></div>
+                    </div>
+
+                    <div class="detail-group">
+                        <div class="detail-label">Cédula</div>
+                        <div class="detail-value"><%= perfil.cedula %></div>
+                    </div>
+
+                    <div class="detail-group">
+                        <div class="detail-label">Teléfono</div>
+                        <div class="detail-value"><%= perfil.telefono %></div>
+                    </div>
+
+                    <div class="detail-group">
+                        <div class="detail-label">Departamento</div>
+                        <div class="detail-value"><%= perfil.departamento %></div>
+                    </div>
+                <% } %>
+
+                <% if (usuario.rol === 'Empleado') { %>
+                    <div class="detail-group">
+                        <div class="detail-label">Especialidad</div>
+                        <div class="detail-value"><%= perfil.especialidad %></div>
+                    </div>
+                <% } %>
+
+                <% if (usuario.rol === 'Cliente') { %>
+                    <div class="detail-group">
+                        <div class="detail-label">Puesto</div>
+                        <div class="detail-value"><%= perfil.puesto %></div>
+                    </div>
+
+                    <div class="detail-group">
+                        <div class="detail-label">Fecha de ingreso</div>
+                        <div class="detail-value"><%= perfil.fecha_ingreso ? new Date(perfil.fecha_ingreso).toLocaleDateString() : 'No especificada' %></div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

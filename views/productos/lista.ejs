@@ -124,7 +124,6 @@
                                         <th>Modelo</th>
                                         <th>Categoría</th>
                                         <th>N° Serie</th>
-                                        <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
@@ -148,21 +147,6 @@
                                             </td>
                                             <td>
                                                 <%= producto.numero_serie || 'N/A' %>
-                                            </td>
-                                            <td>
-                                                <% if (producto.id_estado===1) { %>
-                                                    <span class="status-available">Disponible</span>
-                                                    <% } else if (producto.id_estado===2) { %>
-                                                        <span class="status-assigned">Asignado</span>
-                                                        <% } else if (producto.id_estado===3) { %>
-                                                            <span class="status-repair">En reparación</span>
-                                                            <% } else if (producto.id_estado===4) { %>
-                                                                <span class="status-discarded">Descartado</span>
-                                                                <% } else if (producto.id_estado===5) { %>
-                                                                    <span class="status-lost">Perdido</span>
-                                                                    <% } else { %>
-                                                                        <span>Desconocido</span>
-                                                                        <% } %>
                                             </td>
                                             <td class="actions">
                                                 <a href="/productos/ver/<%= producto.id_producto %>"

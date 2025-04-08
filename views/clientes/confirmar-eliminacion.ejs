@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        main.container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 30px;
+        }
+
+        h2 {
+            color: #00aaff;
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .confirmation-card {
+            background: #1c1c1c;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .alert-danger {
+            background-color: #721c24;
+            color: #f8d7da;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid #f5c6cb;
+        }
+
+        .product-list {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #252525;
+            border-radius: 8px;
+        }
+
+        .product-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #333;
+            color: #b0c4de;
+        }
+
+        .product-item:last-child {
+            border-bottom: none;
+        }
+
+        .warning-message {
+            color: #ffcc00;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #332e00;
+            border-radius: 6px;
+            border-left: 4px solid #ffcc00;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .client-info {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: #b0c4de;
+            text-align: center;
+        }
+
+        .client-name {
+            color: #00aaff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/header') %>
+
+    <main class="container">
+        <h2>Confirmar Eliminación de Cliente</h2>
+
+        <div class="confirmation-card">
+            <% if (typeof error !== 'undefined') { %>
+                <div class="alert alert-danger"><%= error %></div>
+            <% } %>
+
+            <div class="client-info">
+                Está a punto de eliminar al cliente: <span class="client-name"><%= cliente.nombre %> <%= cliente.apellido %></span>
+            </div>
+
+            <div class="product-list">
+                <h4 style="color: #00aaff; margin-bottom: 15px;">Productos asignados activamente:</h4>
+                <% if (productos.length > 0) { %>
+                    <% productos.forEach(producto => { %>
+                        <div class="product-item">
+                            <%= producto.nombre %> - <%= producto.marca %> <%= producto.modelo %>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p style="color: #6c757d; text-align: center;">No hay productos asignados</p>
+                <% } %>
+            </div>
+
+            <div class="warning-message">
+                <strong>¡Advertencia!</strong> Todos los productos asignados serán marcados como inactivos y las asignaciones serán canceladas.
+            </div>
+
+            <div class="actions">
+                <a href="/clientes/eliminar/<%= cliente.id_cliente %>?confirmar=true" class="btn btn-danger">
+                    Sí, eliminar cliente
+                </a>
+                <a href="/clientes" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

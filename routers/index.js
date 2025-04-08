@@ -10,6 +10,7 @@ const bitacoraAController = require('../controllers/bitacoraAController');
 const bitacoraRController = require('../controllers/bitacoraRController');
 const dashboardController = require('../controllers/dashboardController');
 const reportePagosController = require('../controllers/reportePagosController');
+const perfilController = require('../controllers/perfilController');
 
 // Rutas públicas
 router.get('/', (req, res) => {
@@ -106,5 +107,10 @@ router.get('/estadisticas', dashboardController.mostrarEstadisticas);
 router.get('/reportes-pagos', reportePagosController.mostrarReporte);
 router.post('/reportes-pagos', reportePagosController.filtrarReporte);
 router.get('/reportes-pagos/pdf', reportePagosController.generarPDF);
+
+//Rutas del perfil
+router.get('/perfil', perfilController.mostrarPerfil);
+router.get('/perfil/editar', perfilController.mostrarFormularioEdicion);
+router.post('/perfil/actualizar', perfilController.actualizarPerfil);
 
 module.exports = router;

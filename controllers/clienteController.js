@@ -151,10 +151,13 @@ const clienteController = {
         }
     
         const idCliente = req.params.id;
+        const { confirmar } = req.query;
     
-        // Verificar si el cliente tiene asignaciones activas
+        // Verificar asignaciones activas
         conexion.query(
-            'SELECT COUNT(*) as count FROM Asignacion WHERE id_cliente = ? AND activa = 1',
+            `SELECT COUNT(*) as asignaciones_activas 
+             FROM Asignacion 
+             WHERE id_cliente = ? AND activa = 1`,
             [idCliente],
             (error, results) => {
                 if (error) {
@@ -162,8 +165,43 @@ const clienteController = {
                     return res.redirect('/clientes?error=Error al verificar asignaciones del cliente');
                 }
     
-                if (results[0].count > 0) {
-                    return res.redirect('/clientes?error=No se puede desactivar el cliente porque tiene asignaciones activas');
+                const tieneAsignaciones = results[0].asignaciones_activas > 0;
+    
+                // Si tiene asignaciones y no se ha confirmado, mostrar advertencia
+                if (tieneAsignaciones && !confirmar) {
+                    return conexion.query(`
+                        SELECT c.*, u.email 
+                        FROM Cliente c
+                        JOIN Usuario u ON c.id_usuario = u.id_usuario
+                        WHERE c.id_cliente = ? AND u.activo = 1
+                    `, [idCliente], (error, clienteResults) => {
+                        if (error || clienteResults.length === 0) {
+                            return res.redirect('/clientes?error=Cliente no encontrado');
+                        }
+    
+                        const cliente = clienteResults[0];
+                        
+                        // Obtener productos asignados para mostrar en la advertencia
+                        conexion.query(`
+                            SELECT p.id_producto, p.nombre, p.marca, p.modelo 
+                            FROM Asignacion a
+                            JOIN Producto p ON a.id_producto = p.id_producto
+                            WHERE a.id_cliente = ? AND a.activa = 1
+                        `, [idCliente], (error, productos) => {
+                            if (error) {
+                                console.error('Error al obtener productos asignados:', error);
+                                return res.redirect('/clientes?error=Error al obtener productos asignados');
+                            }
+    
+                            return res.render('clientes/confirmar-eliminacion', {
+                                title: 'Confirmar Eliminación - Tecno-Fix',
+                                currentPage: 'clientes',
+                                cliente: cliente,
+                                productos: productos,
+                                error: 'Este cliente tiene productos asignados activamente. ¿Desea continuar con la eliminación?'
+                            });
+                        });
+                    });
                 }
     
                 // Obtener el id_usuario asociado
@@ -178,19 +216,72 @@ const clienteController = {
     
                         const idUsuario = results[0].id_usuario;
     
-                        // Desactivar el usuario (eliminación lógica)
-                        conexion.query(
-                            'UPDATE Usuario SET activo = 0 WHERE id_usuario = ?',
-                            [idUsuario],
-                            (error) => {
+                        // Si tiene asignaciones y se confirmó, procesar todo
+                        if (tieneAsignaciones && confirmar) {
+                            // 1. Actualizar inventario (mover de asignados a disponibles)
+                            conexion.query(`
+                                UPDATE InventarioProducto ip
+                                JOIN Asignacion a ON ip.id_producto = a.id_producto
+                                SET 
+                                    ip.cantidad_asignada = ip.cantidad_asignada - 1,
+                                    ip.cantidad_disponible = ip.cantidad_disponible + 1
+                                WHERE a.id_cliente = ? AND a.activa = 1
+                            `, [idCliente], (error) => {
                                 if (error) {
-                                    console.error('Error al desactivar usuario:', error);
-                                    return res.redirect('/clientes?error=Error al desactivar cliente');
+                                    console.error('Error al actualizar inventario:', error);
+                                    return res.redirect('/clientes?error=Error al actualizar inventario');
                                 }
     
-                                res.redirect('/clientes?success=Cliente desactivado exitosamente');
-                            }
-                        );
+                                // 2. Desactivar asignaciones
+                                conexion.query(
+                                    'UPDATE Asignacion SET activa = 0 WHERE id_cliente = ?',
+                                    [idCliente],
+                                    (error) => {
+                                        if (error) {
+                                            console.error('Error al desactivar asignaciones:', error);
+                                            return res.redirect('/clientes?error=Error al desactivar asignaciones');
+                                        }
+    
+                                        // 3. Eliminar solicitudes de soporte sin procesar
+                                        conexion.query(`
+                                            DELETE s FROM SolicitudSoporte s
+                                            LEFT JOIN ProcesoReparacion pr ON s.id_solicitud = pr.id_solicitud
+                                            WHERE s.id_cliente = ? 
+                                            AND s.fecha_cierre IS NULL 
+                                            AND pr.id_proceso IS NULL
+                                        `, [idCliente], (error) => {
+                                            if (error) {
+                                                console.error('Error al eliminar solicitudes:', error);
+                                                return res.redirect('/clientes?error=Error al limpiar solicitudes de soporte');
+                                            }
+    
+                                            // 4. Finalmente desactivar el usuario
+                                            desactivarUsuario();
+                                        });
+                                    }
+                                );
+                            });
+                        } else {
+                            // No tiene asignaciones o no requiere confirmación
+                            desactivarUsuario();
+                        }
+    
+                        function desactivarUsuario() {
+                            // Desactivar el usuario (eliminación lógica)
+                            conexion.query(
+                                'UPDATE Usuario SET activo = 0 WHERE id_usuario = ?',
+                                [idUsuario],
+                                (error) => {
+                                    if (error) {
+                                        console.error('Error al desactivar usuario:', error);
+                                        return res.redirect('/clientes?error=Error al desactivar cliente');
+                                    }
+    
+                                    res.redirect('/clientes?success=Cliente desactivado exitosamente' + 
+                                        (tieneAsignaciones ? ' (asignaciones canceladas e inventario actualizado)' : ''));
+                                }
+                            );
+                        }
                     }
                 );
             }

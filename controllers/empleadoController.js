@@ -6,11 +6,12 @@ const empleadoController = {
         if (!req.session.user || req.session.user.rol !== 'Administrador') {
             return res.redirect('/login');
         }
-
+    
         conexion.query(`
-            SELECT e.*, u.email 
+            SELECT e.*, u.email, u.activo as usuario_activo
             FROM Empleado e
             JOIN Usuario u ON e.id_usuario = u.id_usuario
+            WHERE u.activo = 1
             ORDER BY e.id_empleado
         `, (error, empleados) => {
             if (error) {
@@ -22,7 +23,7 @@ const empleadoController = {
                     error: 'Error al cargar la lista de empleados'
                 });
             }
-
+    
             res.render('empleados/lista', {
                 title: 'Lista de Empleados - Tecno-Fix',
                 currentPage: 'empleados',
@@ -252,72 +253,133 @@ const empleadoController = {
         if (!req.session.user || req.session.user.rol !== 'Administrador') {
             return res.redirect('/login');
         }
-
+    
         const idEmpleado = req.params.id;
-
-        // Primero verificamos si el empleado tiene responsabilidades
-        conexion.query(
-            `SELECT 
-                (SELECT COUNT(*) FROM Inventario WHERE responsable = ?) AS inventarios,
-                (SELECT COUNT(*) FROM Asignacion WHERE id_empleado_asignador = ?) AS asignaciones,
-                (SELECT COUNT(*) FROM ProcesoReparacion WHERE id_empleado_asignado = ?) AS reparaciones`,
-            [idEmpleado, idEmpleado, idEmpleado],
-            (error, results) => {
-                if (error) {
-                    console.error('Error al verificar responsabilidades:', error);
-                    return res.redirect('/empleados?error=Error al verificar responsabilidades del empleado');
-                }
-
-                const tieneResponsabilidades =
-                    results[0].inventarios > 0 ||
-                    results[0].asignaciones > 0 ||
-                    results[0].reparaciones > 0;
-
-                if (tieneResponsabilidades) {
-                    return res.redirect('/empleados?error=El empleado no se puede eliminar debido a que aún tiene responsabilidades en la empresa');
-                }
-
-                // Si no tiene responsabilidades, procedemos con la eliminación
-                conexion.query(
-                    'SELECT id_usuario FROM Empleado WHERE id_empleado = ?',
-                    [idEmpleado],
-                    (error, results) => {
-                        if (error || results.length === 0) {
-                            console.error('Error al buscar empleado:', error);
-                            return res.redirect('/empleados?error=Empleado no encontrado');
-                        }
-
-                        const idUsuario = results[0].id_usuario;
-
-                        // Eliminar empleado
-                        conexion.query(
-                            'DELETE FROM Empleado WHERE id_empleado = ?',
-                            [idEmpleado],
-                            (error) => {
-                                if (error) {
-                                    console.error('Error al eliminar empleado:', error);
-                                    return res.redirect('/empleados?error=Error al eliminar empleado');
-                                }
-
-                                // Eliminar usuario
-                                conexion.query(
-                                    'DELETE FROM Usuario WHERE id_usuario = ?',
-                                    [idUsuario],
-                                    (error) => {
-                                        if (error) {
-                                            console.error('Error al eliminar usuario:', error);
-                                            return res.redirect('/empleados?error=Error al eliminar usuario asociado');
-                                        }
-
-                                        res.redirect('/empleados?success=Empleado eliminado exitosamente');
-                                    }
-                                );
-                            }
-                        );
-                    }
-                );
+    
+        conexion.beginTransaction(err => {
+            if (err) {
+                console.error('Error al iniciar transacción:', err);
+                return res.redirect('/empleados?error=Error al procesar la solicitud');
             }
-        );
+    
+            // 1. Obtener el id_usuario asociado
+            conexion.query(
+                'SELECT id_usuario FROM Empleado WHERE id_empleado = ?',
+                [idEmpleado],
+                (error, results) => {
+                    if (error || results.length === 0) {
+                        return conexion.rollback(() => {
+                            console.error('Error al buscar empleado:', error);
+                            res.redirect('/empleados?error=Empleado no encontrado');
+                        });
+                    }
+    
+                    const idUsuario = results[0].id_usuario;
+    
+                    // 2. Desactivar el usuario
+                    conexion.query(
+                        'UPDATE Usuario SET activo = 0 WHERE id_usuario = ?',
+                        [idUsuario],
+                        (error) => {
+                            if (error) {
+                                return conexion.rollback(() => {
+                                    console.error('Error al desactivar usuario:', error);
+                                    res.redirect('/empleados?error=Error al desactivar usuario');
+                                });
+                            }
+    
+                            // 3. Actualizar procesos de reparación activos (10,11,12) a Reparado (13)
+                            conexion.query(`
+                                UPDATE ProcesoReparacion 
+                                SET 
+                                    id_estado = 13, -- Reparado
+                                    acciones_realizadas = 'Empleado despedido',
+                                    repuestos_utilizados = 'Ninguno',
+                                    costo_estimado = 0,
+                                    costo_final = 0,
+                                    fecha_fin = NOW(),
+                                    observaciones = 'Proceso cerrado automáticamente por desactivación del empleado'
+                                WHERE id_empleado_asignado = ?
+                                AND id_estado IN (10, 11, 12)  -- Solo procesos activos
+                            `, [idEmpleado], (error) => {
+                                if (error) {
+                                    return conexion.rollback(() => {
+                                        console.error('Error al actualizar procesos de reparación:', error);
+                                        res.redirect('/empleados?error=Error al actualizar procesos de reparación');
+                                    });
+                                }
+    
+                                // 4. Actualizar las solicitudes asociadas a estos procesos a Resuelta (8)
+                                conexion.query(`
+                                    UPDATE SolicitudSoporte s
+                                    JOIN ProcesoReparacion pr ON s.id_solicitud = pr.id_solicitud
+                                    SET 
+                                        s.id_estado = 8, -- Resuelta
+                                        s.fecha_cierre = NOW(),
+                                        s.solucion = 'Reparación cerrada automáticamente por desactivación del técnico'
+                                    WHERE pr.id_empleado_asignado = ?
+                                    AND pr.id_estado = 13 -- Solo los que acabamos de actualizar
+                                `, [idEmpleado], (error) => {
+                                    if (error) {
+                                        return conexion.rollback(() => {
+                                            console.error('Error al actualizar solicitudes:', error);
+                                            res.redirect('/empleados?error=Error al actualizar solicitudes asociadas');
+                                        });
+                                    }
+    
+                                    // 5. Registrar en bitácora de reparaciones
+                                    conexion.query(`
+                                        INSERT INTO BitacoraReparacion 
+                                        (id_proceso, id_estado_anterior, id_estado_nuevo, id_empleado, observaciones)
+                                        SELECT 
+                                            pr.id_proceso,
+                                            pr.id_estado,
+                                            13,  -- Nuevo estado: Reparado
+                                            ?,
+                                            'Proceso cerrado automáticamente por desactivación del técnico'
+                                        FROM ProcesoReparacion pr
+                                        WHERE pr.id_empleado_asignado = ?
+                                        AND pr.id_estado = 13 -- Solo los que acabamos de actualizar
+                                    `, [req.session.user.id_empleado, idEmpleado], (error) => {
+                                        if (error) {
+                                            return conexion.rollback(() => {
+                                                console.error('Error al registrar en bitácora:', error);
+                                                res.redirect('/empleados?error=Error al registrar en bitácora');
+                                            });
+                                        }
+    
+                                        // 6. Quitar al empleado como responsable de inventarios
+                                        conexion.query(
+                                            'UPDATE Inventario SET responsable = NULL WHERE responsable = ?',
+                                            [idEmpleado],
+                                            (error) => {
+                                                if (error) {
+                                                    return conexion.rollback(() => {
+                                                        console.error('Error al actualizar inventarios:', error);
+                                                        res.redirect('/empleados?error=Error al actualizar inventarios asociados');
+                                                    });
+                                                }
+    
+                                                conexion.commit(err => {
+                                                    if (err) {
+                                                        return conexion.rollback(() => {
+                                                            console.error('Error al confirmar transacción:', err);
+                                                            res.redirect('/empleados?error=Error al confirmar la operación');
+                                                        });
+                                                    }
+    
+                                                    res.redirect('/empleados?success=Empleado desactivado exitosamente. Los procesos de reparación activos han sido marcados como completados automáticamente.');
+                                                });
+                                            }
+                                        );
+                                    });
+                                });
+                            });
+                        }
+                    );
+                }
+            );
+        });
     },
 
     listarSolicitudesSoporte: (req, res) => {

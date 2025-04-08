@@ -13,7 +13,7 @@
             padding: 0;
         }
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             background: #111;
             padding: 30px;
             border-radius: 10px;
@@ -35,12 +35,12 @@
             margin: 10px 0;
         }
         .btn {
-            padding: 12px 20px;
+            padding: 8px 12px;
             text-decoration: none;
-            border-radius: 6px;
-            margin: 5px;
+            border-radius: 4px;
+            margin: 2px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
             border: none;
             transition: background 0.3s, transform 0.2s;
         }
@@ -60,6 +60,14 @@
             background-color: #28a745;
             color: white;
         }
+        .btn-warning {
+            background-color: #ffc107;
+            color: #000;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -77,6 +85,22 @@
         th {
             background-color: #00aaff;
             color: black;
+        }
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .form-inline {
+            display: inline-block;
+        }
+        .quantity-input {
+            width: 60px;
+            padding: 5px;
+            background: #333;
+            color: white;
+            border: 1px solid #00aaff;
+            border-radius: 4px;
         }
     </style>
 </head>
@@ -121,6 +145,7 @@
                             <th>Asignado</th>
                             <th>En reparación</th>
                             <th>Descartado</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -135,6 +160,27 @@
                                 <td><%= producto.cantidad_asignada %></td>
                                 <td><%= producto.cantidad_reparacion %></td>
                                 <td><%= producto.cantidad_descartada %></td>
+                                <td class="action-buttons">
+                                    <!-- Formulario para agregar cantidad -->
+                                    <form class="form-inline" action="/inventarios/agregar-cantidad/<%= inventario.id_inventario %>" method="POST">
+                                        <input type="hidden" name="id_producto" value="<%= producto.id_producto %>">
+                                        <input type="number" name="cantidad" min="1" value="1" class="quantity-input">
+                                        <button type="submit" class="btn btn-success">+</button>
+                                    </form>
+                                    
+                                    <!-- Formulario para quitar cantidad -->
+                                    <form class="form-inline" action="/inventarios/quitar-cantidad/<%= inventario.id_inventario %>" method="POST">
+                                        <input type="hidden" name="id_producto" value="<%= producto.id_producto %>">
+                                        <input type="number" name="cantidad" min="1" value="1" class="quantity-input">
+                                        <button type="submit" class="btn btn-warning">-</button>
+                                    </form>
+                                    
+                                    <!-- Botón para eliminar producto -->
+                                    <form class="form-inline" action="/inventarios/eliminar-producto/<%= inventario.id_inventario %>/<%= producto.id_producto %>" method="GET">
+                                        <button type="submit" class="btn btn-danger" 
+                                            onclick="return confirm('¿Está seguro de eliminar este producto del inventario?')">X</button>
+                                    </form>
+                                </td>
                             </tr>
                         <% }); %>
                     </tbody>

@@ -5,11 +5,15 @@ const inventarioController = {
         if (!req.session.user || req.session.user.rol !== 'Administrador') {
             return res.redirect('/login');
         }
-
+    
         conexion.query(`
-            SELECT i.*, e.nombre as nombre_responsable, e.apellido as apellido_responsable 
+            SELECT i.*, 
+                   e.nombre as nombre_responsable, 
+                   e.apellido as apellido_responsable,
+                   u.activo as empleado_activo
             FROM Inventario i
             LEFT JOIN Empleado e ON i.responsable = e.id_empleado
+            LEFT JOIN Usuario u ON e.id_usuario = u.id_usuario
             ORDER BY i.id_inventario
         `, (error, inventarios) => {
             if (error) {
@@ -21,7 +25,7 @@ const inventarioController = {
                     error: 'Error al cargar la lista de inventarios'
                 });
             }
-
+    
             res.render('inventarios/lista', {
                 title: 'Lista de Inventarios - Tecno-Fix',
                 currentPage: 'inventarios',
@@ -34,9 +38,14 @@ const inventarioController = {
         if (!req.session.user || req.session.user.rol !== 'Administrador') {
             return res.redirect('/login');
         }
-
-        // Obtener lista de empleados para seleccionar responsable
-        conexion.query('SELECT id_empleado, nombre, apellido FROM Empleado', (error, empleados) => {
+    
+        // Obtener lista de empleados activos para seleccionar responsable
+        conexion.query(`
+            SELECT e.id_empleado, e.nombre, e.apellido 
+            FROM Empleado e
+            JOIN Usuario u ON e.id_usuario = u.id_usuario
+            WHERE u.activo = 1
+        `, (error, empleados) => {
             if (error) {
                 console.error('Error al obtener empleados:', error);
                 return res.render('inventarios/registrar', {
@@ -46,7 +55,7 @@ const inventarioController = {
                     error: 'Error al cargar la lista de empleados'
                 });
             }
-
+    
             res.render('inventarios/registrar', {
                 title: 'Registrar Inventario - Tecno-Fix',
                 currentPage: 'inventarios',
@@ -140,20 +149,25 @@ const inventarioController = {
         if (!req.session.user || req.session.user.rol !== 'Administrador') {
             return res.redirect('/login');
         }
-
+    
         const idInventario = req.params.id;
-
+    
         // Obtener información del inventario
         conexion.query('SELECT * FROM Inventario WHERE id_inventario = ?', [idInventario], (error, inventarioResults) => {
             if (error || inventarioResults.length === 0) {
                 console.error('Error al obtener inventario:', error);
                 return res.redirect('/inventarios?error=Inventario no encontrado');
             }
-
+    
             const inventario = inventarioResults[0];
-
-            // Obtener lista de empleados para seleccionar responsable
-            conexion.query('SELECT id_empleado, nombre, apellido FROM Empleado', (error, empleados) => {
+    
+            // Obtener lista de empleados activos para seleccionar responsable
+            conexion.query(`
+                SELECT e.id_empleado, e.nombre, e.apellido 
+                FROM Empleado e
+                JOIN Usuario u ON e.id_usuario = u.id_usuario
+                WHERE u.activo = 1
+            `, (error, empleados) => {
                 if (error) {
                     console.error('Error al obtener empleados:', error);
                     return res.render('inventarios/editar', {
@@ -164,7 +178,7 @@ const inventarioController = {
                         error: 'Error al cargar la lista de empleados'
                     });
                 }
-
+    
                 res.render('inventarios/editar', {
                     title: 'Editar Inventario - Tecno-Fix',
                     currentPage: 'inventarios',

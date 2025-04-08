@@ -113,7 +113,11 @@
                                 <li class="nav-item">
                                     <span class="navbar-text">Bienvenido <%= locals.user.nombre %> <%= locals.user.apellido %></span>
                                 </li>
+                                
                             <% } %>
+                            <li class="nav-item">
+                                <a href="/perfil" class="nav-link <%= currentPage === 'perfil' ? 'active' : '' %>">Mi Perfil</a>
+                            </li>
                             <li class="nav-item">
                                 <a href="/logout" class="nav-link">Cerrar sesión</a>
                             </li>
