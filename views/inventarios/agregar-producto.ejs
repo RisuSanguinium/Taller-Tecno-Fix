@@ -4,53 +4,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
+   
     <style>
-        form {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            color: #fff;
+            margin: 0;
+            padding: 0;
         }
-        .form-group {
-            margin-bottom: 15px;
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            background-color: #222;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 170, 255, 0.4);
         }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input, select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .btn {
-            padding: 8px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-        }
-        .error {
-            color: red;
-            margin-bottom: 15px;
-        }
-        .info-section {
+        h2 {
+            font-size: 24px;
+            color: #00aaff;
             margin-bottom: 20px;
         }
+        form div {
+            margin-bottom: 20px;
+        }
+        label {
+            font-size: 14px;
+            color: #00aaff;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #444;
+            background-color: #333;
+            font-size: 14px;
+            color: #fff;
+            resize: vertical; 
+        input:focus, select:focus, textarea:focus {
+            border-color: #00aaff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
+        }
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn {
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            border: none;
+            text-decoration: none;
+            justify-content: center;
+
+        }
+        .btn-primary {
+            background-color: #00aaff;
+            color: #000;
+        }
+        .btn-primary:hover {
+            background-color: #0088cc;
+            transform: scale(1.05);
+        }
+        .btn-secondary {
+            background-color: #555;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #777;
+            transform: scale(1.05);
+        }
+        .error-message {
+            color: red;
+            margin: 10px 0;
+            font-size: 14px;
+        }
     </style>
+
+
 </head>
 <body>
     <%- include('../partials/header') %>
