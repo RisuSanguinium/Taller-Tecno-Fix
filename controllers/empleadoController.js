@@ -6,7 +6,7 @@ const empleadoController = {
         if (!req.session.user || req.session.user.rol !== 'Administrador') {
             return res.redirect('/login');
         }
-    
+
         conexion.query(`
             SELECT e.*, u.email, u.activo as usuario_activo
             FROM Empleado e
@@ -23,7 +23,7 @@ const empleadoController = {
                     error: 'Error al cargar la lista de empleados'
                 });
             }
-    
+
             res.render('empleados/lista', {
                 title: 'Lista de Empleados - Tecno-Fix',
                 currentPage: 'empleados',
@@ -253,15 +253,15 @@ const empleadoController = {
         if (!req.session.user || req.session.user.rol !== 'Administrador') {
             return res.redirect('/login');
         }
-    
+
         const idEmpleado = req.params.id;
-    
+
         conexion.beginTransaction(err => {
             if (err) {
                 console.error('Error al iniciar transacción:', err);
                 return res.redirect('/empleados?error=Error al procesar la solicitud');
             }
-    
+
             // 1. Obtener el id_usuario asociado
             conexion.query(
                 'SELECT id_usuario FROM Empleado WHERE id_empleado = ?',
@@ -273,9 +273,9 @@ const empleadoController = {
                             res.redirect('/empleados?error=Empleado no encontrado');
                         });
                     }
-    
+
                     const idUsuario = results[0].id_usuario;
-    
+
                     // 2. Desactivar el usuario
                     conexion.query(
                         'UPDATE Usuario SET activo = 0 WHERE id_usuario = ?',
@@ -287,7 +287,7 @@ const empleadoController = {
                                     res.redirect('/empleados?error=Error al desactivar usuario');
                                 });
                             }
-    
+
                             // 3. Actualizar procesos de reparación activos (10,11,12) a Reparado (13)
                             conexion.query(`
                                 UPDATE ProcesoReparacion 
@@ -308,7 +308,7 @@ const empleadoController = {
                                         res.redirect('/empleados?error=Error al actualizar procesos de reparación');
                                     });
                                 }
-    
+
                                 // 4. Actualizar las solicitudes asociadas a estos procesos a Resuelta (8)
                                 conexion.query(`
                                     UPDATE SolicitudSoporte s
@@ -326,7 +326,7 @@ const empleadoController = {
                                             res.redirect('/empleados?error=Error al actualizar solicitudes asociadas');
                                         });
                                     }
-    
+
                                     // 5. Registrar en bitácora de reparaciones
                                     conexion.query(`
                                         INSERT INTO BitacoraReparacion 
@@ -347,7 +347,7 @@ const empleadoController = {
                                                 res.redirect('/empleados?error=Error al registrar en bitácora');
                                             });
                                         }
-    
+
                                         // 6. Quitar al empleado como responsable de inventarios
                                         conexion.query(
                                             'UPDATE Inventario SET responsable = NULL WHERE responsable = ?',
@@ -359,7 +359,7 @@ const empleadoController = {
                                                         res.redirect('/empleados?error=Error al actualizar inventarios asociados');
                                                     });
                                                 }
-    
+
                                                 conexion.commit(err => {
                                                     if (err) {
                                                         return conexion.rollback(() => {
@@ -367,7 +367,7 @@ const empleadoController = {
                                                             res.redirect('/empleados?error=Error al confirmar la operación');
                                                         });
                                                     }
-    
+
                                                     res.redirect('/empleados?success=Empleado desactivado exitosamente. Los procesos de reparación activos han sido marcados como completados automáticamente.');
                                                 });
                                             }
@@ -435,48 +435,81 @@ const empleadoController = {
         const id_solicitud = req.params.id;
         const id_empleado = req.session.user.id_empleado;
 
-        // 1. Cambiar estado de la solicitud a "En proceso" (id_estado 7)
-        // 2. Crear proceso de reparación con estado "Diagnóstico" (id_estado 10)
         conexion.beginTransaction(err => {
             if (err) {
                 console.error('Error al iniciar transacción:', err);
                 return res.redirect('/solicitudes-soporte?error=Error al procesar la solicitud');
             }
 
+            // 1. Obtener el id_producto de la solicitud
             conexion.query(
-                'UPDATE SolicitudSoporte SET id_estado = 7 WHERE id_solicitud = ?',
+                'SELECT id_producto FROM SolicitudSoporte WHERE id_solicitud = ?',
                 [id_solicitud],
                 (error, results) => {
-                    if (error) {
+                    if (error || results.length === 0) {
                         return conexion.rollback(() => {
-                            console.error('Error al actualizar solicitud:', error);
-                            res.redirect('/solicitudes-soporte?error=Error al actualizar la solicitud');
+                            console.error('Error al obtener producto:', error);
+                            res.redirect('/solicitudes-soporte?error=Error al obtener información del producto');
                         });
                     }
 
+                    const id_producto = results[0].id_producto;
+
+                    // 2. Cambiar estado de la solicitud a "En proceso" (id_estado 7)
                     conexion.query(
-                        `INSERT INTO ProcesoReparacion 
-                        (id_solicitud, id_empleado_asignado, id_estado, fecha_inicio)
-                        VALUES (?, ?, 10, NOW())`,  // 10 = Diagnóstico
-                        [id_solicitud, id_empleado],
-                        (error, results) => {
+                        'UPDATE SolicitudSoporte SET id_estado = 7 WHERE id_solicitud = ?',
+                        [id_solicitud],
+                        (error) => {
                             if (error) {
                                 return conexion.rollback(() => {
-                                    console.error('Error al crear proceso de reparación:', error);
-                                    res.redirect('/solicitudes-soporte?error=Error al crear proceso de reparación');
+                                    console.error('Error al actualizar solicitud:', error);
+                                    res.redirect('/solicitudes-soporte?error=Error al actualizar la solicitud');
                                 });
                             }
 
-                            conexion.commit(err => {
-                                if (err) {
-                                    return conexion.rollback(() => {
-                                        console.error('Error al confirmar transacción:', err);
-                                        res.redirect('/solicitudes-soporte?error=Error al confirmar la operación');
+                            // 3. Crear proceso de reparación con estado "Diagnóstico" (id_estado 10)
+                            conexion.query(
+                                `INSERT INTO ProcesoReparacion 
+                                (id_solicitud, id_empleado_asignado, id_estado, fecha_inicio)
+                                VALUES (?, ?, 10, NOW())`,
+                                [id_solicitud, id_empleado],
+                                (error, results) => {
+                                    if (error) {
+                                        return conexion.rollback(() => {
+                                            console.error('Error al crear proceso de reparación:', error);
+                                            res.redirect('/solicitudes-soporte?error=Error al crear proceso de reparación');
+                                        });
+                                    }
+
+                                    // 4. Actualizar inventario: pasar de asignado a reparación
+                                    conexion.query(`
+                                        UPDATE InventarioProducto 
+                                        SET 
+                                            cantidad_asignada = cantidad_asignada - 1,
+                                            cantidad_reparacion = cantidad_reparacion + 1
+                                        WHERE id_producto = ?
+                                        AND cantidad_asignada > 0
+                                    `, [id_producto], (error) => {
+                                        if (error) {
+                                            return conexion.rollback(() => {
+                                                console.error('Error al actualizar inventario:', error);
+                                                res.redirect('/solicitudes-soporte?error=Error al actualizar el inventario');
+                                            });
+                                        }
+
+                                        conexion.commit(err => {
+                                            if (err) {
+                                                return conexion.rollback(() => {
+                                                    console.error('Error al confirmar transacción:', err);
+                                                    res.redirect('/solicitudes-soporte?error=Error al confirmar la operación');
+                                                });
+                                            }
+
+                                            res.redirect('/solicitudes-soporte?success=Solicitud aceptada y en proceso de reparación');
+                                        });
                                     });
                                 }
-
-                                res.redirect('/solicitudes-soporte?success=Solicitud aceptada y en proceso de reparación');
-                            });
+                            );
                         }
                     );
                 }
@@ -737,79 +770,130 @@ const empleadoController = {
         if (!req.session.user || req.session.user.rol !== 'Empleado') {
             return res.redirect('/login');
         }
-
+    
         const id_proceso = req.params.id;
         const { motivo, acciones_realizadas } = req.body;
-
+    
         conexion.beginTransaction(err => {
             if (err) {
                 console.error('Error al iniciar transacción:', err);
                 return res.redirect('/en-reparacion?error=Error al procesar la solicitud');
             }
-
-            // 1. Actualizar el proceso de reparación
-            conexion.query(
-                `UPDATE ProcesoReparacion SET 
-                acciones_realizadas = ?,
-                id_estado = 14,  -- Irreparable
-                fecha_fin = NOW(),
-                observaciones = ?
-            WHERE id_proceso = ?`,
-                [acciones_realizadas, motivo, id_proceso],
-                (error, results) => {
-                    if (error) {
-                        return conexion.rollback(() => {
-                            console.error('Error al actualizar reparación:', error);
-                            res.redirect('/en-reparacion?error=Error al actualizar la reparación');
-                        });
-                    }
-
-                    // 2. Actualizar la solicitud a estado Resuelta (8)
-                    conexion.query(
-                        `UPDATE SolicitudSoporte s
-                    JOIN ProcesoReparacion pr ON s.id_solicitud = pr.id_solicitud
-                    SET s.id_estado = 8, s.fecha_cierre = NOW(), 
-                    s.solucion = 'Equipo irreparable: ${motivo}'
-                    WHERE pr.id_proceso = ?`,
-                        [id_proceso],
-                        (error, results) => {
-                            if (error) {
-                                return conexion.rollback(() => {
-                                    console.error('Error al actualizar solicitud:', error);
-                                    res.redirect('/en-reparacion?error=Error al actualizar la solicitud');
-                                });
-                            }
-
-                            // 3. Registrar en bitácora
-                            conexion.query(
-                                `INSERT INTO BitacoraReparacion 
-                            (id_proceso, id_estado_anterior, id_estado_nuevo, id_empleado, observaciones)
-                            VALUES (?, ?, 14, ?, ?)`,  //-- A Irreparable (14)
-                                [id_proceso, req.body.estado_actual, req.session.user.id_empleado, motivo],
-                                (error, results) => {
-                                    if (error) {
-                                        return conexion.rollback(() => {
-                                            console.error('Error al registrar en bitácora:', error);
-                                            res.redirect('/en-reparacion?error=Error al registrar en bitácora');
-                                        });
-                                    }
-
-                                    conexion.commit(err => {
-                                        if (err) {
-                                            return conexion.rollback(() => {
-                                                console.error('Error al confirmar transacción:', err);
-                                                res.redirect('/en-reparacion?error=Error al confirmar la operación');
-                                            });
-                                        }
-
-                                        res.redirect('/en-reparacion?success=Equipo marcado como irreparable');
+    
+            // 1. Obtener información del producto y solicitud
+            conexion.query(`
+                SELECT s.id_producto, s.id_cliente, s.id_solicitud
+                FROM ProcesoReparacion pr
+                JOIN SolicitudSoporte s ON pr.id_solicitud = s.id_solicitud
+                WHERE pr.id_proceso = ?
+            `, [id_proceso], (error, results) => {
+                if (error || results.length === 0) {
+                    return conexion.rollback(() => {
+                        console.error('Error al obtener información:', error);
+                        res.redirect('/en-reparacion?error=Error al obtener información del producto');
+                    });
+                }
+    
+                const { id_producto, id_cliente, id_solicitud } = results[0];
+    
+                // 2. Actualizar el proceso de reparación
+                conexion.query(`
+                    UPDATE ProcesoReparacion SET 
+                        acciones_realizadas = ?,
+                        id_estado = 14,  -- Irreparable
+                        fecha_fin = NOW(),
+                        observaciones = ?
+                    WHERE id_proceso = ?`,
+                    [acciones_realizadas, motivo, id_proceso],
+                    (error) => {
+                        if (error) {
+                            return conexion.rollback(() => {
+                                console.error('Error al actualizar reparación:', error);
+                                res.redirect('/en-reparacion?error=Error al actualizar la reparación');
+                            });
+                        }
+    
+                        // 3. Actualizar la solicitud a estado Resuelta (8)
+                        conexion.query(`
+                            UPDATE SolicitudSoporte SET 
+                                id_estado = 8, 
+                                fecha_cierre = NOW(), 
+                                solucion = ?
+                            WHERE id_solicitud = ?`,
+                            [`Equipo irreparable: ${motivo}`, id_solicitud],
+                            (error) => {
+                                if (error) {
+                                    return conexion.rollback(() => {
+                                        console.error('Error al actualizar solicitud:', error);
+                                        res.redirect('/en-reparacion?error=Error al actualizar la solicitud');
                                     });
                                 }
-                            );
-                        }
-                    );
-                }
-            );
+    
+                                // 4. Desactivar asignación del producto con el cliente
+                                conexion.query(`
+                                    UPDATE Asignacion SET
+                                        activa = 0,
+                                        fecha_devolucion = NOW(),
+                                        motivo_devolucion = 'Producto marcado como irreparable'
+                                    WHERE id_producto = ?
+                                    AND id_cliente = ?
+                                    AND activa = 1
+                                `, [id_producto, id_cliente], (error) => {
+                                    if (error) {
+                                        return conexion.rollback(() => {
+                                            console.error('Error al desactivar asignación:', error);
+                                            res.redirect('/en-reparacion?error=Error al desactivar la asignación');
+                                        });
+                                    }
+    
+                                    // 5. Actualizar inventario: pasar de reparación a descartado
+                                    conexion.query(`
+                                        UPDATE InventarioProducto SET
+                                            cantidad_reparacion = cantidad_reparacion - 1,
+                                            cantidad_descartada = cantidad_descartada + 1
+                                        WHERE id_producto = ?
+                                        AND cantidad_reparacion > 0
+                                    `, [id_producto], (error) => {
+                                        if (error) {
+                                            return conexion.rollback(() => {
+                                                console.error('Error al actualizar inventario:', error);
+                                                res.redirect('/en-reparacion?error=Error al actualizar el inventario');
+                                            });
+                                        }
+    
+                                        // 6. Registrar en bitácora
+                                        conexion.query(`
+                                            INSERT INTO BitacoraReparacion 
+                                            (id_proceso, id_estado_anterior, id_estado_nuevo, id_empleado, observaciones)
+                                            VALUES (?, ?, 14, ?, ?)`,
+                                            [id_proceso, req.body.estado_actual, req.session.user.id_empleado, motivo],
+                                            (error) => {
+                                                if (error) {
+                                                    return conexion.rollback(() => {
+                                                        console.error('Error al registrar en bitácora:', error);
+                                                        res.redirect('/en-reparacion?error=Error al registrar en bitácora');
+                                                    });
+                                                }
+    
+                                                conexion.commit(err => {
+                                                    if (err) {
+                                                        return conexion.rollback(() => {
+                                                            console.error('Error al confirmar transacción:', err);
+                                                            res.redirect('/en-reparacion?error=Error al confirmar la operación');
+                                                        });
+                                                    }
+    
+                                                    res.redirect('/en-reparacion?success=Equipo marcado como irreparable. Asignación desactivada y producto marcado como descartado.');
+                                                });
+                                            }
+                                        );
+                                    });
+                                });
+                            }
+                        );
+                    }
+                );
+            });
         });
     },
 
@@ -818,15 +902,15 @@ const empleadoController = {
         if (!req.session.user || req.session.user.rol !== 'Empleado') {
             return res.redirect('/login');
         }
-    
+
         const id_proceso = req.params.id;
         const { acciones_realizadas, repuestos_utilizados, costo_estimado, observaciones } = req.body;
-    
+
         // Validación mejorada
         if (!acciones_realizadas?.trim() || !repuestos_utilizados?.trim() || !costo_estimado) {
             return res.redirect(`/en-reparacion/?error=Todos los campos requeridos deben estar completos`);
         }
-    
+
         conexion.query(
             `UPDATE ProcesoReparacion SET 
             acciones_realizadas = ?,
