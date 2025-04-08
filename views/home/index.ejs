@@ -1,29 +1,197 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title><%= title %></title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-        <style>
-            body {
-                background-color: #000;
-                color: #fff;
-            }
-            h2 {
-                color: #0d6efd; 
-            }
-        </style>
-    </head>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        h1,
+        h2,
+        h3 {
+            color: #1e90ff;
+            text-align: center;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 4px rgba(30, 144, 255, 0.5);
+            letter-spacing: 1px;
+        }
+
+
+        section {
+            padding: 60px 20px;
+            margin: 40px 0;
+            background: linear-gradient(to bottom, #1c1c1c, #171717);
+            border-bottom: 1px solid #2c2c2c;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            transition: background 0.3s;
+        }
+
+        section img {
+            max-width: 40%;
+            border-radius: 12px;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 4px 12px rgba(30, 144, 255, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        section img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(30, 144, 255, 0.6);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            text-align: center;
+        }
+
+
+        .productos-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .producto-card {
+            background-color: #1f1f1f;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            width: 260px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .producto-card img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .producto-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(30, 144, 255, 0.5);
+        }
+
+        .images img {
+            max-width: 45%;
+            border-radius: 15px;
+            display: block;
+            margin: 20px auto;
+            box-shadow: 0 4px 12px rgba(30, 144, 255, 0.4);
+            transition: transform 0.3s;
+        }
+
+        .images img:hover {
+            transform: scale(1.05);
+        }
+    </style>
+
+
+</head>
+
+<%- include('../partials/header') %>
+
     <body>
-        <%- include('../partials/header') %>
-    
+
+
         <main class="container text-center py-5">
-            <h2><%= message || "Bienvenido a Tecno-Fix" %></h2>
+            <h2>
+                <%= message || "Bienvenido a Tecno-Fix" %>
+            </h2>
             <p class="lead">Sistema integral para la gestión de equipos informáticos, asignaciones y reparaciones.</p>
         </main>
-    
-        <%- include('../partials/footer') %>
-    
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+        <section id="nosotros" class="about">
+            <div>
+                <img src="https://media.licdn.com/dms/image/v2/C5612AQEcRBIW4cOHKA/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1580148527931?e=2147483647&v=beta&t=KxrhuX4V3VwsPkhhXStw4_pGQoyUmvCfHZJWDX-txzA"
+                    alt="Auto">
+                <br>
+                <p>En Tecno-Fix, nos apasiona la reparación y el mantenimiento de equipos tecnológicos, ofreciendo
+                    soluciones rápidas, eficaces y de calidad. Nos dedicamos a devolverle la funcionalidad a tus
+                    dispositivos, garantizando siempre un servicio profesional y confiable. Nuestro objetivo es ser tu
+                    aliado en la tecnología, asegurando que cada equipo esté siempre en su mejor estado, para que puedas
+                    seguir adelante sin preocupaciones.</p>
+            </div>
+        </section>
+
+        <section id="mision" class="mision">
+            <h2>Nuestra Misión</h2>
+            <img src="https://www.tecnologicahn.com/img/soporte-individual.png"
+            <p>En Tecno-Fix, nuestra misión es proporcionar soluciones de reparación y mantenimiento de dispositivos
+                tecnológicos con un enfoque en calidad, rapidez y confiabilidad. Nos comprometemos a ofrecer un servicio
+                excepcional, resolviendo las necesidades de nuestros clientes con precisión y atención al detalle,
+                asegurando que cada equipo funcione como nuevo. Buscamos ser el aliado de confianza para todas las
+                reparaciones tecnológicas, brindando siempre el mejor servicio para mantenerte conectado y en
+                funcionamiento</p>
+        </section>
+
+        <section id="vision" class="vision">
+            <h2>Nuestra Visión</h2>
+            <img src="https://logginet.com.ve/wp-content/uploads/2024/02/male-technician-working-broken-computer-1-1024x683.jpg"
+            <p>En Tecno-Fix, nuestra visión es convertirnos en la empresa líder en reparación y mantenimiento de
+                dispositivos tecnológicos, reconocida por nuestra excelencia en servicio, innovación y compromiso con la
+                satisfacción del cliente. Buscamos expandir nuestra presencia, siendo el referente de confianza para
+                quienes requieren soluciones rápidas y efectivas, contribuyendo al avance tecnológico y mejorando la
+                experiencia de nuestros clientes a través de cada reparación.</p>
+        </section>
+
+        <section class="images">
+            <img src="https://gruporg.tech/web/image/470764-7b7656a4/colaboracion.jpg" alt="img">
+        </section>
+
+        <section id="valores" class="valores">
+            <h2>Valores</h2>
+            <ul>
+                <li><strong>Integridad:</strong> Actuar siempre con honestidad y ética.</li>
+                <li><strong>Calidad:</strong> Ofrecer productos y servicios de excelencia.</li>
+                <li><strong>Innovación:</strong> Buscar constantemente nuevas formas de mejorar.</li>
+                <li><strong>Compromiso:</strong> Priorizar las necesidades de nuestros clientes.</li>
+            </ul>
+        </section>
+
+        <section id="productos" class="productos">
+            <h2>Nuestros Productos</h2>
+            <div class="productos-container">
+
+                <div class="producto-card">
+                    <img src="https://i0.wp.com/ciudadregion.com/uploads/2022/05/computador-alta-calidad.jpg?fit=1200%2C722&ssl=1" alt="Auto">
+                    <h3>Computadoras Gaming</h3>
+                    <p>Para vivir la mejor experiencia en tus juegos favoritos</p>
+                </div>
+
+                <div class="producto-card">
+                    <img src="https://www.pcware.com.co/wp-content/uploads/2024/05/R5116JGCV-006.jpg" alt="Auto">
+                    <h3>Computadoras</h3>
+                    <p>Las mejores marcas y los mejores precios</p>
+                </div>
+
+                <div class="producto-card">
+                    <img src="https://resizer.iproimg.com/unsafe/1280x/filters:format(webp):quality(85)/https://assets.iprofesional.com/assets/jpg/2024/12/589580.jpg" alt="Auto">
+                    <h3>Celulares de lujo</h3>
+                    <p>LLeva tu celular favorito hoy!!</p>
+                </div>
+
+                <div class="producto-card">
+                    <img src="https://www.elgallomasgallo.com.hn/media/catalog/product/m/i/microsoft-office-365-familiar-175911_4_.jpg?optimize=medium&bg-color=255,255,255&fit=bounds&height=700&width=700&canvas=700:700"
+                        alt="Auto">
+                    <h3>Licencias   </h3>
+                    <p>Al mejor precio</p>
+                </div>
+            </div>
+        </section>
+
     </body>
+
+    <%- include('../partials/footer') %>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        </body>
