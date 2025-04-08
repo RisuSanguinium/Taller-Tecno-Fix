@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
+
+
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -112,7 +115,7 @@
             border-radius: 4px;
             border: 1px solid #888;
             width: 100%;
-            text-align: center;
+            
         }
         .filter-form .form-group-left {
             width: 48%;
@@ -173,21 +176,23 @@
 
 
     </style>
+
+
 </head>
 <body>
     <%- include('../partials/header') %>
 
     <main class="container">
         <br>
-        <h2>Bitácora de Asignaciones</h2>
+        <h2>Bitácora de Reparaciones</h2>
         <br>
 
         <% if (typeof success !== 'undefined') { %>
-            <div class="message message-success"><%= success %></div>
+            <div style="color: green; margin: 10px 0;"><%= success %></div>
         <% } %>
 
         <% if (typeof error !== 'undefined') { %>
-            <div class="message message-error"><%= error %></div>
+            <div style="color: red; margin: 10px 0;"><%= error %></div>
         <% } %>
 
         <form method="GET" class="date-filter">
@@ -200,7 +205,7 @@
 
         <% if (registros.length > 0) { %>
             <div class="actions">
-                <a href="/bitacora-asignaciones/pdf?fechaInicio=<%= fechaInicio %>&fechaFin=<%= fechaFin %>" 
+                <a href="/bitacora-reparaciones/pdf?fechaInicio=<%= fechaInicio %>&fechaFin=<%= fechaFin %>" 
                    class="btn btn-info" target="_blank">Descargar PDF</a>
             </div>
 
@@ -210,7 +215,7 @@
                         <th>Fecha</th>
                         <th>Producto</th>
                         <th>Cliente</th>
-                        <th>Empleado</th>
+                        <th>Técnico</th>
                         <th>Estado Anterior</th>
                         <th>Estado Nuevo</th>
                         <th>Usuario</th>
@@ -221,11 +226,20 @@
                     <% registros.forEach(registro => { %>
                         <tr>
                             <td><%= new Date(registro.fecha_modificacion).toLocaleString() %></td>
-                            <td><%= registro.producto_nombre %></td>
+                            <td>
+                                <%= registro.producto_nombre %>
+                                <% if (registro.numero_serie) { %>
+                                    <br><small>Serie: <%= registro.numero_serie %></small>
+                                <% } %>
+                            </td>
                             <td><%= registro.cliente_nombre %> <%= registro.cliente_apellido %></td>
                             <td><%= registro.empleado_nombre %> <%= registro.empleado_apellido %></td>
-                            <td><%= registro.estado_anterior %></td>
-                            <td><%= registro.estado_nuevo %></td>
+                            <td class="estado-cell estado-<%= registro.estado_anterior.toLowerCase().replace(' ', '-') %>">
+                                <%= registro.estado_anterior %>
+                            </td>
+                            <td class="estado-cell estado-<%= registro.estado_nuevo.toLowerCase().replace(' ', '-') %>">
+                                <%= registro.estado_nuevo %>
+                            </td>
                             <td><%= registro.usuario_modificacion %></td>
                             <td><%= registro.observaciones %></td>
                         </tr>

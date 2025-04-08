@@ -1,6 +1,5 @@
 const db = require('../database/db');
 const PDFDocument = require('pdfkit');
-const fs = require('fs');
 
 const bitacoraController = {
     mostrarBitacora: (req, res) => {

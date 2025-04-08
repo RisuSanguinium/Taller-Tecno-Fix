@@ -87,16 +87,16 @@
             font-size: 14px;
         }
     </style>
-
+    
 </head>
 <body>
     <%- include('../partials/header') %>
 
     <main class="container">
         <h2>Editar Inventario</h2>
-
+        
         <% if (typeof error !== 'undefined') { %>
-            <div class="error-message"><%= error %></div>
+            <div class="error"><%= error %></div>
         <% } %>
 
         <form action="/inventarios/editar/<%= inventario.id_inventario %>" method="POST">
@@ -107,7 +107,7 @@
 
             <div class="form-group">
                 <label for="descripcion">Descripción:</label>
-                <textarea id="descripcion" name="descripcion" rows="5"><%= inventario.descripcion || '' %></textarea>
+                <textarea id="descripcion" name="descripcion" rows="3"><%= inventario.descripcion || '' %></textarea>
             </div>
 
             <div class="form-group">
@@ -128,12 +128,13 @@
                 </select>
             </div>
 
-            <div class="actions">
+            <div class="form-group">
                 <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                <a href="/inventarios" class="btn btn-secondary">Cancelar</a>
+                <a href="/inventarios/ver/<%= inventario.id_inventario %>" class="btn btn-secondary">Cancelar</a>
             </div>
         </form>
     </main>
 
+    <%- include('../partials/footer') %>
 </body>
 </html>

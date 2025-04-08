@@ -63,7 +63,7 @@ const soporteController = {
             return res.redirect('/login');
         }
 
-        const { id_producto, tipo_problema, urgencia, descripcion_problema } = req.body;
+        const { id_producto, urgencia, descripcion_problema } = req.body;
         
         // Primero obtener el id_cliente del usuario
         conexion.query(
