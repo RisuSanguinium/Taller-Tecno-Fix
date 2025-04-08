@@ -230,7 +230,7 @@ const inventarioController = {
                 return res.redirect('/inventarios?error=Error al procesar la solicitud');
             }
     
-            // 1. Eliminar todos los productos asociados en InventarioProducto
+            //Eliminar todos los productos asociados en InventarioProducto
             conexion.query(
                 'DELETE FROM InventarioProducto WHERE id_inventario = ?',
                 [idInventario],
@@ -242,7 +242,7 @@ const inventarioController = {
                         });
                     }
     
-                    // 2. Actualizar asignaciones para quitar la referencia al inventario
+                    //Actualizar asignaciones para quitar la referencia al inventario
                     conexion.query(
                         'UPDATE Asignacion SET id_inventario = NULL WHERE id_inventario = ?',
                         [idInventario],
@@ -254,7 +254,7 @@ const inventarioController = {
                                 });
                             }
     
-                            // 3. Eliminar el inventario
+                            //Eliminar el inventario
                             conexion.query(
                                 'DELETE FROM Inventario WHERE id_inventario = ?',
                                 [idInventario],
