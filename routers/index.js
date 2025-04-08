@@ -75,6 +75,8 @@ router.get('/clientes/ver/:id', clienteController.verCliente);
 router.get('/clientes/editar/:id', clienteController.mostrarFormularioEdicion);
 router.post('/clientes/editar/:id', clienteController.actualizarCliente);
 router.get('/clientes/eliminar/:id', clienteController.eliminarCliente);
+
+//Rutas de Cliente
 router.get('/equipos-soporte', clienteController.mostrarEquiposSoporte);
 router.post('/equipos-soporte/pagar/:id', clienteController.marcarComoPagado);
 

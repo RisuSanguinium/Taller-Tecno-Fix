@@ -220,38 +220,70 @@ const inventarioController = {
         if (!req.session.user || req.session.user.rol !== 'Administrador') {
             return res.redirect('/login');
         }
-
+    
         const idInventario = req.params.id;
-
-        // Primero verificar si hay productos asociados
-        conexion.query(
-            'SELECT COUNT(*) as count FROM InventarioProducto WHERE id_inventario = ?',
-            [idInventario],
-            (error, results) => {
-                if (error) {
-                    console.error('Error al verificar productos:', error);
-                    return res.redirect('/inventarios?error=Error al verificar productos asociados');
-                }
-
-                if (results[0].count > 0) {
-                    return res.redirect('/inventarios?error=No se puede eliminar un inventario con productos asociados');
-                }
-
-                // Eliminar inventario
-                conexion.query(
-                    'DELETE FROM Inventario WHERE id_inventario = ?',
-                    [idInventario],
-                    (error) => {
-                        if (error) {
-                            console.error('Error al eliminar inventario:', error);
-                            return res.redirect('/inventarios?error=Error al eliminar inventario');
-                        }
-
-                        res.redirect('/inventarios?success=Inventario eliminado exitosamente');
-                    }
-                );
+    
+        // Iniciar transacción
+        conexion.beginTransaction(err => {
+            if (err) {
+                console.error('Error al iniciar transacción:', err);
+                return res.redirect('/inventarios?error=Error al procesar la solicitud');
             }
-        );
+    
+            // 1. Eliminar todos los productos asociados en InventarioProducto
+            conexion.query(
+                'DELETE FROM InventarioProducto WHERE id_inventario = ?',
+                [idInventario],
+                (error) => {
+                    if (error) {
+                        return conexion.rollback(() => {
+                            console.error('Error al eliminar productos del inventario:', error);
+                            res.redirect('/inventarios?error=Error al eliminar productos asociados al inventario');
+                        });
+                    }
+    
+                    // 2. Actualizar asignaciones para quitar la referencia al inventario
+                    conexion.query(
+                        'UPDATE Asignacion SET id_inventario = NULL WHERE id_inventario = ?',
+                        [idInventario],
+                        (error) => {
+                            if (error) {
+                                return conexion.rollback(() => {
+                                    console.error('Error al actualizar asignaciones:', error);
+                                    res.redirect('/inventarios?error=Error al actualizar asignaciones asociadas');
+                                });
+                            }
+    
+                            // 3. Eliminar el inventario
+                            conexion.query(
+                                'DELETE FROM Inventario WHERE id_inventario = ?',
+                                [idInventario],
+                                (error) => {
+                                    if (error) {
+                                        return conexion.rollback(() => {
+                                            console.error('Error al eliminar inventario:', error);
+                                            res.redirect('/inventarios?error=Error al eliminar inventario');
+                                        });
+                                    }
+    
+                                    // Confirmar transacción
+                                    conexion.commit(err => {
+                                        if (err) {
+                                            return conexion.rollback(() => {
+                                                console.error('Error al confirmar transacción:', err);
+                                                res.redirect('/inventarios?error=Error al confirmar la operación');
+                                            });
+                                        }
+    
+                                        res.redirect('/inventarios?success=Inventario eliminado exitosamente');
+                                    });
+                                }
+                            );
+                        }
+                    );
+                }
+            );
+        });
     },
 
     // Métodos adicionales para gestión de productos en inventario
