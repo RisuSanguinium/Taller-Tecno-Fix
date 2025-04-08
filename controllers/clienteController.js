@@ -293,7 +293,7 @@ const clienteController = {
                 if (estado === 14) { // Irreparable
                     // Desactivar el producto
                     conexion.query(
-                        'UPDATE Producto SET activo = 0 WHERE id_producto = ?',
+                        'UPDATE Producto SET activo = 1 WHERE id_producto = ?',
                         [id_producto],
                         (error) => {
                             if (error) {
