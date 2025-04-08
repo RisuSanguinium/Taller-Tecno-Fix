@@ -906,7 +906,6 @@ const empleadoController = {
         const id_proceso = req.params.id;
         const { acciones_realizadas, repuestos_utilizados, costo_estimado, observaciones } = req.body;
 
-        // Validación mejorada
         if (!acciones_realizadas?.trim() || !repuestos_utilizados?.trim() || !costo_estimado) {
             return res.redirect(`/en-reparacion/?error=Todos los campos requeridos deben estar completos`);
         }

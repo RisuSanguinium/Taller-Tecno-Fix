@@ -63,7 +63,7 @@ const productoController = {
         if (!req.session.user || req.session.user.rol !== 'Administrador') {
             return res.redirect('/login');
         }
-
+    
         const {
             id_categoria,
             nombre,
@@ -75,38 +75,68 @@ const productoController = {
             fecha_compra,
             garantia_hasta
         } = req.body;
-
-        // Primero verificamos si el número de serie ya existe
-        db.query('SELECT id_producto FROM producto WHERE numero_serie = ?', [numero_serie], (error, existing) => {
+    
+        // Función para generar un número de serie único
+        const generarNumeroSerieUnico = (baseNumeroSerie, callback) => {
+            let intento = 1;
+            let numeroSerieActual = baseNumeroSerie;
+            
+            const verificarYGenerar = () => {
+                db.query(
+                    'SELECT id_producto FROM producto WHERE numero_serie = ?', 
+                    [numeroSerieActual],
+                    (error, results) => {
+                        if (error) {
+                            return callback(error);
+                        }
+    
+                        if (results.length === 0) {
+                            return callback(null, numeroSerieActual);
+                        } else {
+                            intento++;
+                            numeroSerieActual = `${baseNumeroSerie}-${intento}`;
+                            verificarYGenerar();
+                        }
+                    }
+                );
+            };
+    
+            verificarYGenerar();
+        };
+    
+        // Generamos un número de serie único
+        generarNumeroSerieUnico(numero_serie, (error, numeroSerieUnico) => {
             if (error) {
                 console.error(error);
                 req.session.formData = req.body;
-                return res.redirect('/productos/registrar?error=Error al verificar número de serie');
+                return res.redirect('/productos/registrar?error=Error al generar número de serie único');
             }
-
-            if (existing && existing.length > 0) {
-                req.session.formData = req.body;
-                return res.redirect('/productos/registrar?error=El número de serie ya está registrado');
-            }
-
-            // Si no existe, procedemos a insertar
+    
+            // Insertar el producto con el número de serie único
             const query = `
                 INSERT INTO producto (
                     id_categoria, nombre, descripcion, marca, modelo, 
                     numero_serie, especificaciones, fecha_compra, garantia_hasta
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             `;
-
+    
             db.query(query, [
-                id_categoria, nombre, descripcion, marca, modelo,
-                numero_serie, especificaciones, fecha_compra || null, garantia_hasta || null
+                id_categoria, 
+                nombre, 
+                descripcion, 
+                marca, 
+                modelo,
+                numeroSerieUnico,
+                especificaciones, 
+                fecha_compra || null, 
+                garantia_hasta || null
             ], (error, results) => {
                 if (error) {
                     console.error(error);
                     req.session.formData = req.body;
                     return res.redirect('/productos/registrar?error=Error al registrar el producto');
                 }
-
+    
                 res.redirect('/productos?success=Producto registrado exitosamente');
             });
         });
