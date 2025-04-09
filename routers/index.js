@@ -116,3 +116,5 @@ router.get('/perfil/editar', perfilController.mostrarFormularioEdicion);
 router.post('/perfil/actualizar', perfilController.actualizarPerfil);
 
 module.exports = router;
+
+//Sala 3

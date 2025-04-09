@@ -214,7 +214,7 @@ const productoController = {
             return res.redirect('/login');
         }
 
-        // Primero obtenemos el producto
+        //Obtenemos el producto
         db.query('SELECT * FROM producto WHERE id_producto = ?', [id], (error, productos) => {
             if (error) {
                 console.error(error);
@@ -225,7 +225,7 @@ const productoController = {
                 return res.redirect('/productos?error=Producto no encontrado');
             }
 
-            // Luego obtenemos las categorías
+            // Obtenemos las categorías
             db.query('SELECT * FROM categoria', (error, categorias) => {
                 if (error) {
                     console.error(error);
@@ -260,7 +260,7 @@ const productoController = {
         if (!req.session.user || req.session.user.rol !== 'Administrador') {
             return res.redirect('/login');
         }
-        // Primero verificamos si el número de serie ya existe en otro producto
+        // Verificamos si el número de serie ya existe en otro producto
         db.query(
             'SELECT id_producto FROM producto WHERE numero_serie = ? AND id_producto != ?',
             [numero_serie, id],
@@ -297,7 +297,7 @@ const productoController = {
         );
     },
 
-    // Eliminar un producto (marcar como inactivo)
+    // Eliminar un producto
     eliminarProducto: (req, res) => {
         const { id } = req.params;
         if (!req.session.user || req.session.user.rol !== 'Administrador') {
@@ -378,7 +378,7 @@ const productoController = {
             return res.redirect('/login');
         }
 
-        // Primero verificamos que el producto existe y está activo
+        // Verificamos que el producto existe y está activo
         db.query(
             'SELECT * FROM producto WHERE id_producto = ? AND activo = 1',
             [id],
@@ -451,7 +451,7 @@ const productoController = {
         const id_empleado_asignador = req.session.user.id_empleado;
         const id_usuario_modificacion = req.session.user.id; // ID del usuario que realiza la acción
 
-        // Primero verificamos que el producto existe y está activo
+        // Verificamos que el producto existe y está activo
         db.query(
             'SELECT * FROM producto WHERE id_producto = ? AND activo = 1',
             [id],
@@ -527,14 +527,13 @@ const productoController = {
 
                                 db.query(bitacoraQuery, [
                                     id_asignacion,
-                                    1, // Estado anterior siempre es Disponible (1)
-                                    nuevoEstado, // Estado nuevo (1 si quedan disponibles, 2 si no)
+                                    1,
+                                    nuevoEstado,
                                     id_usuario_modificacion,
                                     'Asignación inicial del producto'
                                 ], (error, results) => {
                                     if (error) {
                                         console.error('Error al registrar en bitácora:', error);
-                                        // No redirigimos por error, solo registramos y continuamos
                                     }
 
                                     res.redirect(`/productos/ver/${id}?success=Producto asignado exitosamente`);
@@ -549,7 +548,7 @@ const productoController = {
 
     // Desasignar un producto
     desasignarProducto: (req, res) => {
-        const { id } = req.params; // id_asignacion
+        const { id } = req.params;
         const { id_producto } = req.query;
 
         if (!req.session.user || req.session.user.rol !== 'Administrador') {
@@ -568,7 +567,7 @@ const productoController = {
 
                 const id_inventario = asignaciones[0].id_inventario;
 
-                // Actualizar el inventario (devolver el producto)
+                // Actualizar el inventario
                 db.query(
                     `UPDATE inventarioproducto 
                  SET cantidad_disponible = cantidad_disponible + 1,

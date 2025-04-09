@@ -6,7 +6,7 @@ const dashboardController = {
             return res.redirect('/login');
         }
 
-        // Fechas por defecto (1 de enero 2025 hasta hoy)
+        // Fechas por defecto
         const hoy = new Date();
         const fechaInicioDefault = new Date('2025-01-01');
         

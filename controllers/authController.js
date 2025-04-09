@@ -72,7 +72,7 @@ const authController = {
                     nombre: user.nombre,
                     apellido: user.apellido,
                     rol: user.rol,
-                    id_empleado: user.id_empleado || null // Añadimos el id_empleado si existe
+                    id_empleado: user.id_empleado || null
                 };
     
                 // Guardar la sesión antes de redirigir
@@ -199,7 +199,6 @@ const authController = {
                                     });
                                 }
     
-                                // Redirigir al login con mensaje de éxito
                                 res.redirect('/login?registro=exitoso');
                             }
                         );

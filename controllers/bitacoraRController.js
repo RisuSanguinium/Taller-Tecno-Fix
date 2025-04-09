@@ -11,7 +11,7 @@ const bitacoraRController = {
         const fechaInicio = new Date();
         fechaInicio.setDate(fechaInicio.getDate() - 30);
         
-        // Ajustar horas para cubrir todo el día
+        // Ajustar para cubrir todo el día
         fechaInicio.setHours(0, 0, 0, 0);
         fechaFin.setHours(23, 59, 59, 999);
     
@@ -230,7 +230,7 @@ const bitacoraRController = {
                     align: 'left'
                 });
                 
-                // Producto (nombre + serie)
+                // Producto
                 doc.text(`${registro.producto_nombre}\nSerie: ${registro.numero_serie || 'N/A'}`, margin + widths[0], y, {
                     width: widths[1],
                     align: 'left'

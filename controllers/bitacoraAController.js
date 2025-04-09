@@ -7,7 +7,7 @@ const bitacoraController = {
             return res.redirect('/login');
         }
 
-        // Consulta para obtener los últimos 30 días por defecto
+        // Consulta para obtener los últimos 30 días
         const fechaFin = new Date();
         const fechaInicio = new Date();
         fechaInicio.setDate(fechaInicio.getDate() - 30);

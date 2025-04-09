@@ -126,7 +126,6 @@ const clienteController = {
                             return res.redirect(`/clientes/editar/${idCliente}?error=Error al actualizar cliente`);
                         }
     
-                        // Actualizar email del usuario
                         conexion.query(
                             'UPDATE Usuario SET email = ? WHERE id_usuario = ?',
                             [email, idUsuario],
@@ -167,7 +166,7 @@ const clienteController = {
     
                 const tieneAsignaciones = results[0].asignaciones_activas > 0;
     
-                // Si tiene asignaciones y no se ha confirmado, mostrar advertencia
+                // Si tiene asignaciones y no se ha confirmado
                 if (tieneAsignaciones && !confirmar) {
                     return conexion.query(`
                         SELECT c.*, u.email 
@@ -204,7 +203,6 @@ const clienteController = {
                     });
                 }
     
-                // Obtener el id_usuario asociado
                 conexion.query(
                     'SELECT id_usuario FROM Cliente WHERE id_cliente = ?',
                     [idCliente],
@@ -216,9 +214,9 @@ const clienteController = {
     
                         const idUsuario = results[0].id_usuario;
     
-                        // Si tiene asignaciones y se confirmó, procesar todo
+                        // Si tiene asignaciones
                         if (tieneAsignaciones && confirmar) {
-                            // 1. Actualizar inventario (mover de asignados a disponibles)
+                            //Actualizar inventario
                             conexion.query(`
                                 UPDATE InventarioProducto ip
                                 JOIN Asignacion a ON ip.id_producto = a.id_producto
@@ -232,7 +230,7 @@ const clienteController = {
                                     return res.redirect('/clientes?error=Error al actualizar inventario');
                                 }
     
-                                // 2. Desactivar asignaciones
+                                //Desactivar asignaciones
                                 conexion.query(
                                     'UPDATE Asignacion SET activa = 0 WHERE id_cliente = ?',
                                     [idCliente],
@@ -242,7 +240,7 @@ const clienteController = {
                                             return res.redirect('/clientes?error=Error al desactivar asignaciones');
                                         }
     
-                                        // 3. Eliminar solicitudes de soporte sin procesar
+                                        //Eliminar solicitudes de soporte
                                         conexion.query(`
                                             DELETE s FROM SolicitudSoporte s
                                             LEFT JOIN ProcesoReparacion pr ON s.id_solicitud = pr.id_solicitud
@@ -254,20 +252,17 @@ const clienteController = {
                                                 console.error('Error al eliminar solicitudes:', error);
                                                 return res.redirect('/clientes?error=Error al limpiar solicitudes de soporte');
                                             }
-    
-                                            // 4. Finalmente desactivar el usuario
                                             desactivarUsuario();
                                         });
                                     }
                                 );
                             });
                         } else {
-                            // No tiene asignaciones o no requiere confirmación
                             desactivarUsuario();
                         }
     
                         function desactivarUsuario() {
-                            // Desactivar el usuario (eliminación lógica)
+                            // Desactivar el usuario
                             conexion.query(
                                 'UPDATE Usuario SET activo = 0 WHERE id_usuario = ?',
                                 [idUsuario],
@@ -365,7 +360,7 @@ const clienteController = {
     
         const id_proceso = req.params.id;
     
-        // Primero verificar si el producto es irreparable
+        // Verificar si el producto es irreparable
         conexion.query(
             `SELECT pr.id_estado, pr.id_solicitud, s.id_producto 
              FROM ProcesoReparacion pr

@@ -93,7 +93,7 @@ const empleadoController = {
                     });
                 }
 
-                // Obtener ID del rol de Empleado (2 según tu DB)
+                // Obtener ID del rol de Empleado
                 const empleadoRolId = 2;
 
                 // Crear usuario
@@ -201,7 +201,7 @@ const empleadoController = {
         const idEmpleado = req.params.id;
         const { nombre, apellido, cedula, telefono, departamento, especialidad, email } = req.body;
 
-        // Primero obtener el id_usuario asociado
+        // Obtener el id_usuario asociado
         conexion.query(
             'SELECT id_usuario FROM Empleado WHERE id_empleado = ?',
             [idEmpleado],
@@ -262,7 +262,7 @@ const empleadoController = {
                 return res.redirect('/empleados?error=Error al procesar la solicitud');
             }
 
-            // 1. Obtener el id_usuario asociado
+            //Obtener el id_usuario asociado
             conexion.query(
                 'SELECT id_usuario FROM Empleado WHERE id_empleado = ?',
                 [idEmpleado],
@@ -276,7 +276,7 @@ const empleadoController = {
 
                     const idUsuario = results[0].id_usuario;
 
-                    // 2. Desactivar el usuario
+                    //Desactivar el usuario
                     conexion.query(
                         'UPDATE Usuario SET activo = 0 WHERE id_usuario = ?',
                         [idUsuario],
@@ -288,7 +288,7 @@ const empleadoController = {
                                 });
                             }
 
-                            // 3. Actualizar procesos de reparación activos (10,11,12) a Reparado (13)
+                            //Actualizar procesos de reparación activos a Reparado
                             conexion.query(`
                                 UPDATE ProcesoReparacion 
                                 SET 
@@ -309,7 +309,7 @@ const empleadoController = {
                                     });
                                 }
 
-                                // 4. Actualizar las solicitudes asociadas a estos procesos a Resuelta (8)
+                                //Actualizar las solicitudes asociadas a estos procesos a Resuelta
                                 conexion.query(`
                                     UPDATE SolicitudSoporte s
                                     JOIN ProcesoReparacion pr ON s.id_solicitud = pr.id_solicitud
@@ -327,7 +327,7 @@ const empleadoController = {
                                         });
                                     }
 
-                                    // 5. Registrar en bitácora de reparaciones
+                                    // Registrar en bitácora de reparaciones
                                     conexion.query(`
                                         INSERT INTO BitacoraReparacion 
                                         (id_proceso, id_estado_anterior, id_estado_nuevo, id_empleado, observaciones)
@@ -348,7 +348,7 @@ const empleadoController = {
                                             });
                                         }
 
-                                        // 6. Quitar al empleado como responsable de inventarios
+                                        // Quitar al empleado como responsable de inventarios
                                         conexion.query(
                                             'UPDATE Inventario SET responsable = NULL WHERE responsable = ?',
                                             [idEmpleado],
@@ -441,7 +441,6 @@ const empleadoController = {
                 return res.redirect('/solicitudes-soporte?error=Error al procesar la solicitud');
             }
 
-            // 1. Obtener el id_producto de la solicitud
             conexion.query(
                 'SELECT id_producto FROM SolicitudSoporte WHERE id_solicitud = ?',
                 [id_solicitud],
@@ -455,7 +454,7 @@ const empleadoController = {
 
                     const id_producto = results[0].id_producto;
 
-                    // 2. Cambiar estado de la solicitud a "En proceso" (id_estado 7)
+                    // Cambiar estado de la solicitud a En proceso
                     conexion.query(
                         'UPDATE SolicitudSoporte SET id_estado = 7 WHERE id_solicitud = ?',
                         [id_solicitud],
@@ -467,7 +466,7 @@ const empleadoController = {
                                 });
                             }
 
-                            // 3. Crear proceso de reparación con estado "Diagnóstico" (id_estado 10)
+                            //Crear proceso de reparación con estado Diagnóstico
                             conexion.query(
                                 `INSERT INTO ProcesoReparacion 
                                 (id_solicitud, id_empleado_asignado, id_estado, fecha_inicio)
@@ -481,7 +480,7 @@ const empleadoController = {
                                         });
                                     }
 
-                                    // 4. Actualizar inventario: pasar de asignado a reparación
+                                    // Actualizar inventario: pasar de asignado a reparación
                                     conexion.query(`
                                         UPDATE InventarioProducto 
                                         SET 
@@ -525,8 +524,8 @@ const empleadoController = {
         const id_solicitud = req.params.id;
         const { motivo_rechazo } = req.body;
 
-        // 1. Cambiar estado de la solicitud a "Cancelada" (id_estado 9)
-        // 2. Establecer fecha_cierre y solución
+        // Cambiar estado de la solicitud a Cancelada
+        // Establecer fecha_cierre y solución
         conexion.query(
             `UPDATE SolicitudSoporte 
             SET id_estado = 9, fecha_cierre = NOW(), solucion = ?
@@ -601,7 +600,7 @@ const empleadoController = {
         });
     },
 
-    // Completar reparación (pasar a estado Reparado - 13)
+    // Completar reparación
     completarReparacion: (req, res) => {
         if (!req.session.user || req.session.user.rol !== 'Empleado') {
             return res.redirect('/login');
@@ -616,7 +615,7 @@ const empleadoController = {
             return res.redirect(`/en-reparacion?error=Debe completar todos los campos requeridos para finalizar la reparación`);
         }
 
-        // Calcular costo final (costo estimado + 15%)
+        // Calcular costo final
         const costoFinal = parseFloat(costo_estimado) * 1.15;
 
         conexion.beginTransaction(err => {
@@ -625,7 +624,7 @@ const empleadoController = {
                 return res.redirect('/en-reparacion?error=Error al procesar la solicitud');
             }
 
-            // 1. Actualizar el proceso de reparación con todos los datos
+            // Actualizar el proceso de reparación con todos los datos
             conexion.query(
                 `UPDATE ProcesoReparacion SET 
                 acciones_realizadas = ?,
@@ -652,7 +651,7 @@ const empleadoController = {
                         });
                     }
 
-                    // 2. Actualizar la solicitud a estado Resuelta (8)
+                    // Actualizar la solicitud a estado Resuelta 
                     conexion.query(
                         `UPDATE SolicitudSoporte s
                     JOIN ProcesoReparacion pr ON s.id_solicitud = pr.id_solicitud
@@ -668,7 +667,7 @@ const empleadoController = {
                                 });
                             }
 
-                            // 3. Registrar en bitácora
+                            // Registrar en bitácora
                             conexion.query(
                                 `INSERT INTO BitacoraReparacion 
                             (id_proceso, id_estado_anterior, id_estado_nuevo, id_empleado, observaciones)
@@ -707,7 +706,7 @@ const empleadoController = {
         });
     },
 
-    // Pasar a estado Espera repuestos (11)
+    // Pasar a estado Espera repuestos
     esperarRepuestos: (req, res) => {
         if (!req.session.user || req.session.user.rol !== 'Empleado') {
             return res.redirect('/login');
@@ -722,7 +721,7 @@ const empleadoController = {
                 return res.redirect('/en-reparacion?error=Error al procesar la solicitud');
             }
 
-            // 1. Actualizar estado del proceso
+            // Actualizar estado del proceso
             conexion.query(
                 'UPDATE ProcesoReparacion SET id_estado = 11, observaciones = ? WHERE id_proceso = ?',
                 [observaciones, id_proceso],
@@ -734,11 +733,11 @@ const empleadoController = {
                         });
                     }
 
-                    // 2. Registrar en bitácora
+                    // Registrar en bitácora
                     conexion.query(
                         `INSERT INTO BitacoraReparacion 
                     (id_proceso, id_estado_anterior, id_estado_nuevo, id_empleado, observaciones)
-                    VALUES (?, ?, 11, ?, ?)`,  // Nuevo estado: Espera repuestos (11)
+                    VALUES (?, ?, 11, ?, ?)`,  // Nuevo estado: Espera repuestos
                         [id_proceso, req.body.estado_actual, req.session.user.id_empleado, observaciones],
                         (error, results) => {
                             if (error) {
@@ -765,7 +764,7 @@ const empleadoController = {
         });
     },
 
-    // Marcar como irreparable (14)
+    // Marcar como irreparable
     marcarIrreparable: (req, res) => {
         if (!req.session.user || req.session.user.rol !== 'Empleado') {
             return res.redirect('/login');
@@ -780,7 +779,7 @@ const empleadoController = {
                 return res.redirect('/en-reparacion?error=Error al procesar la solicitud');
             }
     
-            // 1. Obtener información del producto y solicitud
+            // Obtener información del producto y solicitud
             conexion.query(`
                 SELECT s.id_producto, s.id_cliente, s.id_solicitud
                 FROM ProcesoReparacion pr
@@ -796,7 +795,7 @@ const empleadoController = {
     
                 const { id_producto, id_cliente, id_solicitud } = results[0];
     
-                // 2. Actualizar el proceso de reparación
+                // Actualizar el proceso de reparación
                 conexion.query(`
                     UPDATE ProcesoReparacion SET 
                         acciones_realizadas = ?,
@@ -813,7 +812,7 @@ const empleadoController = {
                             });
                         }
     
-                        // 3. Actualizar la solicitud a estado Resuelta (8)
+                        // Actualizar la solicitud a estado Resuelta 
                         conexion.query(`
                             UPDATE SolicitudSoporte SET 
                                 id_estado = 8, 
@@ -829,7 +828,7 @@ const empleadoController = {
                                     });
                                 }
     
-                                // 4. Desactivar asignación del producto con el cliente
+                                // Desactivar asignación del producto con el cliente
                                 conexion.query(`
                                     UPDATE Asignacion SET
                                         activa = 0,
@@ -846,7 +845,7 @@ const empleadoController = {
                                         });
                                     }
     
-                                    // 5. Actualizar inventario: pasar de reparación a descartado
+                                    // Actualizar inventario: pasar de reparación a descartado
                                     conexion.query(`
                                         UPDATE InventarioProducto SET
                                             cantidad_reparacion = cantidad_reparacion - 1,
@@ -861,7 +860,7 @@ const empleadoController = {
                                             });
                                         }
     
-                                        // 6. Registrar en bitácora
+                                        // Registrar en bitácora
                                         conexion.query(`
                                             INSERT INTO BitacoraReparacion 
                                             (id_proceso, id_estado_anterior, id_estado_nuevo, id_empleado, observaciones)
