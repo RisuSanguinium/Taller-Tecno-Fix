@@ -1,0 +1,2 @@
+Usuario: admin@tecno-fix.com
+Contraseña: Admin123
