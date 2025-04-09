@@ -251,20 +251,6 @@ CREATE TABLE IF NOT EXISTS `producto` (
 
 -- Volcando datos para la tabla tecno_fix.producto: ~0 rows (aproximadamente)
 
--- Volcando estructura para tabla tecno_fix.reporte
-CREATE TABLE IF NOT EXISTS `reporte` (
-  `id_reporte` int NOT NULL AUTO_INCREMENT,
-  `id_usuario_generador` int NOT NULL,
-  `tipo_reporte` enum('inventario','asignaciones','reparaciones','solicitudes') NOT NULL,
-  `fecha_generacion` datetime DEFAULT CURRENT_TIMESTAMP,
-  `parametros` text,
-  `archivo_ruta` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id_reporte`),
-  KEY `id_usuario_generador` (`id_usuario_generador`),
-  CONSTRAINT `reporte_ibfk_1` FOREIGN KEY (`id_usuario_generador`) REFERENCES `usuario` (`id_usuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Volcando datos para la tabla tecno_fix.reporte: ~0 rows (aproximadamente)
 
 -- Volcando estructura para tabla tecno_fix.rol
 CREATE TABLE IF NOT EXISTS `rol` (
