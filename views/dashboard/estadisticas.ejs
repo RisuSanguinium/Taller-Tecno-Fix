@@ -181,9 +181,14 @@
         </div>
 
         <div class="dashboard-container">
+             <!-- Gráfico de estados de reparación -->
+            <div class="chart-container">
+                <h3 class="chart-title">Estados de Reparación</h3>
+                <canvas id="estadosReparacionChart"></canvas>
+            </div>
             <!-- Gráfico de reparaciones -->
             <div class="chart-container">
-                <h3 class="chart-title">Estado de Reparaciones</h3>
+                <h3 class="chart-title">Pago de Reparaciones</h3>
                 <canvas id="reparacionesChart"></canvas>
             </div>
             
@@ -324,6 +329,55 @@
                             callback: function(value) {
                                 return 'L. ' + value;
                             }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfico de estados de reparación
+        const estadosReparacion = <%- JSON.stringify(estadosReparacion) %>;
+        const estadosLabels = estadosReparacion.map(item => item.estado);
+        const estadosValues = estadosReparacion.map(item => item.cantidad);
+
+        const estadosReparacionCtx = document.getElementById('estadosReparacionChart').getContext('2d');
+        new Chart(estadosReparacionCtx, {
+            type: 'bar',
+            data: {
+                labels: estadosLabels,
+                datasets: [{
+                    label: 'Cantidad',
+                    data: estadosValues,
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(40, 167, 69, 0.7)',
+                        'rgba(220, 53, 69, 0.7)' 
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(40, 167, 69, 1)',
+                        'rgba(220, 53, 69, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
                         }
                     }
                 }

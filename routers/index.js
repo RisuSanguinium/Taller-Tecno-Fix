@@ -11,6 +11,7 @@ const bitacoraRController = require('../controllers/bitacoraRController');
 const dashboardController = require('../controllers/dashboardController');
 const reportePagosController = require('../controllers/reportePagosController');
 const perfilController = require('../controllers/perfilController');
+const bitacoraDController = require('../controllers/bitacoraDController');
 
 // Rutas públicas
 router.get('/', (req, res) => {
@@ -114,6 +115,10 @@ router.get('/reportes-pagos/pdf', reportePagosController.generarPDF);
 router.get('/perfil', perfilController.mostrarPerfil);
 router.get('/perfil/editar', perfilController.mostrarFormularioEdicion);
 router.post('/perfil/actualizar', perfilController.actualizarPerfil);
+
+//Rutas para Bitácoras de Desactivasion
+router.get('/bitacora-desactivaciones', bitacoraDController.mostrarBitacora);
+router.get('/bitacora-desactivaciones/pdf', bitacoraDController.generarPDF);
 
 module.exports = router;
 
