@@ -281,10 +281,6 @@ INSERT INTO `rol` (`id_rol`, `nombre_rol`, `descripcion`, `fecha_creacion`, `act
 	(1, 'Administrador', 'Acceso completo al sistema', '2025-03-26 00:34:00', 1),
 	(2, 'Empleado', 'Técnico o personal de soporte', '2025-03-26 00:34:00', 1),
 	(3, 'Cliente', 'Usuario final que recibe equipos', '2025-03-26 00:34:00', 1),
-	(4, 'Administrador', 'Acceso completo al sistema', '2025-03-26 17:25:01', 1),
-	(5, 'Administrador', 'Acceso completo al sistema', '2025-03-26 17:25:14', 1),
-	(6, 'Administrador', 'Acceso completo al sistema', '2025-03-26 17:26:32', 1),
-	(7, 'Tecnico', 'Personal técnico de soporte y reparación', '2025-03-26 17:26:32', 1);
 
 -- Volcando estructura para tabla tecno_fix.solicitudsoporte
 CREATE TABLE IF NOT EXISTS `solicitudsoporte` (
